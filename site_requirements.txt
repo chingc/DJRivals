@@ -1,0 +1,51 @@
+Real Time Access
+----------------
+This section grab scores directly from the DJMAX site.  Scores are consistent
+with what the site reports.  The DJRivals site should list each song and have
+each chart as a clickable link.  When the link is clicked, the link should be
+highlighted and unhide the section to display the scores.  Clicking a different
+link will hide the current section and display the new section.  Clicking the
+same link will hide the current section.  In addition, a rival section displays
+your score compared to the scores of your rivals for the chosen song and chart.
+The following visual example illustrates the MX chart of Song2 being displayed.
+
+Song1 NM HD MX EX
+Song2 NM HD [MX] EX
+  Rank  DJIcon  DJName  Score1            Rival Box
+  Rank  DJIcon  DJName  Score2            Rank  DJIcon  Rival A  Score
+  Rank  DJIcon  DJName  Score3            Rank  DJIcon  You      Score
+  Rank  DJIcon  DJName  Score4            Rank  DJIcon  Rival B  Score
+  Rank  DJIcon  DJName  Score5            Rank  DJIcon  Rival C  Score
+  ...                                     ...
+Song3 NM HD MX EX
+Song4 NM HD MX EX
+Song5 NM HD MX EX
+...
+
+
+* Investigate: Maybe a 3-column display is simpler?  [Folders] [Scores] [Rivals]
+
+
+
+
+Database Access
+---------------
+These are personal folders in which grabbing data directly from the DJMAX site
+would be impractical.  Most of these folders would require looking through the
+entire database.  Sample folders are listed below.
+
+Perfect Play
+Full Combo  * Impossible?  How to determine full combo?
+Less than 295,000
+Less than 290,000
+Less than 285,000
+Less than 280,000
+Less than 270,000
+Rival A  (Wins:Losses)
+Rival B  (Wins:Losses)
+Rival C  (Wins:Losses)
+...
+
+
+* Investigate: Instead of loading the entire json database, preprocess it into
+smaller chunks by DJNAME and only load what's necessary.

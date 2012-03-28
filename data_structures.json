@@ -1,0 +1,58 @@
+json data structures
+
+{
+    song dictionary
+        image dictionary
+            eyecatch
+            normal
+            hard
+            maximum
+            extra
+        difficulty dictionary
+            normal chart level
+            hard chart level
+            maximum chart level
+            extra chart level
+        length dictionary
+            number of normal records
+            number of hard records
+            number of maximum records
+            number of extra records
+        ranking dictionary
+            normal ranking array of dictionaries
+            hard ranking array of dictionaries
+            maximum ranking array of dictionaries
+            extra ranking array of dictionaries
+}
+
+{
+    "song": {
+        "image": {
+            "eyecatch": "",
+            "nm": "",
+            "hd": "",
+            "mx": "",
+            "ex": ""
+        },
+        "difficulty": {
+            "nm": 0,
+            "hd": 0,
+            "mx": 0,
+            "ex": 0
+        },
+        "length": {
+            "nm": 0,
+            "hd": 0,
+            "mx": 0,
+            "ex": 0
+        },
+        "ranking": {
+            "nm": [
+                { "rank": 0, "djicon": "", "djname": "", "score": 0 }
+            ],
+            "hd": [],
+            "mx": [],
+            "ex": []
+        }
+    }
+}
