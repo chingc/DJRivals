@@ -1,172 +1,99 @@
+import json
+import os, os.path
 import re
 import time
-import json
 import urllib.request
 
 
-def index(download=False):
-    """Map each disc title to its correct page on the DJMAX site."""
-    url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
+def f_clean():
+    """f_clean() -> function(string)
+
+    This function returns a function that cleans disc names.  Cleaning is done
+    by stripping all non-alphanumeric characters.  The remaining characters are
+    then converted to lowercase.
+
+    """
     regex = re.compile(r"[^a-zA-Z0-9]")
-    index = {
-        "ad2222": 8,
-        "heartbeatpart2": 7,
-        "jupiterdriving": 2,
-        "brandnewdays": 3,
-        "melody": 2,
-        "area7": 1,
-        "d2": 4,
-        "thelastdance": 3,
-        "inmyheart": 2,
-        "dreamofwinds": 5,
-        "lupin": 8,
-        "color": 1,
-        "cyphergate": 6,
-        "readynow": 6,
-        "rageofdemon": 4,
-        "endofthemoonlight": 1,
-        "lacampanellanurave": 4,
-        "getdown": 5,
-        "dreamagain": 7,
-        "therainmaker": 6,
-        "fate": 1,
-        "coloursofsorrow": 1,
-        "stop": 3,
-        "enemystorm": 1,
-        "justfortoday": 8,
-        "break": 7,
-        "puzzler": 4,
-        "supersonicmrfunkyremix": 4,
-        "flea": 2,
-        "becomemyself": 6,
-        "whiteblue": 3,
-        "enemystormdarkjunglemix": 6,
-        "beautifulgirlsethvogtelectrovanityremix": 6,
-        "eternalmemory": 3,
-        "outlawreborn": 4,
-        "giveme5": 7,
-        "rightback": 7,
-        "miles": 2,
-        "coastaltempo": 1,
-        "airwave": 5,
-        "someday": 3,
-        "lovelyhands": 5,
-        "rockstar": 7,
-        "rayofilluminati": 4,
-        "cometome": 1,
-        "toyou":1,
-        "dualstrikers": 4,
-        "closer": 1,
-        "voyage": 3,
-        "signalize": 7,
-        "beyondthefuture": 5,
-        "theclearbluesky": 3,
-        "mister": 8,
-        "desperado": 5,
-        "oblivion": 2,
-        "access": 1,
-        "everything": 7,
-        "darkprism": 7,
-        "playthefuture": 3,
-        "firstkiss": 2,
-        "electronics": 1,
-        "sweetshiningshootingstar": 3,
-        "shoreline": 3,
-        "lover": 2,
-        "rutin": 5,
-        "step": 8,
-        "secretworld": 5,
-        "cozyquilt": 4,
-        "asktowind": 3,
-        "blythe": 1,
-        "cosmicfantasticlovesong": 4,
-        "freedom": 2,
-        "iwantyou": 2,
-        "thor": 5,
-        "mellowdfantasy": 6,
-        "jumping": 8,
-        "alifewithyou": 7,
-        "lovemode": 2,
-        "leavemealone": 6,
-        "kungfurider": 7,
-        "pianoconcertono1": 3,
-        "dearmylady": 1,
-        "pdm": 2,
-        "honeymoon": 2,
-        "keystotheworld": 2,
-        "inmydream": 5,
-        "bambooonbamboo": 8,
-        "landscape": 2,
-        "djmax": 6,
-        "creator": 1,
-        "jealousy": 5,
-        "graveconsequence": 5,
-        "proposedflowerwolfpart2": 1,
-        "proposedflowerwolfpart1": 1,
-        "spaceofsoul": 4,
-        "youshouldgetoverme": 8,
-        "yourownmiracle": 3,
-        "heartofwitch": 4,
-        "eternalfantasy": 5,
-        "beeutiful": 4,
-        "nowanewday": 7,
-        "zetmrfunkyremix": 6,
-        "feelmabeat": 7,
-        "sweetdream": 4,
-        "luvistrue": 6,
-        "hexad": 2,
-        "masaielectrohousemix": 6,
-        "desperadonuskoolmix": 6,
-        "loveisbeautiful": 5,
-        "sonofsun": 3,
-        "chemicalslave": 7,
-        "goneastray": 6,
-        "thenightstage": 5,
-        "oohlala": 8,
-        "beatudown": 6,
-        "ai": 1,
-        "seasonwarmmix": 6,
-        "funkypeople": 6,
-        "asktowindliveversion": 3,
-        "emblem": 4,
-        "luvflowfunkyhousemix": 6,
-        "fermion": 2,
-        "if": 6,
-        "theguilty": 5,
-        "burnitdown": 5,
-        "cherokee": 1,
-        "youme": 7,
-        "trip": 4,
-        "overtherainbow": 8,
-        "myheartmysoul": 7,
-        "hereinthemoment": 2,
-        "sin": 3,
-        "sayitfromyourheart": 4,
-        "putemup": 4,
-        "drumtown": 6,
-        "blackswan": 7,
-        "watchyourstep": 7,
-        "fury": 2,
-        "prettygirl": 8,
-        "xlasher": 4,
-        "monoxide": 4,
-        "raisemeup": 7,
-        "supersonic": 3,
-        "forever": 5,
-        "remember": 3,
-        "novamrfunkyremix": 5,
-        "hanzup": 7,
-        "inthetdot": 8,
-        "divineservice": 1,
-        "y": 3,
-        "darkenvy": 5,
-        "ladymadestar": 2
-    }  # pre-populate this index for faster performance
-    if download:
-        index.clear()
+    return lambda x: regex.sub(r"", x).lower()
+
+
+def images():
+    """images() -> None
+
+    Download all disc images from the DJMAX site.  Files are saved in a new
+    directory named "images" under the current working directory.  An image will
+    be skipped if it is determined that the file already exists.  Existence is
+    checked using a simple filename lookup.
+
+    """
+    # todo: make parallel
+    url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
+    image_url = "http://img3.djmaxcrew.com/icon/disc/110/{}"
+    image_dir = "./images/"
+    clean = f_clean()
+    if not os.path.exists(image_dir):
+        os.mkdir(image_dir)
+    for page in range(1, 9):
+        reply = json.loads(urllib.request.urlopen(url.format(page)).read().decode())
+        for record in reply["DATA"]["RECORD"]:
+            name, extension = os.path.splitext(record["DISCIMG"])
+            for chart in range(1, 5):
+                theirname = "{}{}{}".format(name[:-1], chart, extension)
+                myname = "{}_{}{}".format(clean(record["DISCNAME"]), chart, extension)
+                if os.path.exists(image_dir + myname):
+                    continue
+                with open(image_dir + myname, "wb") as f:
+                    f.write(urllib.request.urlopen(image_url.format(theirname)).read())
+                print('Wrote: "{}{}"'.format(image_dir, myname))
+
+
+def index(refresh=False):
+    """index([boolean]) -> dictionary
+
+    An auto-generated dictionary with manually maintained elements.  The
+    dictionary is saved as a plain text file in JSON format with the name
+    "pop_index.json" under the current working directory.  This function takes
+    an optional boolean value (default: False) that controls whether or not it
+    should refresh its contents by going to the DJMAX site.
+
+    Each record of the dictionary has the following structure:
+    string: [string, int, int, int, int, int]
+
+    The key is the cleaned disc name.  The value is a list.  The first element
+    is the full disc name as reported by the DJMAX site.  The remaining five
+    elements are all integers.  The first four indicate the difficulty of the
+    NM, HD, MX, and EX charts.  DJMAX labels these charts as 1, 2, 3, and 4,
+    respectively.  The list is structured such that you can access the correct
+    difficulty using DJMAX labels.  e.g. Element[2] returns the HD difficulty.
+    Finally, the last integer is the page number where the disc name shows up on
+    the ranking page.
+
+    """
+    url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
+    index_file = "./pop_index.json"
+    clean = f_clean()
+    try:
+        with open(index_file, "rb") as f:
+            index = json.loads(f.read().decode())
+    except:
+        index = {}
+    if refresh or not index:
         for page in range(1, 9):
             reply = json.loads(urllib.request.urlopen(url.format(page)).read().decode())
-            index.update({regex.sub(r"", record["DISCNAME"]).lower(): page for record in reply["DATA"]["RECORD"]})
+            for record in reply["DATA"]["RECORD"]:
+                name = record["DISCNAME"]
+                if clean(name) not in index:
+                    index[clean(name)] = [name, 0, 0, 0, 0, page]
+                else:  # do this because the name and page could have changed
+                    index[clean(name)][0] = name
+                    index[clean(name)][5] = page
+        output = json.dumps(index, indent=4)
+        output = re.sub(r', ?\n *(\d)', r', \1', output)  # condense records to one line
+        output = re.sub(r'\n *\](,?) ?', r']\1', output)  # adjust closing braceket
+        output = re.sub(r'\[ ?\n *"', r'["', output)  # adjust opening bracket
+        with open(index_file, "wb") as f:
+            f.write(output.encode())
+        print('Index written to: "{}"'.format(index_file))
     return index
 
 
@@ -187,7 +114,7 @@ def f_identifier():
         return cache[title]
 
     return identifier
-identifier = f_identifier()
+#identifier = f_identifier()
 
 
 def ranking(disc, chart):
@@ -232,6 +159,60 @@ def database():
     output = re.sub(r'([^\]\}])\n +}', r'\1 }', output)  # adjust closing brace
     output = re.sub(r'([,\[] ?\n +\{)\n +"', r'\1 "', output)  # adjust opening brace
     with open("./pop.json", "wb") as f:
+        print("Writing to file.")
+        f.write(output.encode())
+        print("Operation complete!")
+    elapsed_time = round((time.time() - start_time) / 60)
+    print("Database creation took {} minutes.".format(elapsed_time))
+
+
+def database2():
+    """Create a local database of scores in XML format."""
+    start_time = time.time()
+    #disc_list = [title[0] for title in sorted(index().items(), key=lambda i: i[1])]  # sort by page to use cache
+    disc_list = ["d2"]
+    player = "<rank>{}</rank><djicon>{}</djicon><djname>{}</djname><score>{}</score>\n"
+    output = """    <disc>
+        <name>{}</name>
+        <length>
+            <normal>{}</normal>
+            <hard>{}</hard>
+            <maximum>{}</maximum>
+            <extra>{}</extra>
+        </length>
+        <ranking>
+            <normal>
+                {}
+            </normal>
+            <hard>
+                {}
+            </hard>
+            <maximum>
+                {}
+            </maximum>
+            <extra>
+                {}
+            </extra>
+        </ranking>
+    </disc>"""
+    while len(disc_list):
+        disc = disc_list.pop()
+        rank = []
+        print("Working on '{}' ({} remaining).".format(disc, len(disc_list)))
+        try:
+            for chart in ["nm", "hd", "mx", "ex"]:
+                results = ranking(disc, chart)
+                results = [player.format(dj[0], dj[1], dj[2], dj[3]) for page in results for dj in page]
+                rank.append((len(results), "".join(results)))
+                print("    {} complete.  Sleeping...".format(chart))
+                time.sleep(15)
+            output = output.format(disc, rank[0][0], rank[1][0], rank[2][0], rank[3][0], rank[0][1], rank[1][1], rank[2][1], rank[3][1])
+        except:
+            print("An error occurred while working on '{}'".format(disc))
+            print("Sleeping for 5 minutes before restarting.")
+            disc_list.append(disc)
+            time.sleep(300)
+    with open("./pop.xml", "wb") as f:
         print("Writing to file.")
         f.write(output.encode())
         print("Operation complete!")
