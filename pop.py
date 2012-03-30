@@ -26,7 +26,7 @@ def images():
     checked using a simple filename lookup.
 
     """
-    # todo: make parallel
+    # todo: make multithreaded
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
     image_url = "http://img3.djmaxcrew.com/icon/disc/110/{}"
     image_dir = "./images/"
@@ -57,7 +57,7 @@ def index(refresh=False):
     should refresh its contents by going to the DJMAX site.
 
     Each record of the dictionary has the following structure:
-    string: [string, int, int, int, int, int]
+    string: [string, integer, integer, integer, integer, integer]
 
     The key is the cleaned disc name.  The value is a list.  The first element
     is the full disc name as reported by the DJMAX site.  The remaining five
@@ -67,6 +67,14 @@ def index(refresh=False):
     difficulty using DJMAX labels.  e.g. Element[2] returns the HD difficulty.
     Finally, the last integer is the page number where the disc name shows up on
     the ranking page.
+
+    Note: Because the DJMAX site does not list the difficulty level of charts
+    anywhere, these entries are manually maintained.  The dictionary can be
+    edited by hand in any text editor, and subsequent executions of this
+    function will not clobber the manual entries.  However, if this function
+    encounters any errors while attempting to open up the dictionary a new one
+    will be generated as a replacement.  It is therefore recommended to have a
+    backup of the current dictionary before running a refresh.
 
     """
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
@@ -98,38 +106,62 @@ def index(refresh=False):
 
 
 def f_identifier():
-    """Returns a function."""
+    """f_identifier() -> function(string)
+
+    This function returns a function that retrieves a disc identifier from the
+    DJMAX site by disc name.
+
+    """
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
-    regex = re.compile(r"[^a-zA-Z0-9]")
+    clean = f_clean()
     page = index()
     cache = {}
 
-    def identifier(title):
-        """Retrieve a disc identifier by disc title."""
-        title = regex.sub(r"", title).lower()
-        if title not in cache:
-            cache.clear()
-            reply = json.loads(urllib.request.urlopen(url.format(page[title])).read().decode())
-            cache.update({regex.sub(r"", record["DISCNAME"]).lower(): record["DISCID"] for record in reply["DATA"]["RECORD"]})
-        return cache[title]
+    # since DJMAX returns up to 20 identifiers at a time (each page lists 20
+    # discs except the last page which has less than 20), the cache dictionary
+    # saves these identifers to expedite future lookups.  however, since it is
+    # unknown how long these identifiers stay valid, the cache size has been
+    # limited to about 25% of the total number of available discs.  when the
+    # cache exceeds this limit, it will clear itself and rebuild.
+
+    def identifier(name):
+        name = clean(name)
+        if name not in cache:
+            if len(cache) > 20:  # value of 20 means at most 40
+                cache.clear()
+            reply = json.loads(urllib.request.urlopen(url.format(page[name][5])).read().decode())
+            cache.update({clean(record["DISCNAME"]): record["DISCID"] for record in reply["DATA"]["RECORD"]})
+        return cache[name]
 
     return identifier
-#identifier = f_identifier()
 
 
-def ranking(disc, chart):
-    """A generator for the ranking of a specified disc title and chart."""
+def ranking(disc, chart, pages=1):
+    """ranking(string, string[, integer]) -> list
+
+    Retrieve the ranking of a specified disc name and chart.  The chart is a
+    string that can be either NM, HD, MX, or EX; any other value will be treated
+    as EX.  The optional integer specifies how many pages worth of rankings to
+    retrieve (default: 1).  Specify 0 for a full listing.
+
+    """
+    # todo: make multithreaded
     url = "http://djmaxcrew.com/ranking/GetRankPopMixingMusic.asp?c={}&pt={}&p={}"
+    identifier = f_identifier()
+    disc_id = identifier(disc)
     chart = (lambda x: 1 if x == "nm" else 2 if x == "hd" else 3 if x == "mx" else 4)(chart.lower())
-    for page in range(1, 50):
-        reply = json.loads(urllib.request.urlopen(url.format(identifier(disc), chart, page)).read().decode())
-        yield [(record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply["DATA"]["RECORD"]]
+    results = []
+    for page in range(1, 1 + (100 if pages == 0 else pages)):
+        reply = json.loads(urllib.request.urlopen(url.format(disc_id, chart, page)).read().decode())
+        results.extend([(record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply["DATA"]["RECORD"]])
         if len(reply["DATA"]["RECORD"]) < 20:
             break
+    return results
 
 
-def database():
+def database_json():
     """Create a local database of scores in JSON format."""
+    # todo: fix; currently broken
     start_time = time.time()
     disc_list = [title[0] for title in sorted(index().items(), key=lambda i: i[1])]  # sort by page to use cache
     ranking_key = ("rank", "djicon", "djname", "score")
@@ -166,55 +198,100 @@ def database():
     print("Database creation took {} minutes.".format(elapsed_time))
 
 
-def database2():
+def database_xml():
     """Create a local database of scores in XML format."""
+    # todo: clean up
+    # todo: documentation
+    def psxml():    # i didn't want to create a class, so i made this closure
+        """Pretty Simple XML: A simple little pretty print XML generator."""
+        o = []      # open tags
+        x = ""      # xml output string
+        n = True    # newline
+        i = "    "  # indent width
+        d = 0       # depth of current level
+        def prefix():
+            return d * i if n else ""
+        def suffix(newline):
+            nonlocal n
+            n = newline
+            return "\n" if newline else ""
+        def psopen(tag, newline=True):
+            nonlocal x, d
+            x += "{}<{}>{}".format(prefix(), tag, suffix(newline))
+            d += 1
+            o.append(tag)
+        def psclose(newline=True):
+            nonlocal x, d
+            d -= 1
+            x += "{}</{}>{}".format(prefix(), o.pop(), suffix(newline))
+        def pstag(tag, value, newline=True):
+            nonlocal x
+            x += "{}<{}>{}</{}>{}".format(prefix(), tag, value, tag, suffix(newline))
+        def psget():
+            return x
+        return (psopen, psclose, pstag, psget)
+
     start_time = time.time()
+    psopen, psclose, pstag, psget = psxml()
+    disc_info = index()
     #disc_list = [title[0] for title in sorted(index().items(), key=lambda i: i[1])]  # sort by page to use cache
-    disc_list = ["d2"]
-    player = "<rank>{}</rank><djicon>{}</djicon><djname>{}</djname><score>{}</score>\n"
-    output = """    <disc>
-        <name>{}</name>
-        <length>
-            <normal>{}</normal>
-            <hard>{}</hard>
-            <maximum>{}</maximum>
-            <extra>{}</extra>
-        </length>
-        <ranking>
-            <normal>
-                {}
-            </normal>
-            <hard>
-                {}
-            </hard>
-            <maximum>
-                {}
-            </maximum>
-            <extra>
-                {}
-            </extra>
-        </ranking>
-    </disc>"""
+    disc_list = ["theclearbluesky"]
+
+    psopen("root")
     while len(disc_list):
+        records = {}
         disc = disc_list.pop()
-        rank = []
         print("Working on '{}' ({} remaining).".format(disc, len(disc_list)))
-        try:
-            for chart in ["nm", "hd", "mx", "ex"]:
-                results = ranking(disc, chart)
-                results = [player.format(dj[0], dj[1], dj[2], dj[3]) for page in results for dj in page]
-                rank.append((len(results), "".join(results)))
+        charts = ["nm", "hd", "mx", "ex"]
+        for chart in charts:
+            try:
+                records[chart] = ranking(disc, chart, 0)
                 print("    {} complete.  Sleeping...".format(chart))
                 time.sleep(15)
-            output = output.format(disc, rank[0][0], rank[1][0], rank[2][0], rank[3][0], rank[0][1], rank[1][1], rank[2][1], rank[3][1])
-        except:
-            print("An error occurred while working on '{}'".format(disc))
-            print("Sleeping for 5 minutes before restarting.")
-            disc_list.append(disc)
-            time.sleep(300)
-    with open("./pop.xml", "wb") as f:
+            except:
+                print("An error occurred while working on '{} {}'".format(disc, chart))
+                print("Sleeping for 5 minutes before restarting.")
+                charts.insert(0, chart)
+                time.sleep(300)
+        psopen("disc")
+        psopen("name")
+        pstag("clean", disc)
+        pstag("full", disc_info[disc][0])
+        psclose()  # name
+        psopen("image")
+        pstag("eyecatch", disc + ".png")
+        pstag("nm", disc + "_1.png")
+        pstag("hd", disc + "_2.png")
+        pstag("mx", disc + "_3.png")
+        pstag("ex", disc + "_4.png")
+        psclose()  # image
+        psopen("difficulty")
+        pstag("nm", disc_info[disc][1])
+        pstag("hd", disc_info[disc][2])
+        pstag("mx", disc_info[disc][3])
+        pstag("ex", disc_info[disc][4])
+        psclose()  # difficulty
+        psopen("ranking")
+        psopen("length")
+        for chart in ["nm", "hd", "mx", "ex"]:
+            pstag(chart, len(records[chart]))
+        psclose()  # length
+        for chart in ["nm", "hd", "mx", "ex"]:
+            psopen(chart)
+            for dj in records[chart]:
+                psopen("dj", False)
+                pstag("rank", dj[0], False)
+                pstag("icon", dj[1], False)
+                pstag("name", dj[2], False)
+                pstag("score", dj[3], False)
+                psclose()  # dj
+            psclose()  # chart
+        psclose()  # ranking
+        psclose()  # disc
+    psclose()  # root
+    with open("./pop_ranking.xml", "wb") as f:
         print("Writing to file.")
-        f.write(output.encode())
+        f.write(psget().encode())
         print("Operation complete!")
     elapsed_time = round((time.time() - start_time) / 60)
     print("Database creation took {} minutes.".format(elapsed_time))

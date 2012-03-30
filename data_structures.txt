@@ -1,0 +1,86 @@
+xml data structure
+
+<root>
+    <disc>
+        <name>
+            <clean></clean>
+            <full></full>
+        </name>
+        <image>
+            <eyecatch></eyecatch>
+            <nm></nm>
+            <hd></hd>
+            <mx></mx>
+            <ex></ex>
+        </image>
+        <difficulty>
+            <nm></nm>
+            <hd></hd>
+            <mx></mx>
+            <ex></ex>
+        </difficulty>
+        <ranking>
+            <length>
+                <nm></nm>
+                <hd></hd>
+                <mx></mx>
+                <ex></ex>
+            </length>
+            <nm>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+            </nm>
+            <hd>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+            </hd>
+            <mx>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+            </mx>
+            <ex>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+                <dj><rank></rank><icon></icon><name></name><score></score></dj>
+            </ex>
+        </ranking>
+    </disc>
+</root>
+
+
+json data structure (revisions required)
+
+{
+    "song": {
+        "image": {
+            "eyecatch": "",
+            "nm": "",
+            "hd": "",
+            "mx": "",
+            "ex": ""
+        },
+        "difficulty": {
+            "nm": 0,
+            "hd": 0,
+            "mx": 0,
+            "ex": 0
+        },
+        "length": {
+            "nm": 0,
+            "hd": 0,
+            "mx": 0,
+            "ex": 0
+        },
+        "ranking": {
+            "nm": [
+                { "rank": 0, "djicon": "", "djname": "", "score": 0 }
+            ],
+            "hd": [],
+            "mx": [],
+            "ex": []
+        }
+    }
+}
