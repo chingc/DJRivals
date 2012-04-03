@@ -1,8 +1,11 @@
+import collections
 import json
 import os, os.path
 import re
 import time
 import urllib.request
+
+import psxml
 
 
 def f_clean():
@@ -54,7 +57,7 @@ def index(refresh=False):
     dictionary is saved as a plain text file in JSON format with the name
     "pop_index.json" under the current working directory.  This function takes
     an optional boolean value (default: False) that controls whether or not it
-    should refresh its contents by going to the DJMAX site.
+    should refresh its contents by checking the DJMAX site.
 
     Each record of the dictionary has the following structure:
     string: [string, integer, integer, integer, integer, integer]
@@ -64,17 +67,17 @@ def index(refresh=False):
     elements are all integers.  The first four indicate the difficulty of the
     NM, HD, MX, and EX charts.  DJMAX labels these charts as 1, 2, 3, and 4,
     respectively.  The list is structured such that you can access the correct
-    difficulty using DJMAX labels.  e.g. Element[2] returns the HD difficulty.
-    Finally, the last integer is the page number where the disc name shows up on
-    the ranking page.
+    difficulty using DJMAX labels.  That means list index 2 returns the HD
+    difficulty.  Finally, the last integer is the page number where the disc
+    name shows up on the ranking page.
 
     Note: Because the DJMAX site does not list the difficulty level of charts
     anywhere, these entries are manually maintained.  The dictionary can be
     edited by hand in any text editor, and subsequent executions of this
     function will not clobber the manual entries.  However, if this function
-    encounters any errors while attempting to open up the dictionary a new one
-    will be generated as a replacement.  It is therefore recommended to have a
-    backup of the current dictionary before running a refresh.
+    should encounter any errors while attempting to open up the JSON file, a new
+    one will be generated as a replacement.  It is therefore recommended to have
+    a backup of the current dictionary before using this function.
 
     """
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
@@ -96,12 +99,10 @@ def index(refresh=False):
                     index[clean(name)][0] = name
                     index[clean(name)][5] = page
         output = json.dumps(index, indent=4)
-        output = re.sub(r', ?\n *(\d)', r', \1', output)  # condense records to one line
-        output = re.sub(r'\n *\](,?) ?', r']\1', output)  # adjust closing braceket
-        output = re.sub(r'\[ ?\n *"', r'["', output)  # adjust opening bracket
+        output = re.sub(r'\[\n +(".+",) +\n +(\d+,) +\n +(\d+,) +\n +(\d+,) +\n +(\d+,) +\n +(\d+)\n +\](,?) *', r'[\1 \2 \3 \4 \5 \6]\7', output)
         with open(index_file, "wb") as f:
             f.write(output.encode())
-        print('Index written to: "{}"'.format(index_file))
+        print('Wrote: "{}"'.format(index_file))
     return index
 
 
@@ -137,7 +138,7 @@ def f_identifier():
 
 
 def ranking(disc, chart, pages=1):
-    """ranking(string, string[, integer]) -> list
+    """ranking(string, string[, integer]) -> list of tuples
 
     Retrieve the ranking of a specified disc name and chart.  The chart is a
     string that can be either NM, HD, MX, or EX; any other value will be treated
@@ -159,139 +160,109 @@ def ranking(disc, chart, pages=1):
     return results
 
 
-def database_json():
-    """Create a local database of scores in JSON format."""
-    # todo: fix; currently broken
+def database(disc_list=[]):
+    """database([list]) -> None
+
+    Create a local database of scores with information obtained from the DJMAX
+    site.  The database is implemented as a collection of JSON files.  One JSON
+    file is created for each disc.  In addition, one JSON file will be created
+    for each DJ based on the information just acquired.  For the format and
+    content of these files refer to data_structures.txt.  The optional argument
+    is a list of strings (default: []) of cleaned disc names.  By default, it
+    will create the complete database.  When given a list it will create a
+    database of only those discs.  Files are saved in "./rankings/pop/disc/" and
+    "./rankings/pop/dj/" under the current working directory.
+    """
+    # todo: write the code to generate the DJ JSON files
     start_time = time.time()
-    disc_list = [title[0] for title in sorted(index().items(), key=lambda i: i[1])]  # sort by page to use cache
-    ranking_key = ("rank", "djicon", "djname", "score")
-    output = {}
-    while len(disc_list):
-        disc = disc_list.pop()
-        output[disc] = {}
-        output[disc]["length"] = {}
-        output[disc]["ranking"] = {}
-        print("Working on '{}' ({} remaining).".format(disc, len(disc_list)))
-        try:
-            for chart in ["nm", "hd", "mx"]:
-                results = ranking(disc, chart)
-                results = [dict(zip(ranking_key, dj)) for page in results for dj in page]
-                output[disc]["length"][chart] = len(results)
-                output[disc]["ranking"][chart] = results
-                print("    {} complete.  Sleeping...".format(chart))
-                time.sleep(15)
-        except:
-            print("An error occurred while working on '{}'".format(disc))
-            print("Sleeping for 5 minutes before restarting.")
-            disc_list.append(disc)
-            time.sleep(300)
-    print("Cleaning output.")
-    output = json.dumps(output, indent=4)
-    output = re.sub(r'(["\d],) \n +"', r'\1 "', output)  # condense scores to one line
-    output = re.sub(r'([^\]\}])\n +}', r'\1 }', output)  # adjust closing brace
-    output = re.sub(r'([,\[] ?\n +\{)\n +"', r'\1 "', output)  # adjust opening brace
-    with open("./pop.json", "wb") as f:
-        print("Writing to file.")
-        f.write(output.encode())
-        print("Operation complete!")
-    elapsed_time = round((time.time() - start_time) / 60)
-    print("Database creation took {} minutes.".format(elapsed_time))
-
-
-def database_xml():
-    """Create a local database of scores in XML format."""
-    # todo: clean up
-    # todo: documentation
-    def psxml():    # i didn't want to create a class, so i made this closure
-        """Pretty Simple XML: A simple little pretty print XML generator."""
-        o = []      # open tags
-        x = ""      # xml output string
-        n = True    # newline
-        i = "    "  # indent width
-        d = 0       # depth of current level
-        def prefix():
-            return d * i if n else ""
-        def suffix(newline):
-            nonlocal n
-            n = newline
-            return "\n" if newline else ""
-        def psopen(tag, newline=True):
-            nonlocal x, d
-            x += "{}<{}>{}".format(prefix(), tag, suffix(newline))
-            d += 1
-            o.append(tag)
-        def psclose(newline=True):
-            nonlocal x, d
-            d -= 1
-            x += "{}</{}>{}".format(prefix(), o.pop(), suffix(newline))
-        def pstag(tag, value, newline=True):
-            nonlocal x
-            x += "{}<{}>{}</{}>{}".format(prefix(), tag, value, tag, suffix(newline))
-        def psget():
-            return x
-        return (psopen, psclose, pstag, psget)
-
-    start_time = time.time()
-    psopen, psclose, pstag, psget = psxml()
+    disc_dir = "./rankings/pop/disc/"
+    dj_dir = "./rankings/pop/dj/"
+    if not os.path.exists(disc_dir):
+        os.makedirs(disc_dir)
+    if not os.path.exists(dj_dir):
+        os.makedirs(dj_dir)
     disc_info = index()
-    #disc_list = [title[0] for title in sorted(index().items(), key=lambda i: i[1])]  # sort by page to use cache
-    disc_list = ["theclearbluesky"]
-
-    psopen("root")
+    if not disc_list:
+        disc_list = [title[0] for title in sorted(disc_info.items(), key=lambda i: i[1])]  # sort by page to maximize identifier() cache hits
     while len(disc_list):
-        records = {}
+        print("{} discs remaining.".format(len(disc_list)))
         disc = disc_list.pop()
-        print("Working on '{}' ({} remaining).".format(disc, len(disc_list)))
         charts = ["nm", "hd", "mx", "ex"]
+        output = collections.OrderedDict()
+        output["updated"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        output["name"] = collections.OrderedDict(zip(["clean", "full"], [disc, disc_info[disc][0]]))
+        output["image"] = collections.OrderedDict([(i, disc + j) for i, j in zip(["eyecatch"] + charts, [".png", "_1.png", "_2.png", "_3.png", "_4.png"])])
+        output["difficulty"] = collections.OrderedDict([(i, disc_info[disc][j]) for i, j in zip(charts, [1, 2, 3, 4])])
+        output["ranking"] = collections.OrderedDict()
+        output["ranking"]["records"] = collections.OrderedDict()
         for chart in charts:
             try:
-                records[chart] = ranking(disc, chart, 0)
-                print("    {} complete.  Sleeping...".format(chart))
+                results = ranking(disc, chart, 0)
+                output["ranking"][chart] = results
+                output["ranking"]["records"][chart] = len(results)
+                print("{} {} complete.  Sleeping...".format(disc, chart))
                 time.sleep(15)
             except:
-                print("An error occurred while working on '{} {}'".format(disc, chart))
-                print("Sleeping for 5 minutes before restarting.")
+                print("{} {} error.  Sleeping for 5 minutes before retrying.".format(disc, chart))
                 charts.insert(0, chart)
                 time.sleep(300)
-        psopen("disc")
-        psopen("name")
-        pstag("clean", disc)
-        pstag("full", disc_info[disc][0])
-        psclose()  # name
-        psopen("image")
-        pstag("eyecatch", disc + ".png")
-        pstag("nm", disc + "_1.png")
-        pstag("hd", disc + "_2.png")
-        pstag("mx", disc + "_3.png")
-        pstag("ex", disc + "_4.png")
-        psclose()  # image
-        psopen("difficulty")
-        pstag("nm", disc_info[disc][1])
-        pstag("hd", disc_info[disc][2])
-        pstag("mx", disc_info[disc][3])
-        pstag("ex", disc_info[disc][4])
-        psclose()  # difficulty
-        psopen("ranking")
-        psopen("length")
-        for chart in ["nm", "hd", "mx", "ex"]:
-            pstag(chart, len(records[chart]))
-        psclose()  # length
-        for chart in ["nm", "hd", "mx", "ex"]:
-            psopen(chart)
-            for dj in records[chart]:
-                psopen("dj", False)
-                pstag("rank", dj[0], False)
-                pstag("icon", dj[1], False)
-                pstag("name", dj[2], False)
-                pstag("score", dj[3], False)
-                psclose()  # dj
-            psclose()  # chart
-        psclose()  # ranking
-        psclose()  # disc
-    psclose()  # root
-    with open("./pop_ranking.xml", "wb") as f:
-        print("Writing to file.")
-        f.write(psget().encode())
-        print("Operation complete!")
+        output = json.dumps(output, indent=4)
+        output = re.sub(r'\[\n +(\d+,) +\n +(".*",) +\n +(".*",) +\n +(\d{6})\n +\](,?) *', r'[\1 \2 \3 \4]\5', output)
+        with open(disc_dir + disc + ".json", "wb") as f:
+            f.write(output.encode())
+        print('Wrote: "{}{}.json"\n'.format(disc_dir, disc))
+    print("Operation complete!")
     elapsed_time = round((time.time() - start_time) / 60)
     print("Database creation took {} minutes.".format(elapsed_time))
+
+
+def html():
+    """html() -> None
+
+    This generates the HTML that serves as the user interface to the database.
+    A required component before running this function are the difficulty levels
+    for each disc and chart.  For details, see the documentation of index().
+    The information is necessary because it is used to determine whether or not
+    certain sections are created.  The HTML file is saved as "index.html" under
+    the current working directory.
+    """
+    html_file = "./index.html"
+    disc_info = index()
+    disc_list = sorted(disc_info.keys())
+    ps = psxml.PrettySimpleXML()
+    ps.raw("<!DOCTYPE html>")
+    ps.start("html")
+    ps.start("head")
+    ps.empty("meta", ['charset="UTF-8"'])
+    ps.start("title", value="DJRivals", newline=False).end()
+    ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/ui-lightness/jquery-ui-1.8.18.custom.css"'])
+    ps.start("script", ['type="text/javascript"', 'src="./js/jquery-1.7.1.min.js"'], newline=False).end()
+    ps.start("script", ['type="text/javascript"', 'src="./js/jquery-ui-1.8.18.custom.min.js"'], newline=False).end()
+    ps.start("script", ['type="text/javascript"', 'src="./djrivals.js"'], newline=False).end()
+    ps.end()  # head
+    ps.start("body")
+    ps.start("div", attr=['class="accordion"'])
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
+    ps.start("div")
+    ps.start("div", attr=['class="accordion"'])
+    for chart in [(1, "NM"), (2, "HD"), (3, "MX")]:
+        ps.start("h3", newline=False).start("a", ['href="#"'], chart[1], newline=False).end(False).end()
+        ps.start("div")
+        ps.start("div", attr=['class="pop accordion"'])
+        for disc in disc_list:
+            if disc_info[disc][chart[0]]:
+                ps.start("h3", newline=False)
+                ps.start("a", ['href="#"'], newline=False)
+                ps.empty("img", ["{}{}_{}{}".format('src="./images/', disc, chart[0], '.png"')], newline=False)
+                ps.raw("&nbsp " + disc_info[disc][0], newline=False)
+                ps.end(False)  # a
+                ps.end()  # h3
+                ps.start("div")
+                ps.start("p", value="Loading...", newline=False).end()
+                ps.end()  # div
+        ps.end()  # div
+        ps.end()  # div
+    ps.end_all()  # div, div, div, body, html
+    with open(html_file, "wb") as f:
+        f.write(ps.get().encode())
+    print('Wrote: "{}"'.format(html_file))
