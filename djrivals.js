@@ -7,7 +7,7 @@ $(document).ready(function () {
     });
     $(".pop").accordion({
         changestart: function (event, ui) {
-            if (ui.newHeader.text()) {  // activate only on expand
+            if (ui.newHeader.next().children("p").text()) {  // activate on expand and only if "<p>Loading...</p>" is found
                 var disc = ui.newHeader.text().replace(/[^a-zA-Z0-9]/g, "").toLowerCase(),
                     chart = ui.newHeader.parent().parent().prev().text().toLowerCase();
                 $.getJSON("./rankings/pop/disc/" + disc + ".json", function (data) {
