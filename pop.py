@@ -24,18 +24,18 @@ def images():
     """images() -> None
 
     Download all disc images from the DJMAX site.  Files are saved in a new
-    directory named "images" under the current working directory.  An image will
-    be skipped if it is determined that the file already exists.  Existence is
-    checked using a simple filename lookup.
+    directory named "images" under "./DJRivals/".  An image will be skipped if
+    it is determined that the file already exists.  Existence is checked using a
+    simple filename lookup.
 
     """
     # todo: make multithreaded
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
     image_url = "http://img3.djmaxcrew.com/icon/disc/110/{}"
-    image_dir = "./images/"
+    image_dir = "./DJRivals/images/"
     clean = f_clean()
     if not os.path.exists(image_dir):
-        os.mkdir(image_dir)
+        os.makedirs(image_dir)
     for page in range(1, 9):
         reply = json.loads(urllib.request.urlopen(url.format(page)).read().decode())
         for record in reply["DATA"]["RECORD"]:
@@ -55,21 +55,10 @@ def index(refresh=False):
 
     An auto-generated dictionary with manually maintained elements.  The
     dictionary is saved as a plain text file in JSON format with the name
-    "pop_index.json" under the current working directory.  This function takes
-    an optional boolean value (default: False) that controls whether or not it
-    should refresh its contents by checking the DJMAX site.
-
-    Each record of the dictionary has the following structure:
-    string: [string, integer, integer, integer, integer, integer]
-
-    The key is the cleaned disc name.  The value is a list.  The first element
-    is the full disc name as reported by the DJMAX site.  The remaining five
-    elements are all integers.  The first four indicate the difficulty of the
-    NM, HD, MX, and EX charts.  DJMAX labels these charts as 1, 2, 3, and 4,
-    respectively.  The list is structured such that you can access the correct
-    difficulty using DJMAX labels.  That means list index 2 returns the HD
-    difficulty.  Finally, the last integer is the page number where the disc
-    name shows up on the ranking page.
+    "pop_index.json" under "./DJRivals/".  An optional boolean value (default:
+    False) controls whether or not it should refresh its contents by checking
+    the DJMAX site.  Refer to data_structures.txt for the format and contents of
+    this file.
 
     Note: Because the DJMAX site does not list the difficulty level of charts
     anywhere, these entries are manually maintained.  The dictionary can be
@@ -81,8 +70,11 @@ def index(refresh=False):
 
     """
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
-    index_file = "./pop_index.json"
+    index_dir = "./DJRivals/"
+    index_file = index_dir + "pop_index.json"
     clean = f_clean()
+    if not os.path.exists(index_dir):
+        os.mkdir(index_dir)
     try:
         with open(index_file, "rb") as f:
             index = json.loads(f.read().decode())
@@ -99,7 +91,7 @@ def index(refresh=False):
                     index[clean(name)][0] = name
                     index[clean(name)][5] = page
         output = json.dumps(index, indent=4)
-        output = re.sub(r'\[\n +(".+",) +\n +(\d+,) +\n +(\d+,) +\n +(\d+,) +\n +(\d+,) +\n +(\d+)\n +\](,?) *', r'[\1 \2 \3 \4 \5 \6]\7', output)
+        output = re.sub(r'\[\n +(".+",) +\n +(\d+,) +\n +(\d+,) +\n +(\d+,) +\n +(\d+,) +\n +(\d+)\n +\](,?) *', r"[\1 \2 \3 \4 \5 \6]\7", output)
         with open(index_file, "wb") as f:
             f.write(output.encode())
         print('Wrote: "{}"'.format(index_file))
@@ -166,17 +158,18 @@ def database(disc_list=[]):
     Create a local database of scores with information obtained from the DJMAX
     site.  The database is implemented as a collection of JSON files.  One JSON
     file is created for each disc.  In addition, one JSON file will be created
-    for each DJ based on the information just acquired.  For the format and
-    content of these files refer to data_structures.txt.  The optional argument
+    for each DJ based on the information just acquired.  The optional argument
     is a list of strings (default: []) of cleaned disc names.  By default, it
     will create the complete database.  When given a list it will create a
-    database of only those discs.  Files are saved in "./rankings/pop/disc/" and
-    "./rankings/pop/dj/" under the current working directory.
+    database of only those discs.  Files are saved in
+    "./DJRivals/rankings/pop/disc/" and "./DJRivals/rankings/pop/dj/".  Refer to
+    data_structures.txt for the format and contents of these files.
+
     """
     # todo: write the code to generate the DJ JSON files
     start_time = time.time()
-    disc_dir = "./rankings/pop/disc/"
-    dj_dir = "./rankings/pop/dj/"
+    disc_dir = "./DJRivals/rankings/pop/disc/"
+    dj_dir = "./DJRivals/rankings/pop/dj/"
     if not os.path.exists(disc_dir):
         os.makedirs(disc_dir)
     if not os.path.exists(dj_dir):
@@ -187,7 +180,7 @@ def database(disc_list=[]):
     while len(disc_list):
         print("{} discs remaining.".format(len(disc_list)))
         disc = disc_list.pop()
-        charts = ["nm", "hd", "mx", "ex"]
+        charts = ["nm", "hd", "mx"]
         output = collections.OrderedDict()
         output["updated"] = time.strftime("%Y-%m-%d %H:%M:%S")
         output["name"] = collections.OrderedDict(zip(["clean", "full"], [disc, disc_info[disc][0]]))
@@ -207,7 +200,7 @@ def database(disc_list=[]):
                 charts.insert(0, chart)
                 time.sleep(300)
         output = json.dumps(output, indent=4)
-        output = re.sub(r'\[\n +(\d+,) +\n +(".*",) +\n +(".*",) +\n +(\d{6})\n +\](,?) *', r'[\1 \2 \3 \4]\5', output)
+        output = re.sub(r'\[\n +(\d+,) +\n +(".*",) +\n +(".*",) +\n +(\d{6})\n +\](,?) *', r"[\1 \2 \3 \4]\5", output)
         with open(disc_dir + disc + ".json", "wb") as f:
             f.write(output.encode())
         print('Wrote: "{}{}.json"\n'.format(disc_dir, disc))
@@ -224,9 +217,13 @@ def html():
     for each disc and chart.  For details, see the documentation of index().
     The information is necessary because it is used to determine whether or not
     certain sections are created.  The HTML file is saved as "index.html" under
-    the current working directory.
+    "./DJRivals/".
+
     """
-    html_file = "./index.html"
+    html_dir = "./DJRivals/"
+    html_file = html_dir + "index.html"
+    if not os.path.exists(html_dir):
+        os.mkdir(html_dir)
     disc_info = index()
     disc_list = sorted(disc_info.keys())
     ps = psxml.PrettySimpleXML()
@@ -236,6 +233,7 @@ def html():
     ps.empty("meta", ['charset="UTF-8"'])
     ps.start("title", value="DJRivals", newline=False).end()
     ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/ui-lightness/jquery-ui-1.8.18.custom.css"'])
+    ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./djrivals.css"'])
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-1.7.1.min.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-ui-1.8.18.custom.min.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./djrivals.js"'], newline=False).end()
