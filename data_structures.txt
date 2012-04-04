@@ -1,4 +1,20 @@
-json disc data structure
+JSON Index Data Structure
+
+{
+    "clean disc name": ["full disc name", 0, 0, 0, 0, 0],
+    "clean disc name": ["full disc name", 0, 0, 0, 0, 0],
+    "clean disc name": ["full disc name", 0, 0, 0, 0, 0]
+}
+
+The structure is quite self explanitory except for the integer elements.  The
+first four indicate the difficulty of the NM, HD, MX, and EX charts.  DJMAX
+labels these charts as 1, 2, 3, and 4, respectively.  The list is structured
+such that you can access the correct difficulty using DJMAX labels.  That means
+list index 2 returns the HD difficulty.  Finally, the last integer is the page
+number where the disc name shows up on the ranking page.
+
+
+JSON Disc Data Structure
 
 {
     "updated": "",
@@ -50,4 +66,4 @@ json disc data structure
 }
 
 
-todo: json user data structure
+todo: JSON User Data Structure
