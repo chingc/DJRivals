@@ -1,0 +1,35 @@
+.rank {  /* rank column */
+    padding: 5px 10px 5px 0px;
+    text-align: center;
+}
+
+.djicon {  /* djicon column */
+    padding: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+.djname {  /* djname column */
+    padding: 5px 20px 5px 10px;
+    text-align: left;
+}
+
+.score {  /* score column */
+    padding: 5px 0px 5px 20px;
+    text-align: left;
+}
+
+.djs {  /* td cell containing the DJ scores table */
+    padding: 0px 50px 0px 0px;
+    vertical-align: top;
+}
+
+.rivals {  /* td cell containing the Rival scores table */
+    padding: 0px 0px 0px 50px;
+    vertical-align: top;
+}
+
+h3 img {  /* disc icons */
+    width: 66px;
+    height: 66px;
+    vertical-align: middle;
+}
