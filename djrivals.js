@@ -19,7 +19,7 @@ $(document).ready(function () {
                         rival = ["Pakachu", "cgcgngng", "Dan.", "Absurd", "Serika", "DJJEFF20", "Kiba", "Rydia", "evenflow", "Scar", "BluBombr", "Kyon", "Mariposa", "EPHSHI", "novi", "VOXUP", "Butters", "yyr", "Cindy!"];
                     dj_records.push('<tr><th class="rank">Rank</th><th class="icon">Icon</th><th class="djname">DJ</th><th class="score">Score</th></tr>');
                     rival_records.push('<tr><th class="rank">Rank</th><th class="icon">Icon</th><th class="djname">Rival DJ</th><th class="score">Score</th></tr>');
-                    $.each(data.ranking[chart], function (key, value) {
+                    $.each(data.ranking[chart], function (index, value) {
                         var img_url = "http://img3.djmaxcrew.com/icon/djicon/40/",
                             rank = '<td class="rank">' + value[0] + "</td>",
                             djicon = '<td class="icon"><img width="52" height="32" src="' + img_url + value[1] + '" /></td>',
@@ -32,7 +32,7 @@ $(document).ready(function () {
                             rival.splice(rival_index, 1);
                         }
                     });
-                    $.each(rival, function (key, value) {
+                    $.each(rival, function (index, value) {
                         rival_no_play.push('<tr><td class="rank">.</td><td class="icon"></td><td class="djname">' + value + '</td><td class="score">0</td></tr>');
                     });
                     dj_table = $("<table/>", { html: dj_records.join("\n") });
