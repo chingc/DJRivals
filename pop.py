@@ -255,9 +255,7 @@ def html():
                 ps.raw("&nbsp " + disc_info[disc][0], newline=False)
                 ps.end(False)  # a
                 ps.end()  # h3
-                ps.start("div")
-                ps.start("p", value="Loading...", newline=False).end()
-                ps.end()  # div
+                ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
         ps.end()  # div
         ps.end()  # div
     ps.end_all()  # div, div, div, body, html
