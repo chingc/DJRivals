@@ -64,9 +64,9 @@ def index(refresh=False):
     anywhere, these entries are manually maintained.  The dictionary can be
     edited by hand in any text editor, and subsequent executions of this
     function will not clobber the manual entries.  However, if this function
-    should encounter any errors while attempting to open up the JSON file, a new
+    should encounter any errors while attempting to read the file on disk, a new
     one will be generated as a replacement.  It is therefore recommended to have
-    a backup of the current dictionary before using this function.
+    a backup of the current file before using this function.
 
     """
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
@@ -167,14 +167,14 @@ def database(disc_list=[]):
 
     """
     # todo: write the code to generate the DJ JSON files
+    # todo: include EX charts
     start_time = time.time()
     disc_dir = "./DJRivals/rankings/pop/disc/"
     dj_dir = "./DJRivals/rankings/pop/dj/"
-    if not os.path.exists(disc_dir):
-        os.makedirs(disc_dir)
-    if not os.path.exists(dj_dir):
-        os.makedirs(dj_dir)
     disc_info = index()
+    for directory in [disc_dir, dj_dir]:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
     if not disc_list:
         disc_list = [title[0] for title in sorted(disc_info.items(), key=lambda i: i[1])]  # sort by page to maximize identifier() cache hits
     while len(disc_list):
@@ -212,21 +212,27 @@ def database(disc_list=[]):
 def html():
     """html() -> None
 
-    This generates the HTML that serves as the user interface to the database.
-    A required component before running this function are the difficulty levels
-    for each disc and chart.  For details, see the documentation of index().
-    The information is necessary because it is used to determine whether or not
-    certain sections are created.  The HTML file is saved as "index.html" under
-    "./DJRivals/".
+    Crawl through the database and automatically generate the DJRivals HTML user
+    interface.  The HTML file is saved as "index.html" under "./DJRivals/".
 
     """
-    html_dir = "./DJRivals/"
-    html_file = html_dir + "index.html"
-    if not os.path.exists(html_dir):
-        os.mkdir(html_dir)
-    disc_info = index()
-    disc_list = sorted(disc_info.keys())
+    # todo: include EX charts
+    pop_disc_dir = "./DJRivals/rankings/pop/disc/"
+    html_file = "./DJRivals/index.html"
     ps = psxml.PrettySimpleXML()
+    disc_info = []
+    for directory in [pop_disc_dir]:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    for disc in sorted(os.listdir(pop_disc_dir)):
+        with open(pop_disc_dir + disc, "rb") as f:
+            data = json.loads(f.read().decode())
+            extracted = {}
+            extracted["name"] = data["name"]
+            extracted["image"] = data["image"]
+            extracted["difficulty"] = data["difficulty"]
+            extracted["records"] = data["ranking"]["records"]
+            disc_info.append(extracted)
     ps.raw("<!DOCTYPE html>")
     ps.start("html")
     ps.start("head")
@@ -243,19 +249,18 @@ def html():
     ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
     ps.start("div")
     ps.start("div", attr=['class="accordion"'])
-    for chart in [(1, "NM"), (2, "HD"), (3, "MX")]:
-        ps.start("h3", newline=False).start("a", ['href="#"'], chart[1], newline=False).end(False).end()
+    for chart in ["nm", "hd", "mx"]:
+        ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), newline=False).end(False).end()
         ps.start("div")
         ps.start("div", attr=['class="pop accordion"'])
-        for disc in disc_list:
-            if disc_info[disc][chart[0]]:
-                ps.start("h3", newline=False)
-                ps.start("a", ['href="#"'], newline=False)
-                ps.empty("img", ["{}{}_{}{}".format('src="./images/', disc, chart[0], '.png"')], newline=False)
-                ps.raw("&nbsp " + disc_info[disc][0], newline=False)
-                ps.end(False)  # a
-                ps.end()  # h3
-                ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
+        for disc in [disc for disc in disc_info if disc["records"][chart] > 0]:
+            ps.start("h3", newline=False)
+            ps.start("a", ['href="#"'], newline=False)
+            ps.empty("img", ['src="./images/{}"'.format(disc["image"][chart])], newline=False)
+            ps.raw("&nbsp " + disc["name"]["full"], newline=False)
+            ps.end(False)  # a
+            ps.end()  # h3
+            ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
         ps.end()  # div
         ps.end()  # div
     ps.end_all()  # div, div, div, body, html
