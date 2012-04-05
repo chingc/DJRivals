@@ -20,9 +20,8 @@ $(document).ready(function () {
                     dj_records.push('<tr><th class="rank">Rank</th><th class="icon">Icon</th><th class="djname">DJ</th><th class="score">Score</th></tr>');
                     rival_records.push('<tr><th class="rank">Rank</th><th class="icon">Icon</th><th class="djname">Rival DJ</th><th class="score">Score</th></tr>');
                     $.each(data.ranking[chart], function (index, value) {
-                        var img_url = "http://img3.djmaxcrew.com/icon/djicon/40/",
-                            rank = '<td class="rank">' + value[0] + "</td>",
-                            djicon = '<td class="icon"><img width="52" height="32" src="' + img_url + value[1] + '" /></td>',
+                        var rank = '<td class="rank">' + value[0] + "</td>",
+                            djicon = '<td class="icon"><img width="52" height="32" src="./images/icon/' + value[1] + '" /></td>',
                             djname = '<td class="djname">' + value[2] + "</td>",
                             score = '<td class="score">' + value[3] + "</td>",
                             rival_index = $.inArray(value[2], rival);

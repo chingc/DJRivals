@@ -232,6 +232,20 @@ def database(disc_list=[]):
     print("Database creation took {} minutes.".format(elapsed_time))
 
 
+def users():
+    pop_db_dir = "./DJRivals/rankings/pop/disc/"
+    users = {}
+    # sort keys from index, create dictionaries, then crawl through db
+    for disc in sorted(os.listdir(pop_db_dir)):
+        with open(pop_db_dir + disc, "rb") as f:
+            data = json.loads(f.read().decode())
+            for chart in ["nm", "hd", "mx", "ex"]:
+                for user in data["ranking"][chart]:
+                    users[user] = collections.OrderedDict()
+
+
+
+
 def html():
     """html() -> None
 
@@ -239,16 +253,15 @@ def html():
     HTML user interface.  The HTML file is saved as "./DJRivals/index.html".
 
     """
-    pop_disc_dir = "./DJRivals/rankings/pop/disc/"
+    pop_db_dir = "./DJRivals/rankings/pop/disc/"
     html_file = "./DJRivals/index.html"
     charts = ["nm", "hd", "mx", "ex"]
     disc_info = []
     ps = psxml.PrettySimpleXML()
-    for directory in [pop_disc_dir]:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    for disc in sorted(os.listdir(pop_disc_dir)):
-        with open(pop_disc_dir + disc, "rb") as f:
+    if not os.path.exists(pop_db_dir):
+        os.makedirs(pop_db_dir)
+    for disc in sorted(os.listdir(pop_db_dir)):
+        with open(pop_db_dir + disc, "rb") as f:
             data = json.loads(f.read().decode())
             extracted = {}
             extracted["name"] = data["name"]
@@ -279,7 +292,7 @@ def html():
         for disc in [disc for disc in disc_info if disc["records"][chart] > 0]:
             ps.start("h3", newline=False)
             ps.start("a", ['href="#"'], newline=False)
-            ps.empty("img", ['src="./images/{}"'.format(disc["image"][chart])], newline=False)
+            ps.empty("img", ['src="./images/disc/{}"'.format(disc["image"][chart])], newline=False)
             ps.raw("&nbsp " + disc["name"]["full"], newline=False)
             ps.end(False)  # a
             ps.end()  # h3
