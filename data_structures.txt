@@ -1,9 +1,9 @@
 JSON Index Data Structure
 
 {
-    "clean disc name": ["full disc name", 0, 0, 0, 0, 0],
-    "clean disc name": ["full disc name", 0, 0, 0, 0, 0],
-    "clean disc name": ["full disc name", 0, 0, 0, 0, 0]
+    "clean disc name 1": ["full disc name", 0, 0, 0, 0, 0],
+    "clean disc name 2": ["full disc name", 0, 0, 0, 0, 0],
+    "clean disc name 3": ["full disc name", 0, 0, 0, 0, 0]
 }
 
 The structure is quite self explanitory except for the integer elements.  The
@@ -17,7 +17,6 @@ number where the disc name shows up on the ranking page.
 JSON Disc Data Structure
 
 {
-    "updated": "",
     "name": {
         "clean": "",
         "full": ""
@@ -66,4 +65,25 @@ JSON Disc Data Structure
 }
 
 
-todo: JSON User Data Structure
+JSON User Data Structure
+
+{
+    "clean disc name 1": {
+        "nm": 300000,
+        "hd": 300000,
+        "mx": 300000,
+        "ex": 300000
+    },
+    "clean disc name 2": {
+        "nm": 300000,
+        "hd": 300000,
+        "mx": 300000,
+        "ex": 300000
+    },
+    "clean disc name 3": {
+        "nm": 300000,
+        "hd": 300000,
+        "mx": 300000,
+        "ex": 300000
+    }
+}
