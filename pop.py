@@ -83,10 +83,10 @@ def index(refresh=False):
     """index([boolean]) -> dictionary
 
     An auto-generated dictionary with manually maintained elements.  The
-    dictionary is saved in JSON format as "./DJRivals/pop_index.json".  An
-    optional boolean value (default: False) controls whether or not it should
-    refresh its contents by checking the DJMAX site.  Refer to
-    data_structures.txt for the format and contents of this file.
+    dictionary is saved in JSON format as "./pop_index.json".  An optional
+    boolean value (default: False) controls whether or not it should refresh its
+    contents by checking the DJMAX site.  Refer to data_structures.txt for the
+    format and contents of this file.
 
     Note: Because the DJMAX site does not list the difficulty level of charts
     anywhere, these entries are manually maintained.  The dictionary can be
@@ -98,11 +98,8 @@ def index(refresh=False):
 
     """
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
-    index_dir = "./DJRivals/"
-    index_file = index_dir + "pop_index.json"
+    index_file = "pop_index.json"
     clean = f_clean()
-    if not os.path.exists(index_dir):
-        os.mkdir(index_dir)
     try:
         with open(index_file, "rb") as f:
             index = json.loads(f.read().decode())
