@@ -255,7 +255,7 @@ def html():
         ps.start("div")
         ps.start("div", attr=['class="pop accordion"'])
         for disc in [disc for disc in disc_info if disc["records"][chart] > 0]:
-            ps.start("h3", newline=False)
+            ps.start("h3", ['title="{}"'.format(chart)], newline=False)
             ps.start("a", ['href="#"'], newline=False)
             ps.empty("img", ['src="./images/{}"'.format(disc["image"][chart])], newline=False)
             ps.raw("&nbsp " + disc["name"]["full"], newline=False)
@@ -269,7 +269,7 @@ def html():
         ps.start("div")
         ps.start("div", attr=['class="pop accordion"'])
         for dc in [(disc, chart) for disc in disc_info for chart in charts if disc["name"]["clean"][0] in alpha.lower() and disc["records"][chart] > 0]:
-            ps.start("h3", newline=False)
+            ps.start("h3", ['title="{}"'.format(dc[1])], newline=False)
             ps.start("a", ['href="#"'], newline=False)
             ps.empty("img", ['src="./images/{}"'.format(dc[0]["image"][dc[1]])], newline=False)
             ps.raw("&nbsp " + dc[0]["name"]["full"], newline=False)
@@ -283,7 +283,7 @@ def html():
         ps.start("div")
         ps.start("div", attr=['class="pop accordion"'])
         for dc in [(disc, chart) for disc in disc_info for chart in charts if disc["level"][chart] == level]:
-            ps.start("h3", newline=False)
+            ps.start("h3", ['title="{}"'.format(dc[1])], newline=False)
             ps.start("a", ['href="#"'], newline=False)
             ps.empty("img", ['src="./images/{}"'.format(dc[0]["image"][dc[1]])], newline=False)
             ps.raw("&nbsp " + dc[0]["name"]["full"], newline=False)

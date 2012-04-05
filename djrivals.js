@@ -9,7 +9,7 @@ $(document).ready(function () {
         changestart: function (event, ui) {
             if (ui.newHeader.next().children("p").text()) {  // activate on expand and only if "<p>Loading...</p>" is found
                 var disc = ui.newHeader.text().replace(/[^a-zA-Z0-9]/g, "").toLowerCase(),
-                    chart = ui.newHeader.parent().parent().prev().text().toLowerCase();
+                    chart = ui.newHeader.attr("title");
                 $.getJSON("./rankings/pop/disc/" + disc + ".json", function (data) {
                     var dj_table,
                         rival_table,
