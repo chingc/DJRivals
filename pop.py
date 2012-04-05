@@ -20,19 +20,19 @@ def f_clean():
     return lambda x: regex.sub(r"", x).lower()
 
 
-def images():
-    """images() -> None
+def discs():
+    """discs() -> None
 
-    Download all disc images from the DJMAX site.  Files are saved in a new
-    directory named "images" under "./DJRivals/".  An image will be skipped if
-    it is determined that the file already exists.  Existence is checked using a
-    simple filename lookup.
+    Download all disc images from the DJMAX site.  Files are saved under
+    "./DJRivals/images/disc/".  An image will be skipped if it is determined
+    that the file already exists.  Existence is checked using a simple filename
+    lookup.
 
     """
     # todo: make multithreaded
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
-    image_url = "http://img3.djmaxcrew.com/icon/disc/110/{}"
-    image_dir = "./DJRivals/images/"
+    image_url = "http://img3.djmaxcrew.com/icon/disc/110/"
+    image_dir = "./DJRivals/images/disc/"
     clean = f_clean()
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
@@ -46,27 +46,55 @@ def images():
                 if os.path.exists(image_dir + myname):
                     continue
                 with open(image_dir + myname, "wb") as f:
-                    f.write(urllib.request.urlopen(image_url.format(theirname)).read())
+                    f.write(urllib.request.urlopen(image_url + theirname).read())
                 print('Wrote: "{}{}"'.format(image_dir, myname))
+
+
+def icons():
+    """icons() -> None
+
+    Crawl through the local database and download all necessary DJ icons from
+    the DJMAX site.  Files are saved under "./DJRivals/images/icon/".  An image
+    will be skipped if it is determined that the file already exists.  Existence
+    is checked using a simple filename lookup.
+
+    """
+    # todo: make multithreaded
+    url = "http://img3.djmaxcrew.com/icon/djicon/104/"
+    pop_db_dir = "./DJRivals/rankings/pop/disc/"
+    image_dir = "./DJRivals/images/icon/"
+    icons = []
+    for directory in [pop_db_dir, image_dir]:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    for disc in os.listdir(pop_db_dir):
+        with open(pop_db_dir + disc, "rb") as f:
+            data = json.loads(f.read().decode())
+            icons.extend([dj[1] for chart in ['nm', 'hd', 'mx', 'ex'] for dj in data["ranking"][chart]])
+    for icon in set(icons):
+        if os.path.exists(image_dir + icon):
+            continue
+        with open(image_dir + icon, "wb") as f:
+            f.write(urllib.request.urlopen(url + icon).read())
+        print('Wrote: "{}{}"'.format(image_dir, icon))
 
 
 def index(refresh=False):
     """index([boolean]) -> dictionary
 
     An auto-generated dictionary with manually maintained elements.  The
-    dictionary is saved as a plain text file in JSON format with the name
-    "pop_index.json" under "./DJRivals/".  An optional boolean value (default:
-    False) controls whether or not it should refresh its contents by checking
-    the DJMAX site.  Refer to data_structures.txt for the format and contents of
-    this file.
+    dictionary is saved in JSON format as "./DJRivals/pop_index.json".  An
+    optional boolean value (default: False) controls whether or not it should
+    refresh its contents by checking the DJMAX site.  Refer to
+    data_structures.txt for the format and contents of this file.
 
     Note: Because the DJMAX site does not list the difficulty level of charts
     anywhere, these entries are manually maintained.  The dictionary can be
     edited by hand in any text editor, and subsequent executions of this
     function will not clobber the manual entries.  However, if this function
-    should encounter any errors while attempting to read the file on disk, a new
-    one will be generated as a replacement.  It is therefore recommended to have
-    a backup of the current file before using this function.
+    should encounter any errors while attempting to read the file, a new one
+    will be generated as a replacement.  It is therefore recommended to have a
+    backup of the current file before using this function.
 
     """
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
@@ -160,14 +188,13 @@ def database(disc_list=[]):
     file is created for each disc.  In addition, one JSON file will be created
     for each DJ based on the information just acquired.  The optional argument
     is a list of strings (default: []) of cleaned disc names.  By default, it
-    will create the complete database.  When given a list it will create a
-    database of only those discs.  Files are saved in
-    "./DJRivals/rankings/pop/disc/" and "./DJRivals/rankings/pop/dj/".  Refer to
-    data_structures.txt for the format and contents of these files.
+    will create the entire database.  Given a list, it will create a database of
+    only those discs.  Files are saved under "./DJRivals/rankings/pop/disc/" and
+    "./DJRivals/rankings/pop/dj/".  Refer to data_structures.txt for the format
+    and contents of these files.
 
     """
     # todo: write the code to generate the DJ JSON files
-    # todo: include EX charts
     start_time = time.time()
     disc_dir = "./DJRivals/rankings/pop/disc/"
     dj_dir = "./DJRivals/rankings/pop/dj/"
@@ -180,9 +207,8 @@ def database(disc_list=[]):
     while len(disc_list):
         print("{} discs remaining.".format(len(disc_list)))
         disc = disc_list.pop()
-        charts = ["nm", "hd", "mx"]
+        charts = ["nm", "hd", "mx", "ex"]
         output = collections.OrderedDict()
-        output["updated"] = time.strftime("%Y-%m-%d %H:%M:%S")
         output["name"] = collections.OrderedDict(zip(["clean", "full"], [disc, disc_info[disc][0]]))
         output["image"] = collections.OrderedDict([(i, disc + j) for i, j in zip(["eyecatch"] + charts, [".png", "_1.png", "_2.png", "_3.png", "_4.png"])])
         output["difficulty"] = collections.OrderedDict([(i, disc_info[disc][j]) for i, j in zip(charts, [1, 2, 3, 4])])
@@ -194,7 +220,7 @@ def database(disc_list=[]):
                 output["ranking"][chart] = results
                 output["ranking"]["records"][chart] = len(results)
                 print("{} {} complete.  Sleeping...".format(disc, chart))
-                time.sleep(15)
+                time.sleep(10)
             except:
                 print("{} {} error.  Sleeping for 5 minutes before retrying.".format(disc, chart))
                 charts.insert(0, chart)
@@ -212,14 +238,13 @@ def database(disc_list=[]):
 def html():
     """html() -> None
 
-    Crawl through the database and automatically generate the DJRivals HTML user
-    interface.  The HTML file is saved as "index.html" under "./DJRivals/".
+    Crawl through the local database and automatically generate the DJRivals
+    HTML user interface.  The HTML file is saved as "./DJRivals/index.html".
 
     """
-    # todo: include EX charts
     pop_disc_dir = "./DJRivals/rankings/pop/disc/"
     html_file = "./DJRivals/index.html"
-    charts = ["nm", "hd", "mx"]
+    charts = ["nm", "hd", "mx", "ex"]
     disc_info = []
     ps = psxml.PrettySimpleXML()
     for directory in [pop_disc_dir]:
@@ -255,38 +280,10 @@ def html():
         ps.start("div")
         ps.start("div", attr=['class="pop accordion"'])
         for disc in [disc for disc in disc_info if disc["records"][chart] > 0]:
-            ps.start("h3", ['title="{}"'.format(chart)], newline=False)
+            ps.start("h3", newline=False)
             ps.start("a", ['href="#"'], newline=False)
             ps.empty("img", ['src="./images/{}"'.format(disc["image"][chart])], newline=False)
             ps.raw("&nbsp " + disc["name"]["full"], newline=False)
-            ps.end(False)  # a
-            ps.end()  # h3
-            ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
-        ps.end()  # div
-        ps.end()  # div
-    for alpha in ["ABCD", "EFGH", "IJKL", "MNOP", "QRSTU", "VWXYZ"]:
-        ps.start("h3", newline=False).start("a", ['href="#"'], "{} - {}".format(alpha[0], alpha[-1]), newline=False).end(False).end()
-        ps.start("div")
-        ps.start("div", attr=['class="pop accordion"'])
-        for dc in [(disc, chart) for disc in disc_info for chart in charts if disc["name"]["clean"][0] in alpha.lower() and disc["records"][chart] > 0]:
-            ps.start("h3", ['title="{}"'.format(dc[1])], newline=False)
-            ps.start("a", ['href="#"'], newline=False)
-            ps.empty("img", ['src="./images/{}"'.format(dc[0]["image"][dc[1]])], newline=False)
-            ps.raw("&nbsp " + dc[0]["name"]["full"], newline=False)
-            ps.end(False)  # a
-            ps.end()  # h3
-            ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
-        ps.end()  # div
-        ps.end()  # div
-    for level in range(1, 13):
-        ps.start("h3", newline=False).start("a", ['href="#"'], "Level {}".format(level), newline=False).end(False).end()
-        ps.start("div")
-        ps.start("div", attr=['class="pop accordion"'])
-        for dc in [(disc, chart) for disc in disc_info for chart in charts if disc["level"][chart] == level]:
-            ps.start("h3", ['title="{}"'.format(dc[1])], newline=False)
-            ps.start("a", ['href="#"'], newline=False)
-            ps.empty("img", ['src="./images/{}"'.format(dc[0]["image"][dc[1]])], newline=False)
-            ps.raw("&nbsp " + dc[0]["name"]["full"], newline=False)
             ps.end(False)  # a
             ps.end()  # h3
             ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
