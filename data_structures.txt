@@ -65,7 +65,7 @@ JSON Disc Data Structure
 }
 
 
-JSON User Data Structure
+JSON DJ Data Structure
 
 {
     "clean disc name 1": {
