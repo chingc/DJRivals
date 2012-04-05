@@ -219,8 +219,9 @@ def html():
     # todo: include EX charts
     pop_disc_dir = "./DJRivals/rankings/pop/disc/"
     html_file = "./DJRivals/index.html"
-    ps = psxml.PrettySimpleXML()
+    charts = ["nm", "hd", "mx"]
     disc_info = []
+    ps = psxml.PrettySimpleXML()
     for directory in [pop_disc_dir]:
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -230,7 +231,7 @@ def html():
             extracted = {}
             extracted["name"] = data["name"]
             extracted["image"] = data["image"]
-            extracted["difficulty"] = data["difficulty"]
+            extracted["level"] = data["difficulty"]
             extracted["records"] = data["ranking"]["records"]
             disc_info.append(extracted)
     ps.raw("<!DOCTYPE html>")
@@ -249,7 +250,7 @@ def html():
     ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
     ps.start("div")
     ps.start("div", attr=['class="accordion"'])
-    for chart in ["nm", "hd", "mx"]:
+    for chart in charts:
         ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), newline=False).end(False).end()
         ps.start("div")
         ps.start("div", attr=['class="pop accordion"'])
@@ -258,6 +259,34 @@ def html():
             ps.start("a", ['href="#"'], newline=False)
             ps.empty("img", ['src="./images/{}"'.format(disc["image"][chart])], newline=False)
             ps.raw("&nbsp " + disc["name"]["full"], newline=False)
+            ps.end(False)  # a
+            ps.end()  # h3
+            ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
+        ps.end()  # div
+        ps.end()  # div
+    for alpha in ["ABCD", "EFGH", "IJKL", "MNOP", "QRSTU", "VWXYZ"]:
+        ps.start("h3", newline=False).start("a", ['href="#"'], "{} - {}".format(alpha[0], alpha[-1]), newline=False).end(False).end()
+        ps.start("div")
+        ps.start("div", attr=['class="pop accordion"'])
+        for dc in [(disc, chart) for disc in disc_info for chart in charts if disc["name"]["clean"][0] in alpha.lower() and disc["records"][chart] > 0]:
+            ps.start("h3", newline=False)
+            ps.start("a", ['href="#"'], newline=False)
+            ps.empty("img", ['src="./images/{}"'.format(dc[0]["image"][dc[1]])], newline=False)
+            ps.raw("&nbsp " + dc[0]["name"]["full"], newline=False)
+            ps.end(False)  # a
+            ps.end()  # h3
+            ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
+        ps.end()  # div
+        ps.end()  # div
+    for level in range(1, 13):
+        ps.start("h3", newline=False).start("a", ['href="#"'], "Level {}".format(level), newline=False).end(False).end()
+        ps.start("div")
+        ps.start("div", attr=['class="pop accordion"'])
+        for dc in [(disc, chart) for disc in disc_info for chart in charts if disc["level"][chart] == level]:
+            ps.start("h3", newline=False)
+            ps.start("a", ['href="#"'], newline=False)
+            ps.empty("img", ['src="./images/{}"'.format(dc[0]["image"][dc[1]])], newline=False)
+            ps.raw("&nbsp " + dc[0]["name"]["full"], newline=False)
             ps.end(False)  # a
             ps.end()  # h3
             ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
