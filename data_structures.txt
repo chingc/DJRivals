@@ -1,22 +1,41 @@
-JSON Index Data Structure
+JSON Disc Index Data Structure
+==============================
 
 {
     "clean disc name 1": ["full disc name", 0, 0, 0, 0, 0],
     "clean disc name 2": ["full disc name", 0, 0, 0, 0, 0],
-    "clean disc name 3": ["full disc name", 0, 0, 0, 0, 0]
+    "clean disc name 3": ["full disc name", 0, 0, 0, 0, 0],
+    ...
 }
 
-The structure is quite self explanitory except for the integer elements.  The
-first four indicate the difficulty of the NM, HD, MX, and EX charts.  DJMAX
-labels these charts as 1, 2, 3, and 4, respectively.  The list is structured
-such that you can access the correct difficulty using DJMAX labels.  That means
-list index 2 returns the HD difficulty.  Finally, the last integer is the page
-number where the disc name shows up on the ranking page.
+Details
+-------
+The index is a string->list dictionary keyed by the clean disc name, which is
+the full disc name converted to lowercase and stripped of all non-alphanumeric
+characters.  The list contains six elements.  Index 0 is the full disc name.
+Index 1 to 4 are the difficulty levels of the NM, HD, MX, and EX chart,
+respectively.  Finally, index 5 is the page where the disc shows up on the DJMAX
+site ranking section.
+
+DJMAX labels the NM, HD, MX, and EX charts as 1, 2, 3, and 4.  The list is
+structured such that you can access the correct difficulty using DJMAX labels.
+This means accessing index 2 would return the HD difficulty.  The difficulty
+levels must be maintained manually since DJMAX does not list them anywhere.
+
+Special Values
+--------------
+A difficulty level of 0 is used to indicate the non-existence of a chart.
+
+Notes
+-----
+This structure has elements that must be maintained by hand.
 
 
 JSON Disc Data Structure
+========================
 
 {
+    "timestamp": 0,
     "name": {
         "clean": "",
         "full": ""
@@ -44,28 +63,54 @@ JSON Disc Data Structure
         "nm": [
             [ 1, "djicon", "djname", 300000 ],
             [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ]
+            [ 3, "djicon", "djname", 300000 ],
+            ...
         ],
         "hd": [
             [ 1, "djicon", "djname", 300000 ],
             [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ]
+            [ 3, "djicon", "djname", 300000 ],
+            ...
         ],
         "mx": [
             [ 1, "djicon", "djname", 300000 ],
             [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ]
+            [ 3, "djicon", "djname", 300000 ],
+            ...
         ],
         "ex": [
             [ 1, "djicon", "djname", 300000 ],
             [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ]
+            [ 3, "djicon", "djname", 300000 ],
+            ...
         ]
     }
 }
 
+Details
+-------
+This data structure represents a disc.  The clean disc name should be used for
+the filename.  Timestamp is expressed in seconds from the UNIX epoch in UTC/GMT.
+The name and difficulty levels are filled in using the index file.  The images
+are filenames of the eyecatch and disc images.  They should be in PNG format and
+named using the clean disc name.  The image filename for each difficulty should
+include "_1", "_2", "_3", or "_4" depending on the chart.  Ranking contains all
+the scores for this disc.  Each list represents the score for one DJ.  List
+index 0 is the DJ rank, followed by the DJ icon filename, the DJ name, and
+finally index 3 is the score.  Ranking also contains records, which lists the
+number of records for each chart.
+
+Special Values
+--------------
+A difficulty level of 0 is used to indicate the non-existence of a chart.
+
+Notes
+-----
+This structure is generated automatically and should not be edited manually.
+
 
 JSON DJ Data Structure
+======================
 
 {
     "clean disc name 1": {
@@ -85,5 +130,22 @@ JSON DJ Data Structure
         "hd": 300000,
         "mx": 300000,
         "ex": 300000
-    }
+    },
+    ...
 }
+
+Details
+-------
+This data structure represents a DJ.  The DJ name should be used for the
+filename.  However, certain measures must be taken due to the fact that DJ names
+can contain characters not allowed by the OS.  All scores for all discs and all
+charts are contained within this structure.
+
+Special Values
+--------------
+A score of 0 means the DJ has not played the chart and a score of -1 indicates
+the non-existence of a chart.
+
+Notes
+-----
+This structure is generated automatically and should not be edited manually.
