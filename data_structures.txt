@@ -2,25 +2,41 @@ JSON Disc Index Data Structure
 ==============================
 
 {
-    "clean disc name 1": ["full disc name", 0, 0, 0, 0, 0],
-    "clean disc name 2": ["full disc name", 0, 0, 0, 0, 0],
-    "clean disc name 3": ["full disc name", 0, 0, 0, 0, 0],
+    "clean disc name 1": {
+        "full": "",
+        "page": 0,
+        "nm": 0,
+        "hd": 0,
+        "mx": 0,
+        "ex": 0
+    },
+    "clean disc name 2": {
+        "full": "",
+        "page": 0,
+        "nm": 0,
+        "hd": 0,
+        "mx": 0,
+        "ex": 0
+    },
+    "clean disc name 3": {
+        "full": "",
+        "page": 0,
+        "nm": 0,
+        "hd": 0,
+        "mx": 0,
+        "ex": 0
+    },
     ...
 }
 
 Details
 -------
-The index is a string->list dictionary keyed by the clean disc name, which is
-the full disc name converted to lowercase and stripped of all non-alphanumeric
-characters.  The list contains six elements.  Index 0 is the full disc name.
-Index 1 to 4 are the difficulty levels of the NM, HD, MX, and EX chart,
-respectively.  Finally, index 5 is the page where the disc shows up on the DJMAX
-site ranking section.
-
-DJMAX labels the NM, HD, MX, and EX charts as 1, 2, 3, and 4.  The list is
-structured such that you can access the correct difficulty using DJMAX labels.
-This means accessing index 2 would return the HD difficulty.  The difficulty
-levels must be maintained manually since DJMAX does not list them anywhere.
+The index is a dictionary of all available disc names.  It is keyed by the clean
+disc name, which is the full disc name converted to lowercase and stripped of
+all non-alphanumeric characters.  Each key accesses another dictionary that
+contains the full disc name, the page where the disc shows up on the DJMAX site
+ranking section, and the difficulty levels of each chart.  The difficulty levels
+must be maintained manually since DJMAX does not list them anywhere.
 
 Special Values
 --------------
@@ -89,16 +105,13 @@ JSON Disc Data Structure
 
 Details
 -------
-This data structure represents a disc.  The clean disc name should be used for
-the filename.  Timestamp is expressed in seconds from the UNIX epoch in UTC/GMT.
-The name and difficulty levels are filled in using the index file.  The images
-are filenames of the eyecatch and disc images.  They should be in PNG format and
-named using the clean disc name.  The image filename for each difficulty should
-include "_1", "_2", "_3", or "_4" depending on the chart.  Ranking contains all
-the scores for this disc.  Each list represents the score for one DJ.  List
-index 0 is the DJ rank, followed by the DJ icon filename, the DJ name, and
-finally index 3 is the score.  Ranking also contains records, which lists the
-number of records for each chart.
+This data structure represents a disc, and its primary purpose is to contain the
+scores of each chart of the disc it represents.  Most of the entries should be
+self-explanatory.  A few less obvious ones: "image" holds the filename of the
+eyecatch and disc images, and "records" is the amount of scores each chart
+contains.  The ranking for each chart is a list of lists.  Each list represents
+the score for one DJ.  List index 0 is the DJ rank, followed by the DJ icon
+filename, the DJ name, and finally index 3 is the score.
 
 Special Values
 --------------
