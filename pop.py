@@ -36,7 +36,7 @@ def _f_identifier():
     """_f_identifier() -> function(string)
 
     This function returns a function that retrieves a disc identifier from the
-    DJMAX site by disc name.
+    DJMAX site by clean disc name.
 
     """
     # since DJMAX returns up to 20 identifiers at a time (each page lists 20
@@ -45,38 +45,34 @@ def _f_identifier():
     # unknown how long these identifiers stay valid, the cache size has been
     # limited to about 25% of the total number of available discs.  when the
     # cache exceeds this limit, it will clear itself and rebuild.
-    def identifier(name):
-        name = clean(name)
-        if name not in cache:
+    def identifier(disc):
+        if disc not in cache:
             if len(cache) > 20:  # value of 20 means at most 40
                 cache.clear()
-            reply = json.loads(urlopen(url.format(page[name][5])).read().decode())
+            reply = json.loads(urlopen(url.format(info[disc]["page"])).read().decode())
             cache.update({clean(record["DISCNAME"]): record["DISCID"] for record in reply["DATA"]["RECORD"]})
-        return cache[name]
+        return cache[disc]
 
     url = "http://djmaxcrew.com/ranking/GetRankPopMixing.asp?p={}"
     clean = _f_clean()
-    page = index()
+    info = index()
     cache = {}
     return identifier
 
 
-def ranking(disc, chart, pages=1):
-    """ranking(string, string[, pages=integer]) -> list of tuples
+def ranking(disc_id, chart):
+    """ranking(string, string) -> list of tuples
 
-    Retrieve the ranking of a specified disc name and chart.  The chart is a
-    string that can be either NM, HD, MX, or EX; any other value will be treated
-    as EX.  The optional integer specifies how many pages worth of rankings to
-    retrieve (default: 1).  Specify 0 for a full listing.
+    The complete ranking of the specified disc identifier and chart.  The chart
+    is a string that can be NM, HD, MX, or EX; any other value will be treated
+    as EX.
 
     """
     # todo: make multithreaded
     url = "http://djmaxcrew.com/ranking/GetRankPopMixingMusic.asp?c={}&pt={}&p={}"
-    identifier = _f_identifier()
-    disc_id = identifier(disc)
     chart = (lambda x: 1 if x == "nm" else 2 if x == "hd" else 3 if x == "mx" else 4)(chart.lower())
     results = []
-    for page in range(1, 1 + (100 if pages == 0 else pages)):
+    for page in range(1, 100):
         reply = json.loads(urlopen(url.format(disc_id, chart, page)).read().decode())
         results.extend([(record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply["DATA"]["RECORD"]])
         if len(reply["DATA"]["RECORD"]) < 20:
@@ -126,10 +122,10 @@ def icons():
     pop_db_dir = _check_dir("./DJRivals/rankings/pop/disc/")
     image_dir = _check_dir("./DJRivals/images/icon/")
     icons = []
-    for disc in os.listdir(pop_db_dir):
-        with open(pop_db_dir + disc, "rb") as f:
+    for json_file in os.listdir(pop_db_dir):
+        with open(pop_db_dir + json_file, "rb") as f:
             data = json.loads(f.read().decode())
-        icons.extend([dj[1] for chart in ['nm', 'hd', 'mx', 'ex'] for dj in data["ranking"][chart]])
+        icons.extend([result[1] for chart in ['nm', 'hd', 'mx', 'ex'] for result in data["ranking"][chart]])
     for icon in set(icons):
         if os.path.exists(image_dir + icon):
             continue
@@ -161,29 +157,26 @@ def index(refresh=False):
     clean = _f_clean()
     try:
         with open(index_file, "rb") as f:
-            index = json.loads(f.read().decode())
+            index = json.loads(f.read().decode(), object_pairs_hook=OrderedDict)
     except:
-        index = {}
+        index = OrderedDict()
     if refresh or not index:
         for page in range(1, 9):
             reply = json.loads(urlopen(url.format(page)).read().decode())
             for record in reply["DATA"]["RECORD"]:
-                name = record["DISCNAME"]
-                if clean(name) not in index:
-                    index[clean(name)] = [name, 0, 0, 0, 0, page]
-                else:  # do this because the name and page could have changed
-                    index[clean(name)][0] = name
-                    index[clean(name)][5] = page
-        output = json.dumps(index, indent=4)
-        output = re.sub(r'\[\n +(".+",) \n +(\d+,) \n +(\d+,) \n +(\d+,) \n +(\d+,) \n +(\d+)\n +\](,?) ?', r"[\1 \2 \3 \4 \5 \6]\7", output)
+                disc = clean(record["DISCNAME"])
+                if disc not in index:
+                    index[disc] = OrderedDict(zip(["full", "page", "nm", "hd", "mx", "ex"], ["", "", 0, 0, 0, 0]))
+                index[disc]["full"] = disc
+                index[disc]["page"] = page
         with open(index_file, "wb") as f:
-            f.write(output.encode())
+            f.write(json.dumps(OrderedDict(sorted(index.items())), indent=4).encode())
         print('Wrote: "{}"'.format(index_file))
     return index
 
 
-def database(disc_list=[], djs_only=False):
-    """database([disc_list=list], [djs_only=boolean]) -> None
+def database(disc_list=[]):
+    """database([disc_list=list]) -> None
 
     Create a local database of scores with information obtained from the DJMAX
     site.  The database is implemented as a collection of JSON files.  One JSON
@@ -195,70 +188,68 @@ def database(disc_list=[], djs_only=False):
     Refer to data_structures.txt for the format and contents of these files.
 
     """
-    def _rankings():
-        """This portion creates the ranking database."""
-        while len(disc_list):
-            print("{} discs remaining.".format(len(disc_list)))
-            disc = disc_list.pop()
-            charts = ["nm", "hd", "mx", "ex"]
-            output = OrderedDict()
-            output["name"] = OrderedDict([("clean", disc), ("full", disc_info[disc][0])])
-            output["image"] = OrderedDict([(i, disc + j) for i, j in zip(["eyecatch"] + charts, [".png", "_1.png", "_2.png", "_3.png", "_4.png"])])
-            output["difficulty"] = OrderedDict([(i, disc_info[disc][j]) for i, j in zip(charts, [1, 2, 3, 4])])
-            output["ranking"] = OrderedDict()
-            output["ranking"]["records"] = OrderedDict()
-            for chart in charts:
-                try:
-                    results = ranking(disc, chart, 0)
-                    output["ranking"][chart] = results
-                    output["ranking"]["records"][chart] = len(results)
-                    print("{} {} complete.  Sleeping...".format(disc, chart))
-                    time.sleep(10)
-                except:
-                    print("{} {} error.  Sleeping for 5 minutes before retrying.".format(disc, chart))
-                    charts.insert(0, chart)
-                    time.sleep(300)
-            output = json.dumps(output, indent=4)
-            output = re.sub(r'\[\n +(\d+,) \n +(".*",) \n +(".*",) \n +(\d{6})\n +\](,?) ?', r"[\1 \2 \3 \4]\5", output)
-            with open("{}{}.json".format(disc_dir, disc), "wb") as f:
-                f.write(output.encode())
-            print('Wrote: "{}{}.json"\n'.format(disc_dir, disc))
-
-    def _djs():
-        """This portion creates the DJ database."""
-        djs = {}
-        print("Writing DJ files...\n")
-        for json_file in sorted(os.listdir(disc_dir)):
-            with open(disc_dir + json_file, "rb") as f:
-                data = json.loads(f.read().decode())
-            for chart in ["nm", "hd", "mx", "ex"]:
-                for dj in data["ranking"][chart]:
-                    disc = data["name"]["clean"]
-                    name = dj[2]
-                    score = dj[3]
-                    if name.find("*") > -1: name = name.replace("*", "(8)")
-                    if name.find("/") > -1: name = name.replace("/", "(fs)")
-                    if name.find("?") > -1: name = name.replace("?", "(qm)")
-                    if name.find(":") > -1: name = name.replace(":", "(;)")
-                    if name.lower().startswith("con"): name = "(-)" + name   # i never knew this
-                    if name not in djs:
-                        djs[name] = OrderedDict()
-                    if disc not in djs[name]:
-                        djs[name][disc] = OrderedDict()
-                    djs[name][disc][chart] = score
-        for k, v in djs.items():
-            with open("./DJRivals/rankings/pop/dj/{}.json".format(k), "wb") as f:
-                f.write(json.dumps(v, indent=4).encode())
+    def _clean_name(name):
+        """Sanitize DJ names."""
+        if name.find("*") > -1: name = name.replace("*", "(8)")
+        if name.find("/") > -1: name = name.replace("/", "(fs)")
+        if name.find("?") > -1: name = name.replace("?", "(qm)")
+        if name.find(":") > -1: name = name.replace(":", "(;)")
+        if name.lower().startswith("con"): name = "(-)" + name   # i never knew this
+        return name
 
     start_time = time.time()
     disc_dir = _check_dir("./DJRivals/rankings/pop/disc/")
     dj_dir = _check_dir("./DJRivals/rankings/pop/dj/")
-    disc_info = index()
-    if not djs_only:
-        if not disc_list:
-            disc_list = [disc[0] for disc in sorted(disc_info.items(), key=lambda x: x[1][5])]  # sort by page to maximize identifier() cache hits
-        _rankings()
-    _djs()
+    identifier = _f_identifier()
+    info = index()
+    dj = set()
+    if not disc_list:
+        disc_list = [disc for disc in sorted(info.keys(), key=lambda x: info[x]["page"])]  # sort by page to maximize identifier() cache hits
+    while len(disc_list):
+        print("{} discs remaining.".format(len(disc_list)))
+        disc = disc_list.pop()
+        charts = ["nm", "hd", "mx", "ex"]
+        output = OrderedDict()
+        output["timestamp"] = int(time.time())
+        output["name"] = OrderedDict(zip(["clean", "full"], [disc, info[disc]["full"]]))
+        output["image"] = OrderedDict([(i, disc + j) for i, j in zip(["eyecatch"] + charts, [".png", "_1.png", "_2.png", "_3.png", "_4.png"])])
+        output["difficulty"] = OrderedDict([(chart, info[disc][chart]) for chart in charts])
+        output["ranking"] = OrderedDict()
+        output["ranking"]["records"] = OrderedDict()
+        for chart in charts:
+            try:
+                results = ranking(identifier(disc), chart)
+                output["ranking"][chart] = results
+                output["ranking"]["records"][chart] = len(results)
+                dj = dj.union([_clean_name(record[2]) for record in results])
+                print("{} {} complete.  Sleeping...".format(disc, chart))
+                time.sleep(10)
+            except:
+                print("{} {} error.  Sleeping for 5 minutes before retrying.".format(disc, chart))
+                charts.insert(0, chart)
+                time.sleep(300)
+        output = json.dumps(output, indent=4)
+        output = re.sub(r'\[\n +(\d+,) \n +(".*",) \n +(".*",) \n +(\d{6})\n +\](,?) ?', r"[\1 \2 \3 \4]\5", output)
+        with open("{}{}.json".format(disc_dir, disc), "wb") as f:
+            f.write(output.encode())
+        print('Wrote: "{}{}.json"\n'.format(disc_dir, disc))
+    print("Writing DJ files...\n")
+    dj = {name: OrderedDict() for name in dj}
+    db_contents = sorted(os.listdir(disc_dir))
+    for disc in [json_file[:-5] for json_file in db_contents]:
+        for name in dj:
+            dj[name][disc] = OrderedDict([(chart, 0 if info[disc][chart] else -1) for chart in ["nm", "hd", "mx", "ex"]])
+    for json_file in db_contents:
+        with open(disc_dir + json_file, "rb") as f:
+            data = json.loads(f.read().decode())
+        for chart in ["nm", "hd", "mx", "ex"]:
+            for result in data["ranking"][chart]:
+                name = _clean_name(result[2])
+                if name in dj:
+                    dj[name][data["name"]["clean"]][chart] = result[3]
+    for k, v in dj.items():
+        with open("./DJRivals/rankings/pop/dj/{}.json".format(k), "wb") as f:
+            f.write(json.dumps(v, indent=4).encode())
     elapsed_time = round((time.time() - start_time) / 60)
     print("Finished!\n\nDatabase creation took {} minutes.".format(elapsed_time))
 
@@ -296,9 +287,9 @@ def html():
     ps.start("script", ['type="text/javascript"', 'src="./djrivals.js"'], newline=False).end()
     ps.end()  # head
     ps.start("body")
-    ps.start("div", attr=['class="accordion"'])
+    ps.start("div", attr=['class="accordion"'])  # start main accordion
     ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
-    ps.start("div")
+    ps.start("div")  # start pop section
     ps.start("div", attr=['class="accordion"'])
     for chart in charts:
         ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), newline=False).end(False).end()
@@ -309,12 +300,31 @@ def html():
             ps.start("a", ['href="#"'], newline=False)
             ps.empty("img", ['src="./images/disc/{}"'.format(disc["image"][chart])], newline=False)
             ps.raw("&nbsp " + disc["name"]["full"], newline=False)
-            ps.end(False)  # a
-            ps.end()  # h3
+            ps.end(False)
+            ps.end()
             ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
-        ps.end()  # div
-        ps.end()  # div
-    ps.end_all()  # div, div, div, body, html
+        ps.end()
+        ps.end()
+    ps.end()
+    ps.end()  # end pop section
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Me", newline=False).end(False).end()
+    ps.start("div")  # start me section
+    ps.start("div", attr=['class="me accordion"'])
+    for score in ["299950 PP++", "299900 PP+", "299800 PP", "297", "295", "290", "285", "280", "270", "< 270", "No Play"]:
+        ps.start("h3", newline=False).start("a", ['href="#"'], score, newline=False).end(False).end()
+        ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
+    ps.end()
+    ps.end()  # end me section
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Rival", newline=False).end(False).end()
+    ps.start("div")  # start rival section
+    ps.start("div", attr=['class="rival accordion"'])
+    for rival in ["Rival A", "Rival B", "Rival C"]:
+        ps.start("h3", newline=False).start("a", ['href="#"'], rival, newline=False).end(False).end()
+        ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
+    ps.end()
+    ps.end()  # end rival section
+    ps.end()  # end main accordion
+    ps.end_all()  # body, html
     with open(html_file, "wb") as f:
         f.write(ps.get().encode())
     print('Wrote: "{}"'.format(html_file))
