@@ -1,5 +1,6 @@
 """Automatic HTML generation."""
 from common import _dir_listing, _link, _make_dir
+import json
 
 import psxml
 
@@ -7,7 +8,7 @@ import psxml
 def html():
     """html() -> None
 
-    Generate the DJRivals HTML user interface based on database contents.
+    Generate the DJRivals HTML user interface based on the local database.
 
     """
     pop_db_dir = _make_dir(_link("pop_database_directory"))
@@ -39,7 +40,7 @@ def html():
     ps.start("div", attr=['class="accordion"'])  # start main accordion
     ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
     ps.start("div")  # start pop section
-    ps.start("div", attr=['class="accordion"'])
+    ps.start("div", attr=['class="accordion"'])  # start pop accordion
     for chart in charts:
         ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), newline=False).end(False).end()
         ps.start("div")
@@ -54,15 +55,11 @@ def html():
             ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
         ps.end()
         ps.end()
-    ps.end()
+    ps.end()  # end pop accordion
     ps.end()  # end pop section
     ps.start("h3", newline=False).start("a", ['href="#"'], "Me", newline=False).end(False).end()
-    ps.start("div")  # start me section
-    ps.start("div", attr=['class="me accordion"'])
-    for score in ["299950 PP++", "299900 PP+", "299800 PP", "297", "295", "290", "285", "280", "270", "< 270", "No Play"]:
-        ps.start("h3", newline=False).start("a", ['href="#"'], score, newline=False).end(False).end()
-        ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
-    ps.end()
+    ps.start("div", attr=['class="me"'])  # start me section
+    ps.start("button", attr=['type="button"'], value="Load Data").end()
     ps.end()  # end me section
     ps.start("h3", newline=False).start("a", ['href="#"'], "Rival", newline=False).end(False).end()
     ps.start("div")  # start rival section
@@ -77,3 +74,43 @@ def html():
     with open(html_file, "wb") as f:
         f.write(ps.get().encode())
     print('Wrote: "{}"'.format(html_file))
+
+
+def dj():
+    """dj() -> None
+
+    Generate the HTML for the Me section for each DJ in the local database.
+
+    """
+    dj_db_dir = _make_dir(_link("dj_database_directory"))
+    dj_html_dir = _make_dir(_link("dj_html_directory"))
+    charts = ["nm", "hd", "mx", "ex"]
+    ps = psxml.PrettySimpleXML()
+    for dj in _dir_listing(dj_db_dir):
+        with open(dj_db_dir + dj, "rb") as f:
+            data = json.loads(f.read().decode())
+        ps.start("div", attr=['class="accordion"'])  # start main accordion
+        ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
+        ps.start("div")  # start pop section
+        ps.start("div", attr=['class="accordion"'])  # start pop accordion
+        for chart in charts:
+            ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), newline=False).end(False).end()
+            ps.start("div")
+            ps.start("table")
+            ps.start("tr", newline=False)
+            ps.start("th", value="Disc", newline=False).end(False)
+            ps.start("th", value="Score", newline=False).end(False)
+            ps.end()
+            for score in data["pop"][chart]:
+                ps.start("tr", newline=False)
+                ps.start("td", value=score[0], newline=False).end(False)
+                ps.start("td", value=score[1], newline=False).end(False)
+                ps.end()
+            ps.end()
+            ps.end()
+        ps.end()  # end pop accordion
+        ps.end()  # end pop section
+        ps.end()  # end main accordion
+        with open(dj_html_dir + dj[:-5] + ".html", "wb") as f:
+            f.write(ps.get().encode())
+        ps.clear()
