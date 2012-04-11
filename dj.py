@@ -56,6 +56,6 @@ def database():
             dj[name]["pop"][chart] = OrderedDict(sorted(dj[name]["pop"][chart].items(), key=lambda x: x[1], reverse=True))
     for k, v in dj.items():
         with open(dj_db_dir + k + ".json", "wb") as f:
-            f.write(json.dumps(v, indent=4).encode())
+            f.write(json.dumps(v).encode())
     elapsed_time = round(time.time() - start_time)
     print("Database creation took {} seconds.".format(elapsed_time))

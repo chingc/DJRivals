@@ -2,7 +2,6 @@
 from collections import OrderedDict
 from urllib.request import urlopen
 import json
-import re
 import time
 
 from common import _clean, _dir_listing, _file_exists, _link, _make_dir
@@ -123,10 +122,10 @@ def database(disc_list=[]):
                 print("{} {} error.  Sleeping for 5 minutes before retrying.".format(disc, chart))
                 charts.insert(0, chart)
                 time.sleep(300)
-        output = json.dumps(output, indent=4)
-        output = re.sub(r'\[\n +(\d+,) \n +(".*",) \n +(".*",) \n +(\d{6})\n +\](,?) ?', r"[\1 \2 \3 \4]\5", output)
+        #output = json.dumps(output, indent=4)
+        #output = re.sub(r'\[\n +(\d+,) \n +(".*",) \n +(".*",) \n +(\d{6})\n +\](,?) ?', r"[\1 \2 \3 \4]\5", output)
         with open("{}{}.json".format(pop_db_dir, disc), "wb") as f:
-            f.write(output.encode())
+            f.write(json.dumps(output).encode())
         print('Wrote: "{}{}.json"\n'.format(pop_db_dir, disc))
     elapsed_time = round((time.time() - start_time) / 60)
     print("Database creation took {} minutes.".format(elapsed_time))
