@@ -126,38 +126,46 @@ JSON DJ Data Structure
 ======================
 
 {
-    "clean disc name 1": {
-        "nm": 300000,
-        "hd": 300000,
-        "mx": 300000,
-        "ex": 300000
-    },
-    "clean disc name 2": {
-        "nm": 300000,
-        "hd": 300000,
-        "mx": 300000,
-        "ex": 300000
-    },
-    "clean disc name 3": {
-        "nm": 300000,
-        "hd": 300000,
-        "mx": 300000,
-        "ex": 300000
-    },
-    ...
+    "full": "",
+    "pop": {
+        "nm": {
+            "full disc name 1": 0,
+            "full disc name 2": 0,
+            "full disc name 3": 0,
+            ...
+        },
+        "hd": {
+            "full disc name 1": 0,
+            "full disc name 2": 0,
+            "full disc name 3": 0,
+            ...
+        },
+        "mx": {
+            "full disc name 1": 0,
+            "full disc name 2": 0,
+            "full disc name 3": 0,
+            ...
+        },
+        "ex": {
+            "full disc name 1": 0,
+            "full disc name 2": 0,
+            "full disc name 3": 0,
+            ...
+        }
+    }
 }
 
 Details
 -------
-This data structure represents a DJ.  The DJ name should be used for the
-filename.  However, certain measures must be taken due to the fact that DJ names
-can contain characters not allowed by the OS.  All scores for all discs and all
-charts are contained within this structure.
+This data structure represents a DJ.  A sanitized DJ name should be used for the
+filename.  The "full" key holds the full DJ name.  All scores for all discs and
+all charts are contained within this structure, and each section is sorted by
+score from highest to lowest.  This structure can be expanded to hold the scores
+of other game modes if necessary.
 
 Special Values
 --------------
-A score of 0 means the DJ has not played the chart and a score of -1 indicates
-the non-existence of a chart.
+A score of 0 means the DJ has not played the chart.
 
 Notes
 -----
