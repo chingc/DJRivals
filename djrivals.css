@@ -2,36 +2,60 @@ table {
     table-layout: fixed;
 }
 
-.rank {  /* rank column */
+/* pop accordion disc icons */
+h3 img {
+    width: 66px;
+    height: 66px;
+    vertical-align: middle;
+}
+
+/* the two cells that hold the ranking tables */
+.djs, .rivals {
+    vertical-align: top;
+}
+
+/* ranking table djicons */
+.djs td:nth-child(2) img, .rivals td:nth-child(2) img {
+    width: 52px;
+    height: 32px;
+}
+
+/* 1st column of the ranking tables */
+.djs th:nth-child(1), .djs td:nth-child(1),
+.rivals th:nth-child(1), .rivals td:nth-child(1) {
     text-align: center;
     width: 50px;
 }
 
-.djicon {  /* djicon column */
+/* 2nd column of the ranking tables */
+.djs th:nth-child(2), .djs td:nth-child(2),
+.rivals th:nth-child(2), .rivals td:nth-child(2) {
     text-align: center;
     width: 75px;
 }
 
-.djname {  /* djname column */
+/* 3rd column of the ranking tables */
+.djs th:nth-child(3), .djs td:nth-child(3),
+.rivals th:nth-child(3), .rivals td:nth-child(3) {
     text-align: left;
     width: 125px;
 }
 
-.score {  /* score column */
+/* 4th column of the ranking tables */
+.djs th:nth-child(4), .djs td:nth-child(4),
+.rivals th:nth-child(4), .rivals td:nth-child(4) {
     text-align: left;
     width: 100px;
 }
 
-.djs {  /* td cell containing the DJ scores table */
-    vertical-align: top;
+/* 1st column of the personal score table */
+.me th:nth-child(1), .me td:nth-child(1) {
+    text-align: left;
+    width: 425px;
 }
 
-.rivals {  /* td cell containing the Rival scores table */
-    vertical-align: top;
-}
-
-h3 img {  /* disc icons */
-    width: 66px;
-    height: 66px;
-    vertical-align: middle;
+/* 2nd column of the personal score table */
+.me th:nth-child(2), .me td:nth-child(2) {
+    text-align: left;
+    width: 100px;
 }
