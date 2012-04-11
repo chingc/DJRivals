@@ -27,8 +27,11 @@ def _link(name):
         "disc_image_url": "http://img3.djmaxcrew.com/icon/disc/110/{}",
         "icon_image_url": "http://img3.djmaxcrew.com/icon/djicon/104/{}",
 
-        "pop_database_directory": "./DJRivals/rankings/pop/disc/",
-        "dj_database_directory": "./DJRivals/rankings/pop/dj/",
+        "pop_database_directory": "./DJRivals/database/pop/",
+        "dj_database_directory": "./DJRivals/database/dj/",
+
+        "pop_html_directory": "./DJRivals/database/pop_html/",
+        "dj_html_directory": "./DJRivals/database/dj_html/",
 
         "disc_image_directory": "./DJRivals/images/disc/",
         "icon_image_directory": "./DJRivals/images/icon/",
