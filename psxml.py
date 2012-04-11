@@ -11,9 +11,6 @@ class PrettySimpleXML():
         trail = "" if not newline else "\n"
         return "{}{}{}".format(lead, value, trail)
 
-    def get(self):
-        return "".join(self._output)
-
     def raw(self, value, newline=True):
         self._output.append(self._untrim(value, newline))
         return self
@@ -37,3 +34,11 @@ class PrettySimpleXML():
         while len(self._open_tags):
             self.end()
         return self
+
+    def get(self):
+        return "".join(self._output)
+
+    def clear(self):
+        self._output = []
+        self._open_tags = []
+        self._depth = 0
