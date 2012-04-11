@@ -17,7 +17,14 @@ def _clean_name(name):
 
 
 def database():
-    """Comment"""
+    """database() -> None
+
+    Create a DJ database using information in the local database.  The database
+    is implemented as a collection of JSON files.  One JSON file is created for
+    each DJ.  Refer to data_structures.txt for the format and contents of these
+    files.
+
+    """
     start_time = time.time()
     pop_db_dir = _make_dir(_link("pop_database_directory"))
     dj_db_dir = _make_dir(_link("dj_database_directory"))
@@ -53,7 +60,7 @@ def database():
                     dj[name]["pop"][chart][data["name"]["full"]] = result[3]
     for name in dj:
         for chart in charts:
-            dj[name]["pop"][chart] = OrderedDict(sorted(dj[name]["pop"][chart].items(), key=lambda x: x[1], reverse=True))
+            dj[name]["pop"][chart] = sorted(dj[name]["pop"][chart].items(), key=lambda x: x[1], reverse=True)
     for k, v in dj.items():
         with open(dj_db_dir + k + ".json", "wb") as f:
             f.write(json.dumps(v).encode())
