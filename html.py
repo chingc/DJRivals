@@ -37,18 +37,18 @@ def html():
     ps.start("script", ['type="text/javascript"', 'src="./djrivals.js"'], newline=False).end()
     ps.end()  # head
     ps.start("body")
-    ps.start("div", attr=['class="accordion"'])  # start main accordion
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
+    ps.start("div", ['class="accordion"'])  # start main accordion
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", False).end(False).end()
     ps.start("div")  # start pop section
-    ps.start("div", attr=['class="accordion"'])  # start pop accordion
+    ps.start("div", ['class="accordion"'])  # start pop accordion
     for chart in charts:
-        ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), newline=False).end(False).end()
+        ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), False).end(False).end()
         ps.start("div")
-        ps.start("div", attr=['class="pop accordion"'])
+        ps.start("div", ['class="pop accordion"'])
         for disc in [disc for disc in disc_info if disc["records"][chart] > 0]:
             ps.start("h3", newline=False)
             ps.start("a", ['href="#"'], newline=False)
-            ps.empty("img", ['src="./images/disc/{}"'.format(disc["image"][chart])], newline=False)
+            ps.empty("img", ['src="./images/disc/{}"'.format(disc["image"][chart])], False)
             ps.raw("&nbsp " + disc["name"]["full"], newline=False)
             ps.end(False)
             ps.end()
@@ -57,17 +57,13 @@ def html():
         ps.end()
     ps.end()  # end pop accordion
     ps.end()  # end pop section
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Me", newline=False).end(False).end()
-    ps.start("div", attr=['class="me"'])  # start me section
-    ps.start("button", attr=['type="button"'], value="Load Data").end()
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Me", False).end(False).end()
+    ps.start("div", ['class="me"'])  # start me section
+    ps.start("button", ['type="button"'], "Load Data", False).end()
     ps.end()  # end me section
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Rival", newline=False).end(False).end()
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Rival", False).end(False).end()
     ps.start("div")  # start rival section
-    ps.start("div", attr=['class="rival accordion"'])
-    for rival in ["Rival A", "Rival B", "Rival C"]:
-        ps.start("h3", newline=False).start("a", ['href="#"'], rival, newline=False).end(False).end()
-        ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
-    ps.end()
+    ps.start("p", value="Empty", newline=False).end()
     ps.end()  # end rival section
     ps.end()  # end main accordion
     ps.end_all()  # body, html
@@ -89,12 +85,12 @@ def dj():
     for dj in _dir_listing(dj_db_dir):
         with open(dj_db_dir + dj, "rb") as f:
             data = json.loads(f.read().decode())
-        ps.start("div", attr=['class="accordion"'])  # start main accordion
-        ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", newline=False).end(False).end()
+        ps.start("div", ['class="accordion"'])  # start main accordion
+        ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", False).end(False).end()
         ps.start("div")  # start pop section
-        ps.start("div", attr=['class="accordion"'])  # start pop accordion
+        ps.start("div", ['class="accordion"'])  # start pop accordion
         for chart in charts:
-            ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), newline=False).end(False).end()
+            ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), False).end(False).end()
             ps.start("div")
             ps.start("table")
             ps.start("tr", newline=False)
