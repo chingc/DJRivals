@@ -60,7 +60,7 @@ def database():
                     dj[name]["pop"][chart][data["name"]["full"]] = result[3]
     for name in dj:
         for chart in charts:
-            dj[name]["pop"][chart] = sorted(dj[name]["pop"][chart].items(), key=lambda x: x[1], reverse=True)
+            dj[name]["pop"][chart] = sorted(dj[name]["pop"][chart].items())
     for k, v in dj.items():
         with open(dj_db_dir + k + ".json", "wb") as f:
             f.write(json.dumps(v).encode())
