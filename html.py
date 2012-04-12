@@ -31,19 +31,17 @@ def html():
     ps.empty("meta", ['charset="UTF-8"'])
     ps.start("title", value="DJRivals", newline=False).end()
     ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/ui-lightness/jquery-ui-1.8.18.custom.css"'])
-    ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./djrivals.css"'])
+    ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/djrivals.css"'])
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-1.7.1.min.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-ui-1.8.18.custom.min.js"'], newline=False).end()
-    ps.start("script", ['type="text/javascript"', 'src="./djrivals.js"'], newline=False).end()
+    ps.start("script", ['type="text/javascript"', 'src="./js/jquery.tablesorter.min.js"'], newline=False).end()
+    ps.start("script", ['type="text/javascript"', 'src="./js/djrivals.js"'], newline=False).end()
     ps.end()  # head
     ps.start("body")
     ps.start("div", ['class="accordion"'])  # start main accordion
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", False).end(False).end()
-    ps.start("div")  # start pop section
-    ps.start("div", ['class="accordion"'])  # start pop accordion
     for chart in charts:
-        ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), False).end(False).end()
-        ps.start("div")
+        ps.start("h3", newline=False).start("a", ['href="#"'], "Pop: " + chart.upper(), False).end(False).end()
+        ps.start("div")  # start pop section
         ps.start("div", ['class="pop accordion"'])
         for disc in [disc for disc in disc_info if disc["records"][chart] > 0]:
             ps.start("h3", newline=False)
@@ -54,9 +52,7 @@ def html():
             ps.end()
             ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
         ps.end()
-        ps.end()
-    ps.end()  # end pop accordion
-    ps.end()  # end pop section
+        ps.end()  # end pop section
     ps.start("h3", newline=False).start("a", ['href="#"'], "Me", False).end(False).end()
     ps.start("div", ['class="me"'])  # start me section
     ps.start("button", ['type="button"'], "Load Data", False).end()
