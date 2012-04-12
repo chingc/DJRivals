@@ -1,4 +1,7 @@
 """Image retrieval."""
+from urllib.request import urlopen
+import json
+
 from common import _clean, _dir_listing, _file_exists, _link, _make_dir
 
 
@@ -16,7 +19,8 @@ def discs():
     for page in range(1, 9):
         data = json.loads(urlopen(url.format(page)).read().decode())["DATA"]["RECORD"]
         for record in data:
-            name, extension = os.path.splitext(record["DISCIMG"])
+            i = record["DISCIMG"].rfind(".")
+            name, extension = record["DISCIMG"][:i], record["DISCIMG"][i:]
             for chart in range(1, 5):
                 theirname = "{}{}{}".format(name[:-1], chart, extension)
                 myname = "{}_{}{}".format(_clean(record["DISCNAME"]), chart, extension)

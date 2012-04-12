@@ -1,7 +1,7 @@
 """Automatic HTML generation."""
-from common import _dir_listing, _link, _make_dir
 import json
 
+from common import _dir_listing, _link, _make_dir
 import psxml
 
 
