@@ -46,7 +46,7 @@ def icons():
     for json_file in _dir_listing(pop_db_dir):
         with open(pop_db_dir + json_file, "rb") as f:
             ranking = json.loads(f.read().decode())["ranking"]
-        icons.extend([result[1] for chart in ['nm', 'hd', 'mx', 'ex'] for result in ranking[chart]])
+        icons.extend([result[1] for chart in ["nm", "hd", "mx", "ex"] for result in ranking[chart]])
     for icon in set(icons):
         if _file_exists(image_dir + icon):
             continue
