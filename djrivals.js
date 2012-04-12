@@ -13,7 +13,7 @@ $(document).ready(function () {
                 var disc = ui.newHeader.text().replace(/[^a-zA-Z0-9]/g, "").toLowerCase(),
                     chart = ui.newHeader.parent().parent().prev().text().toLowerCase();
                 $.ajax({
-                    url: "./rankings/pop/disc/" + disc + ".json",
+                    url: "./database/pop/" + disc + ".json",
                     dataType: "json"
                 }).done(function (data) {
                     var dj_records = [],
@@ -47,7 +47,7 @@ $(document).ready(function () {
         },
         button_function = function () {
             $.ajax({
-                url: "./rankings/pop/dj/" + me + ".html",
+                url: "./database/dj_html/" + me + ".html",
                 dataType: "html"
             }).done(function (data) {
                 $(".me").html(data);
