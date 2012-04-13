@@ -10,52 +10,73 @@ h3 img {
 }
 
 /* the two cells that hold the ranking tables */
-.djs, .rivals {
+.djrank, .rivalrank {
     vertical-align: top;
 }
 
 /* ranking table djicons */
-.djs td:nth-child(2) img, .rivals td:nth-child(2) img {
+.djrank td:nth-child(2) img, .rivalrank td:nth-child(2) img {
     width: 52px;
     height: 32px;
 }
 
 /* 1st column of the ranking tables */
-.djs th:nth-child(1), .djs td:nth-child(1),
-.rivals th:nth-child(1), .rivals td:nth-child(1) {
+.djrank th:nth-child(1), .djrank td:nth-child(1),
+.rivalrank th:nth-child(1), .rivalrank td:nth-child(1) {
     text-align: center;
     width: 50px;
 }
 
 /* 2nd column of the ranking tables */
-.djs th:nth-child(2), .djs td:nth-child(2),
-.rivals th:nth-child(2), .rivals td:nth-child(2) {
+.djrank th:nth-child(2), .djrank td:nth-child(2),
+.rivalrank th:nth-child(2), .rivalrank td:nth-child(2) {
     text-align: center;
     width: 75px;
 }
 
 /* 3rd column of the ranking tables */
-.djs th:nth-child(3), .djs td:nth-child(3),
-.rivals th:nth-child(3), .rivals td:nth-child(3) {
+.djrank th:nth-child(3), .djrank td:nth-child(3),
+.rivalrank th:nth-child(3), .rivalrank td:nth-child(3) {
     text-align: left;
     width: 125px;
 }
 
 /* 4th column of the ranking tables */
-.djs th:nth-child(4), .djs td:nth-child(4),
-.rivals th:nth-child(4), .rivals td:nth-child(4) {
+.djrank th:nth-child(4), .djrank td:nth-child(4),
+.rivalrank th:nth-child(4), .rivalrank td:nth-child(4) {
     text-align: left;
     width: 100px;
 }
 
-/* 1st column of the personal score table */
-.me th:nth-child(1), .me td:nth-child(1) {
+/* 1st column of the personal/rival score tables */
+#me th:nth-child(1), #me td:nth-child(1),
+#rival th:nth-child(1), #rival td:nth-child(1) {
     text-align: left;
     width: 425px;
 }
 
-/* 2nd column of the personal score table */
-.me th:nth-child(2), .me td:nth-child(2) {
+/* 2nd column of the personal/rival score tables */
+#me th:nth-child(2), #me td:nth-child(2),
+#rival th:nth-child(2), #rival td:nth-child(2) {
     text-align: left;
     width: 100px;
+}
+
+/* 3rd column of the personal/rival score tables */
+#rival th:nth-child(3), #rival td:nth-child(3) {
+    text-align: left;
+    width: 100px;
+}
+
+/* 4th column of the personal/rival score tables */
+#rival th:nth-child(4), #rival td:nth-child(4) {
+    text-align: left;
+    width: 100px;
+}
+
+/* scrollable autocomplete list */
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
