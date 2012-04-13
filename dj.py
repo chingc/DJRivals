@@ -45,6 +45,8 @@ def database():
         for chart in charts:
             if data["difficulty"][chart]:
                 disc_list[chart][data["name"]["full"]] = 0
+    with open(dj_db_dir + "!__all_djnames__.json", "wb") as f:
+        f.write(json.dumps(sorted([name[1] for name in dj])).encode())
     dj = {name[0]: OrderedDict({"full": name[1]}) for name in dj}
     for name in dj:
         dj[name]["pop"] = OrderedDict()
