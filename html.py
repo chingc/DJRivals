@@ -53,14 +53,20 @@ def html():
             ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
         ps.end()
         ps.end()  # end pop section
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Me", False).end(False).end()
-    ps.start("div", ['class="me"'])  # start me section
-    ps.start("button", ['type="button"'], "Load Data", False).end()
+    ps.start("h3", newline=False).start("a", ['href="#"'], "DJ Empty", False).end(False).end()
+    ps.start("div", ['id="me"'])  # start me section
+    ps.start("p", value="Go to settings to enter your DJ name.", newline=False).end()
     ps.end()  # end me section
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Rival", False).end(False).end()
-    ps.start("div")  # start rival section
-    ps.start("p", value="Empty", newline=False).end()
+    ps.start("h3", newline=False).start("a", ['href="#"'], "DJ Rivals", False).end(False).end()
+    ps.start("div", ['id="rival"'])  # start rival section
+    ps.start("p", value="Go to settings to enter your rivals.", newline=False).end()
     ps.end()  # end rival section
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Settings", False).start("span", attr=['id="status"'], newline=False).end(False).end(False).end()
+    ps.start("div")  # start settings section
+    ps.empty("input", ['id="myname"', 'type="text"', 'placeholder="My DJ Name"'], False).empty("br")
+    ps.start("textarea", ['id="myrival"', 'cols="40"', 'rows="3"', 'placeholder="My Rival List"'], newline=False).end(False).empty("br")
+    ps.start("button", ['id="save"', 'type="button"'], "YAY", False).end()
+    ps.end()  # end settings section
     ps.end()  # end main accordion
     ps.end_all()  # body, html
     with open(html_file, "wb") as f:
