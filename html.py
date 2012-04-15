@@ -14,17 +14,8 @@ def html():
     pop_db_dir = _make_dir(_link("pop_database_directory"))
     html_file = _link("html_file")
     charts = ["nm", "hd", "mx"]
+    disc_list = sorted(_dir_listing(pop_db_dir))
     ps = psxml.PrettySimpleXML()
-    disc_info = []
-    for disc in sorted(_dir_listing(pop_db_dir)):
-        with open(pop_db_dir + disc, "rb") as f:
-            data = json.loads(f.read().decode())
-        extracted = {}
-        extracted["name"] = data["name"]
-        extracted["image"] = data["image"]
-        extracted["level"] = data["difficulty"]
-        extracted["records"] = data["ranking"]["records"]
-        disc_info.append(extracted)
     ps.raw("<!DOCTYPE html>")
     ps.start("html")
     ps.start("head")
@@ -43,11 +34,13 @@ def html():
         ps.start("h3", newline=False).start("a", ['href="#"'], "Pop: " + chart.upper(), False).end(False).end()
         ps.start("div")  # start pop section
         ps.start("div", ['class="pop accordion"'])
-        for disc in [disc for disc in disc_info if disc["records"][chart] > 0]:
+        for disc in disc_list:
+            with open(pop_db_dir + disc, "rb") as f:
+                data = json.loads(f.read().decode())
             ps.start("h3", newline=False)
             ps.start("a", ['href="#"'], newline=False)
-            ps.empty("img", ['src="./images/disc/{}"'.format(disc["image"][chart])], False)
-            ps.raw("&nbsp " + disc["name"]["full"], newline=False)
+            ps.empty("img", ['src="./images/disc/{}"'.format(data[chart]["icon"])], False)
+            ps.raw("&nbsp " + data["name"], newline=False)
             ps.end(False)
             ps.end()
             ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
@@ -72,43 +65,3 @@ def html():
     with open(html_file, "wb") as f:
         f.write(ps.get().encode())
     print('Wrote: "{}"'.format(html_file))
-
-
-def dj():
-    """dj() -> None
-
-    Generate the HTML for the Me section for each DJ in the local database.
-
-    """
-    dj_db_dir = _make_dir(_link("dj_database_directory"))
-    dj_html_dir = _make_dir(_link("dj_html_directory"))
-    charts = ["nm", "hd", "mx"]
-    ps = psxml.PrettySimpleXML()
-    for dj in _dir_listing(dj_db_dir):
-        with open(dj_db_dir + dj, "rb") as f:
-            data = json.loads(f.read().decode())
-        ps.start("div", ['class="accordion"'])  # start main accordion
-        ps.start("h3", newline=False).start("a", ['href="#"'], "Pop", False).end(False).end()
-        ps.start("div")  # start pop section
-        ps.start("div", ['class="accordion"'])  # start pop accordion
-        for chart in charts:
-            ps.start("h3", newline=False).start("a", ['href="#"'], chart.upper(), False).end(False).end()
-            ps.start("div")
-            ps.start("table")
-            ps.start("tr", newline=False)
-            ps.start("th", value="Disc", newline=False).end(False)
-            ps.start("th", value="Score", newline=False).end(False)
-            ps.end()
-            for score in data["pop"][chart]:
-                ps.start("tr", newline=False)
-                ps.start("td", value=score[0], newline=False).end(False)
-                ps.start("td", value=score[1], newline=False).end(False)
-                ps.end()
-            ps.end()
-            ps.end()
-        ps.end()  # end pop accordion
-        ps.end()  # end pop section
-        ps.end()  # end main accordion
-        with open(dj_html_dir + dj[:-5] + ".html", "wb") as f:
-            f.write(ps.get().encode())
-        ps.clear()
