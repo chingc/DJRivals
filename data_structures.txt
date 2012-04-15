@@ -118,30 +118,30 @@ JSON DJ Data Structure
 ======================
 
 {
-    "full": "",
+    "djname": "",
     "pop": {
         "nm": [
-            ["full disc name 1", 0],
-            ["full disc name 2", 0],
-            ["full disc name 3", 0],
+            ["name 1", 0],
+            ["name 2", 0],
+            ["name 3", 0],
             ...
         ],
         "hd": [
-            ["full disc name 1", 0],
-            ["full disc name 2", 0],
-            ["full disc name 3", 0],
+            ["name 1", 0],
+            ["name 2", 0],
+            ["name 3", 0],
             ...
         ],
         "mx": [
-            ["full disc name 1", 0],
-            ["full disc name 2", 0],
-            ["full disc name 3", 0],
+            ["name 1", 0],
+            ["name 2", 0],
+            ["name 3", 0],
             ...
         ],
         "ex": [
-            ["full disc name 1", 0],
-            ["full disc name 2", 0],
-            ["full disc name 3", 0],
+            ["name 1", 0],
+            ["name 2", 0],
+            ["name 3", 0],
             ...
         ]
     }
@@ -149,10 +149,9 @@ JSON DJ Data Structure
 
 Details
 -------
-This data structure represents a DJ.  A sanitized DJ name should be used for the
-filename.  The "full" key holds the full DJ name.  All scores for all discs and
-all charts are contained within this structure.  This structure can be expanded
-to hold the scores of other game modes if necessary.
+This data structure represents a DJ.  All scores for all discs and all charts
+are contained within this structure.  This structure can be expanded to hold the
+scores of other game modes if necessary.
 
 Special Values
 --------------
