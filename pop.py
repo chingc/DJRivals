@@ -103,7 +103,7 @@ def database(disc_list=[]):
     while len(disc_list):
         print("{} discs remaining.".format(len(disc_list)))
         disc = disc_list.pop()
-        charts = ["nm", "hd", "mx", "ex"]
+        charts = ["nm", "hd", "mx"]
         output = OrderedDict()
         output["timestamp"] = int(time.time())
         output["name"] = OrderedDict(zip(["clean", "full"], [disc, info[disc]["full"]]))

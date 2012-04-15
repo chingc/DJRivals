@@ -30,12 +30,11 @@ def database():
     dj_db_dir = _make_dir(_link("dj_database_directory"))
     db_contents = _dir_listing(pop_db_dir)
     dj = set()
-    charts = ["nm", "hd", "mx", "ex"]
+    charts = ["nm", "hd", "mx"]
     disc_list = {
         "nm": {},
         "hd": {},
-        "mx": {},
-        "ex": {}
+        "mx": {}
     }
     print("Writing DJ files...")
     for json_file in db_contents:

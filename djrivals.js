@@ -68,7 +68,7 @@ $(document).ready(function () {
                         }).done(function (data) {
                             var records = [];
                             records.push('<div class="accordion">');
-                            $.each(["nm", "hd", "mx", "ex"], function (index, value) {
+                            $.each(["nm", "hd", "mx"], function (index, value) {
                                 records.push('<h3><a href="#">Pop: ' + value.toUpperCase() + "</a></h3><div>");
                                 records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Score</th></tr></thead><tbody>');
                                 $.each(data.pop[value], function (index, value) { records.push("<tr><td>" + value[0] + "</td><td>" + value[1] + "</td></tr>"); });

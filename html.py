@@ -13,7 +13,7 @@ def html():
     """
     pop_db_dir = _make_dir(_link("pop_database_directory"))
     html_file = _link("html_file")
-    charts = ["nm", "hd", "mx", "ex"]
+    charts = ["nm", "hd", "mx"]
     ps = psxml.PrettySimpleXML()
     disc_info = []
     for disc in sorted(_dir_listing(pop_db_dir)):
@@ -82,7 +82,7 @@ def dj():
     """
     dj_db_dir = _make_dir(_link("dj_database_directory"))
     dj_html_dir = _make_dir(_link("dj_html_directory"))
-    charts = ["nm", "hd", "mx", "ex"]
+    charts = ["nm", "hd", "mx"]
     ps = psxml.PrettySimpleXML()
     for dj in _dir_listing(dj_db_dir):
         with open(dj_db_dir + dj, "rb") as f:
