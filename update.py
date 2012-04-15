@@ -9,7 +9,7 @@ import html
 
 
 def continuous():
-    """update() -> None
+    """continuous() -> None
 
     Continuous incremental updates of the DJRivals database.
 
