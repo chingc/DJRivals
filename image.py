@@ -42,12 +42,12 @@ def icons():
     url = _link("icon_image_url")
     pop_db_dir = _make_dir(_link("pop_database_directory"))
     image_dir = _make_dir(_link("icon_image_directory"))
-    icons = []
+    icons = set()
     for json_file in _dir_listing(pop_db_dir):
         with open(pop_db_dir + json_file, "rb") as f:
-            ranking = json.loads(f.read().decode())["ranking"]
-        icons.extend([result[1] for chart in ["nm", "hd", "mx"] for result in ranking[chart]])
-    for icon in set(icons):
+            data = json.loads(f.read().decode())
+        icons = icons.union([record[1] for chart in ["nm", "hd", "mx"] for record in data[chart]["ranking"]])
+    for icon in icons:
         if _file_exists(image_dir + icon):
             continue
         with open(image_dir + icon, "wb") as f:
