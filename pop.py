@@ -73,7 +73,7 @@ def index(refresh=False):
             for record in data:
                 disc = record["DISCNAME"]
                 if disc not in index:
-                    index[disc] = OrderedDict(zip(["page", "nm", "hd", "mx", "ex"], [0, 0, 0, 0, 0]))
+                    index[disc] = OrderedDict([("page", 0), ("nm", 0), ("hd", 0), ("mx", 0), ("ex", 0)])
                 index[disc]["page"] = page
         with open(index_file, "wb") as f:
             f.write(json.dumps(OrderedDict(sorted(index.items())), indent=4).encode())
