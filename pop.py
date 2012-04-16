@@ -73,7 +73,7 @@ def index(refresh=False):
             for record in data:
                 disc = record["DISCNAME"]
                 if disc not in index:
-                    index[disc] = OrderedDict([("page", 0), ("nm", 0), ("hd", 0), ("mx", 0), ("ex", 0)])
+                    index[disc] = OrderedDict([("timestamp", 0), ("page", 0), ("nm", 0), ("hd", 0), ("mx", 0), ("ex", 0)])
                 index[disc]["page"] = page
         with open(index_file, "wb") as f:
             f.write(json.dumps(OrderedDict(sorted(index.items())), indent=4).encode())
@@ -104,10 +104,7 @@ def database(disc_list=[]):
         disc = disc_list.pop()
         clean_disc = _clean(disc)
         charts = ["nm", "hd", "mx"]
-        output = OrderedDict()
-        output["timestamp"] = int(time.time())
-        output["name"] = disc
-        output["eyecatch"] = clean_disc + ".png"
+        output = OrderedDict([("name", disc), ("eyecatch", clean_disc + ".png")])
         for chart in charts:
             output[chart] = OrderedDict()
             output[chart]["icon"] = "{}_{}.png".format(clean_disc, 1 if chart == "nm" else 2 if chart == "hd" else 3 if chart == "mx" else 4)
