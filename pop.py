@@ -113,10 +113,9 @@ def database(disc_list=[]):
                 results = _ranking(identifier(disc), chart)
                 output[chart]["records"] = len(results)
                 output[chart]["ranking"] = results
-                print("{} {} complete.  Sleeping...".format(clean_disc, chart))
-                time.sleep(10)
+                print("{} {} ok.".format(clean_disc, chart))
             except:
-                print("{} {} error.  Sleeping for 5 minutes before retrying.".format(clean_disc, chart))
+                print("{} {} error.  (retrying in 5 minutes)".format(clean_disc, chart))
                 charts.insert(0, chart)
                 time.sleep(300)
         with open("{}{}.json".format(pop_db_dir, clean_disc), "wb") as f:
