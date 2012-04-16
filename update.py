@@ -38,6 +38,16 @@ def continuous():
         print("Full database update complete.\n")
 
 
+def djs():
+    """djs() -> None
+
+    Update the DJ database and retrieve any necessary icons.
+
+    """
+    dj.database()
+    image.icons()
+
+
 def index():
     """index() -> None
 
