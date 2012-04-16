@@ -34,9 +34,6 @@ def database():
             djs = djs.union([record[2] for record in data[chart]["ranking"]])
             if data[chart]["difficulty"]:
                 disc_list[chart][data["name"]] = 0
-    djs = sorted(djs)
-    with open(dj_db_dir + "__all_djs__.json", "wb") as f:
-        f.write(json.dumps(djs).encode())
     djs = {dj: OrderedDict([("name", dj), ("pop", OrderedDict((chart, dict(disc_list[chart])) for chart in charts))]) for dj in djs}
     for json_file in db_contents:
         with open(pop_db_dir + json_file, "rb") as f:
@@ -47,8 +44,11 @@ def database():
     for chart in charts:
         for dj in djs:
             djs[dj]["pop"][chart] = sorted(djs[dj]["pop"][chart].items())
-    for k, v in enumerate(djs.items()):
+    djs = sorted(djs.items())
+    for k, v in enumerate(djs):
         with open("{}{}.json".format(dj_db_dir, k), "wb") as f:
             f.write(json.dumps(v[1]).encode())
+    with open(dj_db_dir + "__all_djs__.json", "wb") as f:
+        f.write(json.dumps([{"id": k, "name": v[0]} for k, v in enumerate(djs)]).encode())
     elapsed_time = round(time.time() - start_time)
     print("Database creation took {} seconds.".format(elapsed_time))
