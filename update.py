@@ -35,7 +35,7 @@ def continuous():
         dj.database()
         image.icons()
         html.html()
-        print("Full database update complete.\n")
+        print("\nFull database update complete.\n")
 
 
 def djs():
