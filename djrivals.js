@@ -1,8 +1,8 @@
 $(document).ready(function () {
     "use strict";
-    var me = "",
+    var me = [],
         rival = [],
-        all_djnames = [],
+        charts = ["nm", "hd", "mx"],
         default_accordion = {
             active: false,
             animated: false,
@@ -10,160 +10,183 @@ $(document).ready(function () {
             collapsible: true
         },
         pop_accordion_function = function (event, ui) {
-            if (ui.newHeader.next().children("p").length !== 0) {  // activate on expand and only if "<p>" is found
+            if (ui.newHeader.next().children("p").length > 0) {  // activate on expand and only if "<p>" is found
                 var disc = ui.newHeader.text().replace(/[^a-zA-Z0-9]/g, "").toLowerCase(),
                     chart = ui.newHeader.parent().parent().prev().text().slice(-2).toLowerCase();
                 $.ajax({
                     url: "./database/pop/" + disc + ".json",
                     dataType: "json"
                 }).done(function (data) {
-                    var dj_records = [],
+                    var ranking = data[chart].ranking,
+                        dj_records = [],
                         rival_records = [],
-                        rival_copy = rival.slice(0);  // local copy for modification
-                    rival_copy.push(me);  // i am my own rival
+                        rival_copy = $.extend(true, [], rival),  // local copy for modification
+                        rival_index,
+                        i, j, ilen, jlen;
                     dj_records.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
                     rival_records.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
-                    $.each(data.ranking[chart], function (index, value) {
-                        var rival_index = $.inArray(value[2], rival_copy);
-                        dj_records.push("<tr><td>" + value[0] + '</td><td><img src="./images/icon/' + value[1] + '" /></td><td>' + value[2] + "</td><td>" + value[3] + "</td></tr>");
-                        if (rival_index > -1) {
-                            rival_records.push("<tr><td>" + value[0] + '</td><td><img src="./images/icon/' + value[1] + '" /></td><td>' + value[2] + "</td><td>" + value[3] + "</td></tr>");
-                            rival_copy.splice(rival_index, 1);
+                    for (i = 0, ilen = ranking.length; i < ilen; i += 1) {
+                        rival_index = -1;
+                        for (j = 0, jlen = rival_copy.length; j < jlen; j += 1) {
+                            if (rival_copy[j].name === ranking[i][2]) {
+                                rival_index = j;
+                                break;
+                            }
                         }
-                    });
-                    $.each(rival_copy, function (index, value) { rival_records.push("<tr><td>.</td><td></td><td>" + value + "</td><td>0</td></tr>"); });
-                    dj_records.push("</table>");
-                    rival_records.push("</table>");
-                    ui.newHeader.next().empty().html('<table><tr><td class="djrank">' + dj_records.join("") + '</td><td class="rivalrank">' + rival_records.join("") + "</td></tr></table>");
+                        dj_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
+                        if (rival_index > -1) {
+                            rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
+                            rival_copy.splice(rival_index, 1);
+                        } else if (me.length > 0 && me[0].name === ranking[i][2]) {
+                            rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
+                        }
+                    }
+                    for (i = 0, ilen = rival_copy.length; i < ilen; i += 1) {
+                        rival_records.push("<tr><td>.</td><td></td><td>" + rival_copy[i].name + "</td><td>0</td></tr>");
+                    }
+                    ui.newHeader.next().empty().html('<table><tr><td class="djrank">' + dj_records.join("") + '</table></td><td class="rivalrank">' + rival_records.join("") + "</table></td></tr></table>");
                 });
             }
         },
-        rival_accordion_function = function (event, ui) {
+        prune = function () {
+            // remove DJ from #myrival if the same DJ is in #myname
+            var new_me = $("#myname").tokenInput("get"),
+                new_rival = $("#myrival").tokenInput("get"),
+                i, ilen;
+            if (new_me.length > 0 && new_rival.length > 0) {
+                for (i = 0, ilen = new_rival.length; i < ilen; i += 1) {
+                    if (new_rival[i].name === new_me[0].name) {
+                        $("#myrival").tokenInput("remove", {name: new_me[0].name});
+                        break;
+                    }
+                }
+            }
         },
-        check_and_save = function () {
-            var new_me = $("#myname").val().trim(),
-                new_rival = $("#myrival").val().split(/,\s*/),
-                invalid_names = [];
-            if (new_rival[new_rival.length - 1] === "") {
-                new_rival.pop();
-            }
-            if ($.inArray(new_me, all_djnames) < 0) {
-                invalid_names.push(new_me);
-            }
-            $.each(new_rival, function (index, value) {
-                if ($.inArray(value, all_djnames) < 0 || value === new_me) {
-                    invalid_names.push(value);
-                }
-            });
-            if (invalid_names.length === 0) {
-                if (new_me !== me) {
-                    me = new_me;
-                    if (me === "") {
-                        $("#me").prev().children("a").text("DJ Empty");
-                        $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
-                    } else {
-                        $.ajax({
-                            url: "./database/dj/" + me + ".json",
-                            dataType: "json"
-                        }).done(function (data) {
-                            var records = [];
-                            records.push('<div class="accordion">');
-                            $.each(["nm", "hd", "mx"], function (index, value) {
-                                records.push('<h3><a href="#">Pop: ' + value.toUpperCase() + "</a></h3><div>");
-                                records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Score</th></tr></thead><tbody>');
-                                $.each(data.pop[value], function (index, value) { records.push("<tr><td>" + value[0] + "</td><td>" + value[1] + "</td></tr>"); });
-                                records.push("</tbody></table></div>");
-                            });
-                            records.push("</div>");
-                            $("#me").prev().children("a").text("DJ " + me);
-                            $("#me").empty().html(records.join(""));
-                            $("#me .accordion").accordion(default_accordion);
-                            $("#me .tablesorter").tablesorter();
-                        });
-                    }
-                }
-                if (JSON.stringify(new_rival.sort()) !== JSON.stringify(rival)) {
-                    rival = new_rival.slice(0);
-                    if (rival.length === 0) {
-                        $("#rival").empty().html("<p>Go to settings to enter your rivals.</p>");
-                    } else {
-                        $.ajax({
-                            url: "./database/dj/" + me + ".json",
-                            dataType: "json"
-                        }).done(function (myscore) {
-                            var records = [];
-                            records.push('<div class="accordion">');
-                            $.each(rival, function (index, rivaldj) {
-                                if (rivaldj === me) {
-                                    return true;
-                                }
-                                $.ajax({
-                                    async: false,
-                                    url: "./database/dj/" + rivaldj + ".json",
-                                    dataType: "json"
-                                }).done(function (rivalscore) {
-                                    records.push('<h3><a href="#">' + rivaldj + "</a></h3><div>");
-                                    records.push('<div class="accordion">');
-                                    $.each(["nm", "hd", "mx"], function (index, chart) {
-                                        var i, max, disc, score1, score2;
-                                        records.push('<h3><a href="#">Pop: ' + chart.toUpperCase() + "</a></h3><div>");
-                                        records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
-                                        for (i = 0, max = myscore.pop[chart].length; i < max; i += 1) {
-                                            disc = myscore.pop[chart][i][0];
-                                            score1 = myscore.pop[chart][i][1];
-                                            score2 = rivalscore.pop[chart][i][1];
-                                            records.push("<tr><td>" + disc + "</td><td>" + score1 + "</td><td>" + score2 + "</td><td>" + (score1 - score2) + "</td></tr>");
-                                        }
-                                        records.push("</tbody></table></div>");
-                                    });
-                                    records.push("</div></div>");
-                                });
-                            });
-                            records.push("</div>");
-                            $("#rival").empty().html(records.join(""));
-                            $("#rival .accordion").accordion(default_accordion);
-                            $("#rival .tablesorter").tablesorter();
-                        });
-                    }
-                }
-                $("<span> (Saved! not really, not until i use cookies)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
-            } else if (invalid_names[0] === new_me) {
-                $("<span> (Not saved.  No need to put yourself in the rival list.)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
+        dj_list_equal = function (list1, list2) {
+            // compare two DJ lists for equality
+            var i, j, ilen, jlen, found;
+            if (list1.length === 0 && list2.length === 0) {
+                return true;
+            } else if (list1.length !== list2.length) {
+                return false;
             } else {
-                $("<span> (Not saved.  Invalid DJ Names: " + invalid_names + ")</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
+                for (i = 0, ilen = list1.length; i < ilen; i += 1) {
+                    found = false;
+                    for (j = 0, jlen = list2.length; j < jlen; j += 1) {
+                        if (list1[i].id === list2[j].id && list1[i].name === list2[j].name) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        },
+        me_section = function (new_me) {
+            // generate the me section if #myname has changed
+            if (!dj_list_equal(new_me, me)) {
+                if (new_me.length === 0) {
+                    $("#me").prev().children("a").text("DJ Empty");
+                    $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
+                } else {
+                    $.ajax({
+                        url: "./database/dj/" + new_me[0].id + ".json",
+                        dataType: "json"
+                    }).done(function (data) {
+                        var records = [],
+                            i, j, ilen, jlen;
+                        records.push('<div class="accordion">');
+                        for (i = 0, ilen = charts.length; i < ilen; i += 1) {
+                            records.push('<h3><a href="#">Pop: ' + charts[i].toUpperCase() + "</a></h3><div>");
+                            records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Score</th></tr></thead><tbody>');
+                            for (j = 0, jlen = data.pop[charts[i]].length; j < jlen; j += 1) {
+                                records.push("<tr><td>" + data.pop[charts[i]][j][0] + "</td><td>" + data.pop[charts[i]][j][1] + "</td></tr>");
+                            }
+                            records.push("</tbody></table></div>");
+                        }
+                        records.push("</div>");
+                        $("#me").prev().children("a").text("DJ " + new_me[0].name);
+                        $("#me").empty().html(records.join(""));
+                        $("#me .accordion").accordion(default_accordion);
+                        $("#me .tablesorter").tablesorter();
+                    });
+                }
+                me = $.extend(true, [], new_me);
+            }
+        },
+        rival_section = function (new_rival) {
+            // generate the rival section if #myrival has changed
+            if (!dj_list_equal(new_rival, rival)) {
+                if (new_rival.length === 0) {
+                    $("#rival").empty().html("<p>Go to settings to enter your rivals.</p>");
+                } else {
+                    $.ajax({
+                        url: "./database/dj/" + me[0].id + ".json",
+                        dataType: "json"
+                    }).done(function (myscores) {
+                        var records = [],
+                            i, j, k, ilen, jlen, klen,
+                            disc, score1, score2;
+                        records.push('<div class="accordion">');
+                        for (i = 0, ilen = new_rival.length; i < ilen; i += 1) {
+                            $.ajax({
+                                async: false,
+                                url: "./database/dj/" + new_rival[i].id + ".json",
+                                dataType: "json"
+                            }).done(function (rivalscores) {
+                                records.push('<h3><a href="#">' + new_rival[i].name + "</a></h3><div>");
+                                records.push('<div class="accordion">');
+                                for (j = 0, jlen = charts.length; j < jlen; j += 1) {
+                                    records.push('<h3><a href="#">Pop: ' + charts[j].toUpperCase() + "</a></h3><div>");
+                                    records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
+                                    for (k = 0, klen = myscores.pop[charts[j]].length; k < klen; k += 1) {
+                                        disc = myscores.pop[charts[j]][k][0];
+                                        score1 = myscores.pop[charts[j]][k][1];
+                                        score2 = rivalscores.pop[charts[j]][k][1];
+                                        records.push("<tr><td>" + disc + "</td><td>" + score1 + "</td><td>" + score2 + "</td><td>" + (score1 - score2) + "</td></tr>");
+                                    }
+                                    records.push("</tbody></table></div>");
+                                }
+                                records.push("</div></div>");
+                            });
+                        }
+                        records.push("</div>");
+                        $("#rival").empty().html(records.join(""));
+                        $("#rival .accordion").accordion(default_accordion);
+                        $("#rival .tablesorter").tablesorter();
+                    });
+                }
+                rival = $.extend(true, [], new_rival);
+                $(".pop > div > table").replaceWith("<p>Loading...</p>");
             }
         };
 
-    // create the accordions
+    // create accordions
     $(".accordion").accordion(default_accordion);
     $(".pop").bind("accordionchange", pop_accordion_function);
 
     // create the autocomplete fields
     $.ajax({
-        url: "./database/dj/!__all_djnames__.json",
+        url: "./database/dj/__all_djs__.json",
         dataType: "json"
     }).done(function (data) {
-        $("#myname").autocomplete({
-            focus: function () { return false; },
-            source: data
+        $("#myname").tokenInput(data, {
+            animateDropdown: false,
+            hintText: "Type in a DJ name",
+            theme: "facebook",
+            onAdd: prune,
+            tokenLimit: 1
         });
-        $("#myrival").bind("keydown", function (event) {
-            if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
-                event.preventDefault();
-            }
-        }).autocomplete({
-            delay: 600,
-            focus: function () { return false; },
-            select: function (event, ui) {
-                var terms = this.value.split(/,\s*/);
-                terms.pop();
-                terms.push(ui.item.value, "");
-                this.value = terms.join(", ");
-                return false;
-            },
-            source: function (request, response) { response($.ui.autocomplete.filter(data, request.term.split(/,\s*/).pop())); }
+        $("#myrival").tokenInput(data, {
+            animateDropdown: false,
+            hintText: "Type in a DJ name",
+            theme: "facebook",
+            onAdd: prune,
+            preventDuplicates: true
         });
-        all_djnames = data.slice(0);
     }).fail(function () {
         $("#save").prop("disabled", true);
         $("#myname").prop("disabled", true);
@@ -171,5 +194,15 @@ $(document).ready(function () {
     });
 
     // save button :V
-    $("#save").click(function () { check_and_save(); });
+    $("#save").click(function () {
+        var new_me = $("#myname").tokenInput("get"),
+            new_rival = $("#myrival").tokenInput("get");
+        if (new_me.length === 0 && new_rival.length > 0) {
+            $("<span> (Please enter your DJ name!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
+        } else {
+            me_section(new_me);
+            rival_section(new_rival);
+            $("<span> (Saved!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
+        }
+    });
 });
