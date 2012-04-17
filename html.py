@@ -21,7 +21,7 @@ def html():
     ps.start("head")
     ps.empty("meta", ['charset="UTF-8"'])
     ps.start("title", value="DJRivals", newline=False).end()
-    ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/redmond/jquery-ui-1.8.19.custom.css"'])
+    ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/ui-lightness/jquery-ui-1.8.19.custom.css"'])
     ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/token-input-facebook.css"'])
     ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/djrivals.css"'])
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-1.7.2.min.js"'], newline=False).end()
