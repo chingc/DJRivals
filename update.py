@@ -10,8 +10,8 @@ import image
 import html
 
 
-def continuous():
-    """continuous() -> None
+def database():
+    """database() -> None
 
     Continuous incremental updates of the DJRivals database.
 
@@ -32,9 +32,6 @@ def continuous():
             print("\nNext incremental update at: " + strftime("%H:%M:%S", localtime(time() + interval)))
             print("Ctrl-C to quit.\n")
             sleep(interval)
-        dj.database()
-        image.icons()
-        html.html()
         print("\nFull database update complete.\n")
 
 
@@ -51,8 +48,10 @@ def djs():
 def index():
     """index() -> None
 
-    Update the index file and retrieve new disc images if available.
+    Update the index file, retrieve new disc images if available, and generate
+    the html for DJRivals.
 
     """
     pop.index(True)
     image.discs()
+    html.html()
