@@ -21,7 +21,7 @@ def database():
         print("Beginning new cycle...\n")
         disc_list = pop.index()
         disc_list = sorted(disc_list.keys(), key=lambda x: disc_list[x]["timestamp"])
-        interval = int(24 * 60 * 60 / len(disc_list))
+        interval = int(36 * 60 * 60 / len(disc_list))
         for disc in disc_list:
             pop.database([disc])
             with open(index_file, "rb") as f:
@@ -48,10 +48,10 @@ def djs():
 def index():
     """index() -> None
 
-    Update the index file, retrieve new disc images if available, and generate
-    the html for DJRivals.
+    Update the index file, generate the html for DJRivals, and retrieve new disc
+    images if available.
 
     """
     pop.index(True)
-    image.discs()
     html.html()
+    image.discs()
