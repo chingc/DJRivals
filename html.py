@@ -39,13 +39,14 @@ def html():
         for disc in disc_list:
             with open(pop_db_dir + disc, "rb") as f:
                 data = json.loads(f.read().decode())
-            ps.start("h3", newline=False)
-            ps.start("a", ['href="#"'], newline=False)
-            ps.empty("img", ['src="./images/disc/{}"'.format(data[chart]["icon"])], False)
-            ps.raw("&nbsp " + data["name"], newline=False)
-            ps.end(False)
-            ps.end()
-            ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
+            if data[chart]["records"] > 0:
+                ps.start("h3", newline=False)
+                ps.start("a", ['href="#"'], newline=False)
+                ps.empty("img", ['src="./images/disc/{}"'.format(data[chart]["icon"])], False)
+                ps.raw("&nbsp " + data["name"], newline=False)
+                ps.end(False)
+                ps.end()
+                ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
         ps.end()
         ps.end()  # end pop section
     ps.start("h3", newline=False).start("a", ['href="#"'], "DJ Empty", False).end(False).end()
