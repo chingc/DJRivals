@@ -22,10 +22,12 @@ def html():
     ps.empty("meta", ['charset="UTF-8"'])
     ps.start("title", value="DJRivals", newline=False).end()
     ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/ui-lightness/jquery-ui-1.8.18.custom.css"'])
+    ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/token-input-facebook.css"'])
     ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/djrivals.css"'])
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-1.7.1.min.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-ui-1.8.18.custom.min.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery.tablesorter.min.js"'], newline=False).end()
+    ps.start("script", ['type="text/javascript"', 'src="./js/jquery.tokeninput.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/djrivals.js"'], newline=False).end()
     ps.end()  # head
     ps.start("body")
@@ -56,8 +58,10 @@ def html():
     ps.end()  # end rival section
     ps.start("h3", newline=False).start("a", ['href="#"'], "Settings", False).start("span", attr=['id="status"'], newline=False).end(False).end(False).end()
     ps.start("div")  # start settings section
-    ps.empty("input", ['id="myname"', 'type="text"', 'placeholder="My DJ Name"'], False).empty("br")
-    ps.start("textarea", ['id="myrival"', 'cols="40"', 'rows="3"', 'placeholder="My Rival List"'], newline=False).end(False).empty("br")
+    ps.start("label", ['for="myname"'], "My DJ Name", False).end()
+    ps.empty("input", ['id="myname"', 'type="text"'], False).empty("br")
+    ps.start("label", ['for="myrival"'], "My Rival List", False).end()
+    ps.empty("input", ['id="myrival"', 'type="text"'], False).empty("br")
     ps.start("button", ['id="save"', 'type="button"'], "YAY", False).end()
     ps.end()  # end settings section
     ps.end()  # end main accordion
