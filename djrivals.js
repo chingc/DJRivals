@@ -10,6 +10,7 @@ $(document).ready(function () {
             collapsible: true
         },
         pop_accordion_function = function (event, ui) {
+            // generate the rankings table for the main pop sections
             if (ui.newHeader.next().children("p").length > 0) {  // activate on expand and only if "<p>" is found
                 var disc = ui.newHeader.text().replace(/[^a-zA-Z0-9]/g, "").toLowerCase(),
                     chart = ui.newHeader.parent().parent().prev().text().slice(-2).toLowerCase();
@@ -162,6 +163,37 @@ $(document).ready(function () {
                 rival = $.extend(true, [], new_rival);
                 $(".pop > div > table").replaceWith("<p>Loading...</p>");
             }
+        },
+        save_settings = function () {
+            // save the current settings and generate the me section and rival section
+            var new_me = $("#myname").tokenInput("get"),
+                new_rival = $("#myrival").tokenInput("get");
+            if (new_me.length === 0 && new_rival.length > 0) {
+                $("<span> (Please enter your DJ name!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
+            } else {
+                me_section(new_me);
+                rival_section(new_rival);
+            }
+        },
+        save_cookie = function () {
+            // save the current settings to cookies
+            var expire = new Date();
+            expire.setDate(expire.getDate() + 90);
+            expire = "; expires=" + expire.toUTCString();
+            document.cookie = "DJR_myname=" + JSON.stringify(me) + expire;
+            document.cookie = "DJR_myrival=" + JSON.stringify(rival) + expire;
+        },
+        load_cookie = function (name) {
+            // load stored settings from cookies
+            var cookie = document.cookie.split(/;\s*/),
+                result = [],
+                i, ilen;
+            for (i = 0, ilen = cookie.length; i < ilen; i += 1) {
+                if (cookie[i].indexOf(name) === 0) {
+                    result = cookie[i].slice(cookie[i].indexOf("=") + 1);
+                }
+            }
+            return (result.length > 0) ? JSON.parse(result) : null;
         };
 
     // create accordions
@@ -178,6 +210,7 @@ $(document).ready(function () {
             hintText: "Type in a DJ name",
             theme: "facebook",
             onAdd: prune,
+            prePopulate: load_cookie("DJR_myname"),
             tokenLimit: 1
         });
         $("#myrival").tokenInput(data, {
@@ -185,8 +218,10 @@ $(document).ready(function () {
             hintText: "Type in a DJ name",
             theme: "facebook",
             onAdd: prune,
+            prePopulate: load_cookie("DJR_myrival"),
             preventDuplicates: true
         });
+        save_settings();
     }).fail(function () {
         $("#save").prop("disabled", true);
         $("#myname").prop("disabled", true);
@@ -195,14 +230,8 @@ $(document).ready(function () {
 
     // save button :V
     $("#save").click(function () {
-        var new_me = $("#myname").tokenInput("get"),
-            new_rival = $("#myrival").tokenInput("get");
-        if (new_me.length === 0 && new_rival.length > 0) {
-            $("<span> (Please enter your DJ name!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
-        } else {
-            me_section(new_me);
-            rival_section(new_rival);
-            $("<span> (Saved!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
-        }
+        save_settings();
+        save_cookie();
+        $("<span> (Saved!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
     });
 });
