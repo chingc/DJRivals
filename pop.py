@@ -61,9 +61,9 @@ def index(refresh=False):
 
     """
     url = _link("pop_ranking_page_url")
-    index_file = _link("index_file")
+    pop_index_file = _link("pop_index_file")
     try:
-        with open(index_file, "rb") as f:
+        with open(pop_index_file, "rb") as f:
             index = json.loads(f.read().decode(), object_pairs_hook=OrderedDict)
     except:
         index = {}
@@ -75,9 +75,9 @@ def index(refresh=False):
                 if disc not in index:
                     index[disc] = OrderedDict([("timestamp", 0), ("page", 0), ("nm", 0), ("hd", 0), ("mx", 0), ("ex", 0)])
                 index[disc]["page"] = page
-        with open(index_file, "wb") as f:
+        with open(pop_index_file, "wb") as f:
             f.write(json.dumps(OrderedDict(sorted(index.items())), indent=4).encode())
-        print('Wrote: "{}"'.format(index_file))
+        print('Wrote: "{}"'.format(pop_index_file))
     return index
 
 

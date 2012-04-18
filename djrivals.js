@@ -202,7 +202,7 @@ $(document).ready(function () {
 
     // create the autocomplete fields
     $.ajax({
-        url: "./database/dj/__all_djs__.json",
+        url: "./database/dj_index.json",
         dataType: "json"
     }).done(function (data) {
         $("#myname").tokenInput(data, {

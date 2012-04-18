@@ -18,6 +18,7 @@ def database():
     start_time = time.time()
     pop_db_dir = _make_dir(_link("pop_database_directory"))
     dj_db_dir = _make_dir(_link("dj_database_directory"))
+    dj_index_file = _link("dj_index_file")
     db_contents = _dir_listing(pop_db_dir)
     djs = set()
     charts = ["nm", "hd", "mx"]
@@ -48,7 +49,7 @@ def database():
     for k, v in enumerate(djs):
         with open("{}{}.json".format(dj_db_dir, k), "wb") as f:
             f.write(json.dumps(v[1]).encode())
-    with open(dj_db_dir + "__all_djs__.json", "wb") as f:
+    with open(dj_index_file, "wb") as f:
         f.write(json.dumps([{"id": k, "name": v[0]} for k, v in enumerate(djs)]).encode())
     elapsed_time = round(time.time() - start_time)
     print("Database creation took {} seconds.".format(elapsed_time))

@@ -30,14 +30,13 @@ def _link(name):
         "pop_database_directory": "./DJRivals/database/pop/",
         "dj_database_directory": "./DJRivals/database/dj/",
 
-        "pop_html_directory": "./DJRivals/database/pop_html/",
-        "dj_html_directory": "./DJRivals/database/dj_html/",
+        "pop_index_file": "pop_index.json",
+        "dj_index_file": "dj_index.json",
 
         "disc_image_directory": "./DJRivals/images/disc/",
         "icon_image_directory": "./DJRivals/images/icon/",
 
-        "html_file": "./DJRivals/index.html",
-        "index_file": "pop_index.json"
+        "html_file": "./DJRivals/index.html"
     }
     return link[name]
 

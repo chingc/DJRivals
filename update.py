@@ -16,7 +16,7 @@ def database():
     Continuous incremental updates of the DJRivals database.
 
     """
-    index_file = _link("index_file")
+    pop_index_file = _link("pop_index_file")
     while(True):
         print("Beginning new cycle...\n")
         disc_list = pop.index()
@@ -24,10 +24,10 @@ def database():
         interval = int(36 * 60 * 60 / len(disc_list))
         for disc in disc_list:
             pop.database([disc])
-            with open(index_file, "rb") as f:
+            with open(pop_index_file, "rb") as f:
                 data = json.loads(f.read().decode(), object_pairs_hook=OrderedDict)
             data[disc]["timestamp"] = int(time())
-            with open(index_file, "wb") as f:
+            with open(pop_index_file, "wb") as f:
                 f.write(json.dumps(data, indent=4).encode())
             print("\nNext incremental update at: " + strftime("%H:%M:%S", localtime(time() + interval)))
             print("Ctrl-C to quit.\n")
