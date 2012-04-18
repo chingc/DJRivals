@@ -50,6 +50,6 @@ def database():
         with open("{}{}.json".format(dj_db_dir, zlib.crc32(k.encode())), "wb") as f:
             f.write(json.dumps(v).encode())
     with open(dj_index_file, "wb") as f:
-        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in djs.keys()]).encode())
+        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())]).encode())
     elapsed_time = round(time.time() - start_time)
     print("Database creation took {} seconds.".format(elapsed_time))
