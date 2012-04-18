@@ -2,6 +2,7 @@
 from collections import OrderedDict
 import json
 import time
+import zlib
 
 from common import _dir_listing, _link, _make_dir
 
@@ -45,11 +46,10 @@ def database():
     for chart in charts:
         for dj in djs:
             djs[dj]["pop"][chart] = sorted(djs[dj]["pop"][chart].items())
-    djs = sorted(djs.items())
-    for k, v in enumerate(djs):
-        with open("{}{}.json".format(dj_db_dir, k), "wb") as f:
-            f.write(json.dumps(v[1]).encode())
+    for k, v in djs.items():
+        with open("{}{}.json".format(dj_db_dir, zlib.crc32(k.encode())), "wb") as f:
+            f.write(json.dumps(v).encode())
     with open(dj_index_file, "wb") as f:
-        f.write(json.dumps([{"id": k, "name": v[0]} for k, v in enumerate(djs)]).encode())
+        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in djs.keys()]).encode())
     elapsed_time = round(time.time() - start_time)
     print("Database creation took {} seconds.".format(elapsed_time))
