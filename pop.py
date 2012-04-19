@@ -61,6 +61,7 @@ def index(refresh=False):
 
     """
     url = _link("pop_ranking_page_url")
+    pop_db_dir = _make_dir(_link("pop_database_directory"))
     pop_index_file = _link("pop_index_file")
     try:
         with open(pop_index_file, "rb") as f:
@@ -95,6 +96,7 @@ def database(disc_list=[]):
     """
     start_time = time.time()
     pop_db_dir = _make_dir(_link("pop_database_directory"))
+    pop_index_file = _link("pop_index_file")
     identifier = _f_identifier()
     info = index()
     if not disc_list:
@@ -118,6 +120,11 @@ def database(disc_list=[]):
                 print("{} {} error.  (retrying in 5 minutes)".format(clean_disc, chart))
                 charts.insert(0, chart)
                 time.sleep(300)
+        with open(pop_index_file, "rb") as f:
+            data = json.loads(f.read().decode(), object_pairs_hook=OrderedDict)
+        data[disc]["timestamp"] = int(time.time())
+        with open(pop_index_file, "wb") as f:
+            f.write(json.dumps(data, indent=4).encode())
         with open("{}{}.json".format(pop_db_dir, clean_disc), "wb") as f:
             f.write(json.dumps(output).encode())
         print('Wrote: "{}{}.json"\n'.format(pop_db_dir, clean_disc))
