@@ -102,7 +102,7 @@ $(document).ready(function () {
                         records.push('<div class="accordion">');
                         for (i = 0, ilen = charts.length; i < ilen; i += 1) {
                             records.push('<h3><a href="#">Pop: ' + charts[i].toUpperCase() + "</a></h3><div>");
-                            records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Score</th><th>Rank</th></tr></thead><tbody>');
+                            records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
                             for (j = 0, jlen = data.pop[charts[i]].length; j < jlen; j += 1) {
                                 records.push("<tr><td>" + data.pop[charts[i]][j][0] + "</td><td>" + data.pop[charts[i]][j][1] + "</td><td>" + data.pop[charts[i]][j][2] + "</td></tr>");
                             }
