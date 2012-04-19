@@ -33,10 +33,10 @@ def database():
         with open(pop_db_dir + json_file, "rb") as f:
             data = json.loads(f.read().decode())
         for chart in charts:
-            djs = djs.union([record[2] for record in data[chart]["ranking"]])
+            djs = djs.union([(record[1], record[2]) for record in data[chart]["ranking"]])
             if data[chart]["difficulty"]:
                 disc_list[chart][data["name"]] = 0
-    djs = {dj: OrderedDict([("name", dj), ("pop", OrderedDict((chart, dict(disc_list[chart])) for chart in charts))]) for dj in djs}
+    djs = {dj[1]: OrderedDict([("name", dj[1]), ("icon", dj[0]), ("pop", OrderedDict((chart, dict(disc_list[chart])) for chart in charts))]) for dj in djs}
     for json_file in db_contents:
         with open(pop_db_dir + json_file, "rb") as f:
             data = json.loads(f.read().decode())

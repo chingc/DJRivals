@@ -121,7 +121,8 @@ JSON DJ Data Structure
 ======================
 
 {
-    "djname": "",
+    "name": "",
+    "icon": "",
     "pop": {
         "nm": [
             ["name 1", 0],
