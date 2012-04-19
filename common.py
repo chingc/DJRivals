@@ -30,8 +30,8 @@ def _link(name):
         "pop_database_directory": "./DJRivals/database/pop/",
         "dj_database_directory": "./DJRivals/database/dj/",
 
-        "pop_index_file": "pop_index.json",
-        "dj_index_file": "dj_index.json",
+        "pop_index_file": "./DJRivals/database/pop_index.json",
+        "dj_index_file": "./DJRivals/database/dj_index.json",
 
         "disc_image_directory": "./DJRivals/images/disc/",
         "icon_image_directory": "./DJRivals/images/icon/",
