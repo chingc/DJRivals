@@ -125,27 +125,27 @@ JSON DJ Data Structure
     "icon": "",
     "pop": {
         "nm": [
-            ["name 1", 0],
-            ["name 2", 0],
-            ["name 3", 0],
+            ["disc 1", rank, 300000],
+            ["disc 2", rank, 300000],
+            ["disc 3", rank, 300000],
             ...
         ],
         "hd": [
-            ["name 1", 0],
-            ["name 2", 0],
-            ["name 3", 0],
+            ["disc 1", rank, 300000],
+            ["disc 2", rank, 300000],
+            ["disc 3", rank, 300000],
             ...
         ],
         "mx": [
-            ["name 1", 0],
-            ["name 2", 0],
-            ["name 3", 0],
+            ["disc 1", rank, 300000],
+            ["disc 2", rank, 300000],
+            ["disc 3", rank, 300000],
             ...
         ],
         "ex": [
-            ["name 1", 0],
-            ["name 2", 0],
-            ["name 3", 0],
+            ["disc 1", rank, 300000],
+            ["disc 2", rank, 300000],
+            ["disc 3", rank, 300000],
             ...
         ]
     }
