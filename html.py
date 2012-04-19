@@ -26,6 +26,7 @@ def html():
     ps.empty("link", ['rel="stylesheet"', 'type="text/css"', 'href="./css/djrivals.css"'])
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-1.7.2.min.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery-ui-1.8.19.custom.min.js"'], newline=False).end()
+    ps.start("script", ['type="text/javascript"', 'src="./js/jquery-ui-theme.switcher.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery.tablesorter.min.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/jquery.tokeninput.js"'], newline=False).end()
     ps.start("script", ['type="text/javascript"', 'src="./js/djrivals.js"'], newline=False).end()
@@ -63,7 +64,9 @@ def html():
     ps.empty("input", ['id="myname"', 'type="text"'], False).empty("br")
     ps.start("label", ['for="myrival"'], "My Rival List", False).end()
     ps.empty("input", ['id="myrival"', 'type="text"'], False).empty("br")
-    ps.start("button", ['id="save"', 'type="button"'], "YAY", False).end()
+    ps.start("label", ['for="themeswitcher"'], "Theme", False).end()
+    ps.start("div", ['id="themeswitcher"'], newline=False).end(False).empty("br")
+    ps.start("button", ['id="save"', 'type="button"'], ":'D", False).end()
     ps.end()  # end settings section
     ps.end()  # end main accordion
     ps.end_all()  # body, html

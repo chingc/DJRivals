@@ -196,11 +196,11 @@ $(document).ready(function () {
             return (result.length > 0) ? JSON.parse(result) : null;
         };
 
-    // create accordions
+    // accordions
     $(".accordion").accordion(default_accordion);
     $(".pop").bind("accordionchange", pop_accordion_function);
 
-    // create the autocomplete fields
+    // autocomplete fields
     $.ajax({
         url: "./database/dj_index.json",
         dataType: "json"
@@ -228,8 +228,17 @@ $(document).ready(function () {
         $("#myrival").prop("disabled", true);
     });
 
+    // themes
+    $("#themeswitcher").themeswitcher({
+        buttonPreText: "",
+        cookieExpires: 90,
+        cookieName: "DJR_theme",
+        height: 345,
+        loadTheme: "UI lightness",
+    });
+
     // save button :V
-    $("#save").click(function () {
+    $("#save").button().click(function () {
         save_settings();
         save_cookie();
         $("<span> (Saved!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
