@@ -35,17 +35,17 @@ def database():
         for chart in charts:
             djs = djs.union([(record[1], record[2]) for record in data[chart]["ranking"]])
             if data[chart]["difficulty"]:
-                disc_list[chart][data["name"]] = 0
+                disc_list[chart][data["name"]] = [9999, 0]
     djs = {dj[1]: OrderedDict([("name", dj[1]), ("icon", dj[0]), ("pop", OrderedDict((chart, dict(disc_list[chart])) for chart in charts))]) for dj in djs}
     for json_file in db_contents:
         with open(pop_db_dir + json_file, "rb") as f:
             data = json.loads(f.read().decode())
         for chart in charts:
             for record in data[chart]["ranking"]:
-                djs[record[2]]["pop"][chart][data["name"]] = record[3]
+                djs[record[2]]["pop"][chart][data["name"]] = [record[0], record[3]]
     for chart in charts:
         for dj in djs:
-            djs[dj]["pop"][chart] = sorted(djs[dj]["pop"][chart].items())
+            djs[dj]["pop"][chart] = sorted([(k, v[0], v[1]) for k, v in djs[dj]["pop"][chart].items()])
     for k, v in djs.items():
         with open("{}{}.json".format(dj_db_dir, zlib.crc32(k.encode())), "wb") as f:
             f.write(json.dumps(v).encode())

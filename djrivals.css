@@ -55,20 +55,11 @@ h3 img {
     width: 425px;
 }
 
-/* 2nd column of the personal/rival score tables */
+/* 2nd, 3rd, and 4th column of the personal/rival score tables */
 #me th:nth-child(2), #me td:nth-child(2),
-#rival th:nth-child(2), #rival td:nth-child(2) {
-    text-align: left;
-    width: 100px;
-}
-
-/* 3rd column of the personal/rival score tables */
-#rival th:nth-child(3), #rival td:nth-child(3) {
-    text-align: left;
-    width: 100px;
-}
-
-/* 4th column of the personal/rival score tables */
+#me th:nth-child(3), #me td:nth-child(3),
+#rival th:nth-child(2), #rival td:nth-child(2),
+#rival th:nth-child(3), #rival td:nth-child(3),
 #rival th:nth-child(4), #rival td:nth-child(4) {
     text-align: left;
     width: 100px;
