@@ -145,8 +145,8 @@ $(document).ready(function () {
                                     records.push('<table class="tablesorter"><thead><tr><th>Disc</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
                                     for (k = 0, klen = myscores.pop[charts[j]].length; k < klen; k += 1) {
                                         disc = myscores.pop[charts[j]][k][0];
-                                        score1 = myscores.pop[charts[j]][k][1];
-                                        score2 = rivalscores.pop[charts[j]][k][1];
+                                        score1 = myscores.pop[charts[j]][k][2];
+                                        score2 = rivalscores.pop[charts[j]][k][2];
                                         records.push("<tr><td>" + disc + "</td><td>" + score1 + "</td><td>" + score2 + "</td><td>" + (score1 - score2) + "</td></tr>");
                                     }
                                     records.push("</tbody></table></div>");
