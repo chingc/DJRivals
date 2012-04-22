@@ -147,19 +147,48 @@ JSON DJ Data Structure
             ["disc 2", rank, 300000],
             ["disc 3", rank, 300000],
             ...
-        ]
+        ],
+        "master": 15000000
     }
 }
 
 Details
 -------
 This data structure represents a DJ.  All scores for all discs and all charts
-are contained within this structure.  This structure can be expanded to hold the
-scores of other game modes if necessary.
+are contained within this structure.  The master score is also included.  This
+structure can be expanded to hold the scores of other game modes if necessary.
 
 Special Values
 --------------
 A score of 0 means the DJ has not played the chart.
+
+Notes
+-----
+This structure is generated automatically and should not be edited manually.
+
+
+JSON Master Ranking Data Structure
+==================================
+
+{
+    "pop": [
+            [ 1, "djicon", "djname", 1500000 ],
+            [ 2, "djicon", "djname", 1500000 ],
+            [ 3, "djicon", "djname", 1500000 ],
+            ...
+        ]
+}
+
+Details
+-------
+This represents the master rankings.  e.g. Pop Master.  It is identical to the
+ranking key of the Disc data structure, except the scores in this case is the
+sum total of all the charts a DJ has played.  This structure can be expanded to
+create and hold the scores of other master rankings if desired.
+
+Special Values
+--------------
+None.
 
 Notes
 -----
