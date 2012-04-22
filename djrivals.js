@@ -156,7 +156,7 @@ $(document).ready(function () {
                                     records.push("</tbody></table></div>");
                                 }
                                 records.push('<h3><a href="#">Master</a></h3><div>');
-                                records.push('<table class="tablesorter"><thead><tr><th>Mode</th><th>Me</th><th>Rival</th><th>Score</th></tr></thead><tbody>');
+                                records.push('<table class="tablesorter"><thead><tr><th>Mode</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
                                 score1 = myscores.pop.master[1];
                                 score2 = rivalscores.pop.master[1];
                                 records.push("<tr><td>Pop</td><td>" + score1 + "</td><td>" + score2 + "</td><td>" + (score1 - score2) + "</td></tr>");
