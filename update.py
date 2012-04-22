@@ -7,17 +7,17 @@ import image
 import html
 
 
-def database():
-    """database() -> None
+def pop():
+    """pop() -> None
 
-    Continuous incremental updates of the DJRivals database.
+    Continuous incremental updates of the pop database.
 
     """
     while(True):
         print("Beginning new cycle...\n")
         disc_list = pop.index()
         disc_list = sorted(disc_list.keys(), key=lambda x: disc_list[x]["timestamp"])
-        interval = int(36 * 60 * 60 / len(disc_list))
+        interval = int(24 * 60 * 60 / len(disc_list))
         for disc in disc_list:
             pop.database([disc])
             print("\nNext incremental update at: " + strftime("%H:%M:%S", localtime(time() + interval)))
@@ -44,5 +44,5 @@ def index():
 
     """
     pop.index(True)
-    html.html()
+    html.index()
     image.discs()

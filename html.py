@@ -5,8 +5,8 @@ from common import _dir_listing, _link, _make_dir
 import psxml
 
 
-def html():
-    """html() -> None
+def index():
+    """index() -> None
 
     Generate the DJRivals HTML user interface based on the local database.
 
