@@ -1,5 +1,4 @@
 """DJ database creation."""
-from collections import OrderedDict
 import json
 import time
 import zlib
@@ -36,16 +35,19 @@ def database():
             djs = djs.union([(record[1], record[2]) for record in data[chart]["ranking"]])
             if data[chart]["difficulty"]:
                 disc_list[chart][data["name"]] = [9999, 0]
-    djs = {dj[1]: OrderedDict([("name", dj[1]), ("icon", dj[0]), ("pop", OrderedDict((chart, dict(disc_list[chart])) for chart in charts))]) for dj in djs}
+    djs = {dj[1]: dict([("name", dj[1]), ("icon", dj[0])] + [("pop", {chart: dict(disc_list[chart]) for chart in charts})]) for dj in djs}
     for json_file in db_contents:
         with open(pop_db_dir + json_file, "rb") as f:
             data = json.loads(f.read().decode())
         for chart in charts:
             for record in data[chart]["ranking"]:
                 djs[record[2]]["pop"][chart][data["name"]] = [record[0], record[3]]
-    for chart in charts:
-        for dj in djs:
+    for dj in djs:
+        master_score = 0
+        for chart in charts:
             djs[dj]["pop"][chart] = sorted([(k, v[0], v[1]) for k, v in djs[dj]["pop"][chart].items()])
+            master_score += sum([data[2] for data in djs[dj]["pop"][chart]])
+        djs[dj]["pop"]["master"] = master_score
     for k, v in djs.items():
         with open("{}{}.json".format(dj_db_dir, zlib.crc32(k.encode())), "wb") as f:
             f.write(json.dumps(v).encode())
