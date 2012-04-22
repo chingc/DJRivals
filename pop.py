@@ -106,9 +106,9 @@ def database(disc_list=[]):
         disc = disc_list.pop()
         clean_disc = _clean(disc)
         charts = ["nm", "hd", "mx"]
-        output = OrderedDict([("name", disc), ("eyecatch", clean_disc + ".png")])
+        output = {"name": disc, "eyecatch": clean_disc + ".png"}
         for chart in charts:
-            output[chart] = OrderedDict()
+            output[chart] = {}
             output[chart]["icon"] = "{}_{}.png".format(clean_disc, 1 if chart == "nm" else 2 if chart == "hd" else 3 if chart == "mx" else 4)
             output[chart]["difficulty"] = info[disc][chart]
             try:
