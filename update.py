@@ -7,8 +7,8 @@ import image
 import html
 
 
-def pop():
-    """pop() -> None
+def popdb():
+    """popdb() -> None
 
     Continuous incremental updates of the pop database.
 
