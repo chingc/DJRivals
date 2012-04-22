@@ -148,7 +148,7 @@ JSON DJ Data Structure
             ["disc 3", rank, 300000],
             ...
         ],
-        "master": 15000000
+        "master": [rank, 15000000]
     }
 }
 

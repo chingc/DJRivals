@@ -21,6 +21,7 @@ def database():
     dj_index_file = _link("dj_index_file")
     db_contents = _dir_listing(pop_db_dir)
     djs = set()
+    pop_master = []
     charts = ["nm", "hd", "mx"]
     disc_list = {
         "nm": {},
@@ -43,11 +44,14 @@ def database():
             for record in data[chart]["ranking"]:
                 djs[record[2]]["pop"][chart][data["name"]] = [record[0], record[3]]
     for dj in djs:
-        master_score = 0
+        total = 0
         for chart in charts:
             djs[dj]["pop"][chart] = sorted([(k, v[0], v[1]) for k, v in djs[dj]["pop"][chart].items()])
-            master_score += sum([data[2] for data in djs[dj]["pop"][chart]])
-        djs[dj]["pop"]["master"] = master_score
+            total += sum([data[2] for data in djs[dj]["pop"][chart]])
+        pop_master.append([dj, total])
+    pop_master.sort(key=lambda x: x[1], reverse=True)
+    for i, v in enumerate(pop_master):
+        djs[v[0]]["pop"]["master"] = [i + 1, v[1]]
     for k, v in djs.items():
         with open("{}{}.json".format(dj_db_dir, zlib.crc32(k.encode())), "wb") as f:
             f.write(json.dumps(v).encode())
