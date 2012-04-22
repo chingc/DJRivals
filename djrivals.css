@@ -64,10 +64,3 @@ h3 img {
     text-align: left;
     width: 100px;
 }
-
-/* scrollable autocomplete list */
-.ui-autocomplete {
-    max-height: 200px;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
