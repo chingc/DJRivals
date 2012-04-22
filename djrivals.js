@@ -64,7 +64,7 @@ $(document).ready(function () {
             }
         },
         dj_list_equal = function (list1, list2) {
-            // compare two DJ lists for equality
+            // compare two DJ lists for equality (order is irrelevant)
             var i, j, ilen, jlen, found;
             if (list1.length === 0 && list2.length === 0) {
                 return true;
@@ -87,7 +87,7 @@ $(document).ready(function () {
             }
         },
         me_section = function (new_me) {
-            // generate the me section if #myname has changed
+            // generate the me section only if #myname has changed
             if (!dj_list_equal(new_me, me)) {
                 if (new_me.length === 0) {
                     $("#me").prev().children("a").text("DJ Empty");
@@ -108,6 +108,10 @@ $(document).ready(function () {
                             }
                             records.push("</tbody></table></div>");
                         }
+                        records.push('<h3><a href="#">Master</a></h3><div>');
+                        records.push('<table class="tablesorter"><thead><tr><th>Mode</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
+                        records.push("<tr><td>Pop</td><td>" + data.pop.master[0] + "</td><td>" + data.pop.master[1] + "</td></tr>");
+                        records.push("</tbody></table></div>");
                         records.push("</div>");
                         $("#me").prev().children("a").text("DJ " + new_me[0].name);
                         $("#me").empty().html(records.join(""));
@@ -119,7 +123,7 @@ $(document).ready(function () {
             }
         },
         rival_section = function (new_rival) {
-            // generate the rival section if #myrival has changed
+            // generate the rival section only if #myrival has changed
             if (!dj_list_equal(new_rival, rival)) {
                 if (new_rival.length === 0) {
                     $("#rival").empty().html("<p>Go to settings to enter your rivals.</p>");
@@ -151,6 +155,12 @@ $(document).ready(function () {
                                     }
                                     records.push("</tbody></table></div>");
                                 }
+                                records.push('<h3><a href="#">Master</a></h3><div>');
+                                records.push('<table class="tablesorter"><thead><tr><th>Mode</th><th>Me</th><th>Rival</th><th>Score</th></tr></thead><tbody>');
+                                score1 = myscores.pop.master[1];
+                                score2 = rivalscores.pop.master[1];
+                                records.push("<tr><td>Pop</td><td>" + score1 + "</td><td>" + score2 + "</td><td>" + (score1 - score2) + "</td></tr>");
+                                records.push("</tbody></table></div>");
                                 records.push("</div></div>");
                             });
                         }
