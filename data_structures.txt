@@ -172,11 +172,11 @@ JSON Master Ranking Data Structure
 
 {
     "pop": [
-            [ 1, "djicon", "djname", 1500000 ],
-            [ 2, "djicon", "djname", 1500000 ],
-            [ 3, "djicon", "djname", 1500000 ],
-            ...
-        ]
+        [ 1, "djicon", "djname", 1500000 ],
+        [ 2, "djicon", "djname", 1500000 ],
+        [ 3, "djicon", "djname", 1500000 ],
+        ...
+    ]
 }
 
 Details
