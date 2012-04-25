@@ -9,7 +9,7 @@ $(document).ready(function () {
             autoHeight: false,
             collapsible: true
         },
-        pop_accordion_function = function (event, ui) {
+        pop_accordion = function (event, ui) {
             // generate the rankings table for the main pop sections
             if (ui.newHeader.next().children("p").length > 0) {  // activate on expand and only if "<p>" is found
                 var disc = ui.newHeader.text().replace(/[^a-zA-Z0-9]/g, "").toLowerCase(),
@@ -179,17 +179,24 @@ $(document).ready(function () {
             var new_me = $("#myname").tokenInput("get"),
                 new_rival = $("#myrival").tokenInput("get");
             if (new_me.length === 0 && new_rival.length > 0) {
-                $("<span> (Please enter your DJ name!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
+                return "(Please enter your DJ name!)";
             } else {
                 me_section(new_me);
                 rival_section(new_rival);
+                save_cookie();
+                return "(Saved!)";
             }
         },
         save_cookie = function () {
             // save the current settings to cookies
-            var expire = new Date();
-            expire.setDate(expire.getDate() + 90);
+            var expire = new Date(),
+                settings = {};
+            expire.setDate(expire.getDate() + 365);
             expire = "; expires=" + expire.toUTCString();
+            settings.me = me;
+            settings.rival = rival;
+            document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + expire;
+            // delete the bottom two after a week or two
             document.cookie = "DJR_myname=" + JSON.stringify(me) + expire;
             document.cookie = "DJR_myrival=" + JSON.stringify(rival) + expire;
         },
@@ -204,11 +211,14 @@ $(document).ready(function () {
                 }
             }
             return (result.length > 0) ? JSON.parse(result) : null;
+        },
+        status_message = function (message) {
+            $("<span> " + message + "</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
         };
 
     // accordions
     $(".accordion").accordion(default_accordion);
-    $(".pop").bind("accordionchange", pop_accordion_function);
+    $(".pop").bind("accordionchange", pop_accordion);
 
     // autocomplete fields
     $.ajax({
@@ -221,6 +231,7 @@ $(document).ready(function () {
             theme: "facebook",
             onAdd: prune,
             prePopulate: load_cookie("DJR_myname"),
+            //prePopulate: load_cookie().me, switch to this in a week or two (hardcode cookie name)
             tokenLimit: 1
         });
         $("#myrival").tokenInput(data, {
@@ -229,6 +240,7 @@ $(document).ready(function () {
             theme: "facebook",
             onAdd: prune,
             prePopulate: load_cookie("DJR_myrival"),
+            //prePopulate: load_cookie().rival,  switch to this in a week or two (hardcode cookie name)
             preventDuplicates: true
         });
         save_settings();
@@ -241,16 +253,12 @@ $(document).ready(function () {
     // themes
     $("#themeswitcher").themeswitcher({
         buttonPreText: "",
-        cookieExpires: 90,
-        cookieName: "DJR_theme",
+        cookieExpires: 365,
+        cookieName: "DJRivals_Theme",
         height: 345,
         loadTheme: "UI lightness",
     });
 
     // save button :V
-    $("#save").button().click(function () {
-        save_settings();
-        save_cookie();
-        $("<span> (Saved!)</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
-    });
+    $("#save").button().click(function () { status_message(save_settings()); });
 });
