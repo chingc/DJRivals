@@ -37,7 +37,9 @@ $(document).ready(function () {
                                 break;
                             }
                         }
-                        dj_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
+                        if (ranking[i][3] >= settings.popcut) {
+                            dj_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
+                        }
                         if (rival_found || settings.me[0].name === ranking[i][2]) {
                             rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
                         }
@@ -198,9 +200,9 @@ $(document).ready(function () {
             if (new_me.length === 0 && new_rival.length > 0) {
                 result = "(Please enter your DJ name!)";
             }
-            if (new_cutoff[0].search(/\D/) > -1 ||
-                    new_cutoff[1].search(/\D/) > -1) {
-                result = "(Cutoff values must be whole numbers!)";
+            if (new_cutoff[0].length === 0 || new_cutoff[0].search(/\D/) > -1 ||
+                    new_cutoff[1].length === 0 || new_cutoff[1].search(/\D/) > -1) {
+                result = "(Cutoff values must be positive whole numbers!)";
             }
             if (!result) {
                 me_section(new_me);
@@ -243,8 +245,8 @@ $(document).ready(function () {
 
     // load settings
     settings = load_settings();
-    //$("#popcut").val(settings.popcut);
-    //$("#popmastercut").val(settings.popmastercut);
+    $("#popcut").val(settings.popcut);
+    $("#popmastercut").val(settings.popmastercut);
 
     // accordions
     $(".accordion").accordion(default_accordion);
