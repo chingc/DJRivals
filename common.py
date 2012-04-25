@@ -4,8 +4,8 @@ import re
 
 
 def _clean(name):
-    """Strip all non-alphanumeric characters and convert to lowercase."""
-    return re.sub(r"[^a-zA-Z0-9]", r"", name).lower()
+    """Strip all [^a-zA-Z0-9_] characters and convert to lowercase."""
+    return re.sub(r"\W", r"", name).lower()
 
 
 def _dir_listing(path):
