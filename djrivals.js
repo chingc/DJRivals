@@ -1,7 +1,6 @@
 $(document).ready(function () {
     "use strict";
-    var me = [],
-        rival = [],
+    var settings,
         charts = ["nm", "hd", "mx"],
         default_accordion = {
             active: false,
@@ -12,7 +11,7 @@ $(document).ready(function () {
         pop_accordion = function (event, ui) {
             // generate the rankings table for the main pop sections
             if (ui.newHeader.next().children("p").length > 0) {  // activate on expand and only if "<p>" is found
-                var disc = ui.newHeader.text().replace(/[^a-zA-Z0-9]/g, "").toLowerCase(),
+                var disc = ui.newHeader.text().replace(/\W/g, "").toLowerCase(),
                     chart = ui.newHeader.parent().parent().prev().text().slice(-2).toLowerCase();
                 $.ajax({
                     url: "./database/pop/" + disc + ".json",
@@ -21,24 +20,25 @@ $(document).ready(function () {
                     var ranking = data[chart].ranking,
                         dj_records = [],
                         rival_records = [],
-                        rival_copy = $.extend(true, [], rival),  // local copy for modification
-                        rival_index,
-                        i, j, ilen, jlen;
+                        rival_copy = $.extend(true, [], settings.rival),  // local copy for modification
+                        rival_found,
+                        i,
+                        j,
+                        ilen,
+                        jlen;
                     dj_records.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
                     rival_records.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
                     for (i = 0, ilen = ranking.length; i < ilen; i += 1) {
-                        rival_index = -1;
+                        rival_found = false;
                         for (j = 0, jlen = rival_copy.length; j < jlen; j += 1) {
                             if (rival_copy[j].name === ranking[i][2]) {
-                                rival_index = j;
+                                rival_copy.splice(j, 1);
+                                rival_found = true;
                                 break;
                             }
                         }
                         dj_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
-                        if (rival_index > -1) {
-                            rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
-                            rival_copy.splice(rival_index, 1);
-                        } else if (me.length > 0 && me[0].name === ranking[i][2]) {
+                        if (rival_found || settings.me[0].name === ranking[i][2]) {
                             rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
                         }
                     }
@@ -53,7 +53,8 @@ $(document).ready(function () {
             // remove DJ from #myrival if the same DJ is in #myname
             var new_me = $("#myname").tokenInput("get"),
                 new_rival = $("#myrival").tokenInput("get"),
-                i, ilen;
+                i,
+                ilen;
             if (new_me.length > 0 && new_rival.length > 0) {
                 for (i = 0, ilen = new_rival.length; i < ilen; i += 1) {
                     if (new_rival[i].name === new_me[0].name) {
@@ -65,11 +66,15 @@ $(document).ready(function () {
         },
         dj_list_equal = function (list1, list2) {
             // compare two DJ lists for equality (order is irrelevant)
-            var i, j, ilen, jlen, found;
+            var found,
+                i,
+                j,
+                ilen,
+                jlen;
             if (list1.length === 0 && list2.length === 0) {
-                return true;
+                found = true;
             } else if (list1.length !== list2.length) {
-                return false;
+                found = false;
             } else {
                 for (i = 0, ilen = list1.length; i < ilen; i += 1) {
                     found = false;
@@ -80,15 +85,15 @@ $(document).ready(function () {
                         }
                     }
                     if (!found) {
-                        return false;
+                        break;
                     }
                 }
-                return true;
             }
+            return (found) ? true : false;
         },
         me_section = function (new_me) {
             // generate the me section only if #myname has changed
-            if (!dj_list_equal(new_me, me)) {
+            if (!dj_list_equal(new_me, settings.me)) {
                 if (new_me.length === 0) {
                     $("#me").prev().children("a").text("DJ Empty");
                     $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
@@ -98,7 +103,10 @@ $(document).ready(function () {
                         dataType: "json"
                     }).done(function (data) {
                         var records = [],
-                            i, j, ilen, jlen;
+                            i,
+                            j,
+                            ilen,
+                            jlen;
                         records.push('<div class="accordion">');
                         for (i = 0, ilen = charts.length; i < ilen; i += 1) {
                             records.push('<h3><a href="#">Pop: ' + charts[i].toUpperCase() + "</a></h3><div>");
@@ -119,22 +127,29 @@ $(document).ready(function () {
                         $("#me .tablesorter").tablesorter();
                     });
                 }
-                me = $.extend(true, [], new_me);
+                settings.me = $.extend(true, [], new_me);
             }
         },
         rival_section = function (new_rival) {
             // generate the rival section only if #myrival has changed
-            if (!dj_list_equal(new_rival, rival)) {
+            if (!dj_list_equal(new_rival, settings.rival)) {
                 if (new_rival.length === 0) {
                     $("#rival").empty().html("<p>Go to settings to enter your rivals.</p>");
                 } else {
                     $.ajax({
-                        url: "./database/dj/" + me[0].id + ".json",
+                        url: "./database/dj/" + settings.me[0].id + ".json",
                         dataType: "json"
                     }).done(function (myscores) {
                         var records = [],
-                            i, j, k, ilen, jlen, klen,
-                            disc, score1, score2;
+                            disc,
+                            score1,
+                            score2,
+                            i,
+                            j,
+                            k,
+                            ilen,
+                            jlen,
+                            klen;
                         records.push('<div class="accordion">');
                         for (i = 0, ilen = new_rival.length; i < ilen; i += 1) {
                             $.ajax({
@@ -170,51 +185,66 @@ $(document).ready(function () {
                         $("#rival .tablesorter").tablesorter();
                     });
                 }
-                rival = $.extend(true, [], new_rival);
-                $(".pop > div > table").replaceWith("<p>Loading...</p>");
+                settings.rival = $.extend(true, [], new_rival);
             }
         },
         save_settings = function () {
-            // save the current settings and generate the me section and rival section
+            // save the current settings and deconstruct tables
             var new_me = $("#myname").tokenInput("get"),
-                new_rival = $("#myrival").tokenInput("get");
+                new_rival = $("#myrival").tokenInput("get"),
+                new_cutoff = [$("#popcut").val(), $("#popmastercut").val()],
+                expire = new Date(),
+                result = false;
             if (new_me.length === 0 && new_rival.length > 0) {
-                return "(Please enter your DJ name!)";
-            } else {
+                result = "(Please enter your DJ name!)";
+            }
+            if (new_cutoff[0].search(/\D/) > -1 ||
+                    new_cutoff[1].search(/\D/) > -1) {
+                result = "(Cutoff values must be whole numbers!)";
+            }
+            if (!result) {
                 me_section(new_me);
                 rival_section(new_rival);
-                save_cookie();
-                return "(Saved!)";
+                settings.popcut = parseInt(new_cutoff[0], 10);
+                settings.popmastercut = parseInt(new_cutoff[1], 10);
+                expire.setDate(expire.getDate() + 365);
+                document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire.toUTCString();
+                // delete the bottom two after a week or two
+                document.cookie = "DJR_myname=" + JSON.stringify(settings.me) + "; expires=" + expire.toUTCString();
+                document.cookie = "DJR_myrival=" + JSON.stringify(settings.rival) + "; expires=" + expire.toUTCString();
+                $(".pop > div > table").replaceWith("<p>Loading...</p>");
+                result = "(Saved!)";
             }
+            return result;
         },
-        save_cookie = function () {
-            // save the current settings to cookies
-            var expire = new Date(),
-                settings = {};
-            expire.setDate(expire.getDate() + 365);
-            expire = "; expires=" + expire.toUTCString();
-            settings.me = me;
-            settings.rival = rival;
-            document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + expire;
-            // delete the bottom two after a week or two
-            document.cookie = "DJR_myname=" + JSON.stringify(me) + expire;
-            document.cookie = "DJR_myrival=" + JSON.stringify(rival) + expire;
-        },
-        load_cookie = function (name) {
-            // load stored settings from cookies
-            var cookie = document.cookie.split(/;\s*/),
+        load_settings = function (name) {
+            // load settings from cookies or use defaults if no cookies found
+            var defaults = {
+                    me: [],
+                    rival: [],
+                    popcut: 270000,
+                    popmastercut: 30000000
+                },
+                cookie = document.cookie.split(/;\s*/),
                 result = [],
-                i, ilen;
+                i,
+                ilen;
             for (i = 0, ilen = cookie.length; i < ilen; i += 1) {
                 if (cookie[i].indexOf(name) === 0) {
                     result = cookie[i].slice(cookie[i].indexOf("=") + 1);
+                    break;
                 }
             }
-            return (result.length > 0) ? JSON.parse(result) : null;
+            return (result.length > 0) ? JSON.parse(result) : defaults;
         },
         status_message = function (message) {
             $("<span> " + message + "</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
         };
+
+    // load settings
+    settings = load_settings();
+    //$("#popcut").val(settings.popcut);
+    //$("#popmastercut").val(settings.popmastercut);
 
     // accordions
     $(".accordion").accordion(default_accordion);
@@ -230,8 +260,8 @@ $(document).ready(function () {
             hintText: "Type in a DJ name",
             theme: "facebook",
             onAdd: prune,
-            prePopulate: load_cookie("DJR_myname"),
-            //prePopulate: load_cookie().me, switch to this in a week or two (hardcode cookie name)
+            prePopulate: load_settings("DJR_myname"),
+            //prePopulate: load_settings().me, switch to this in a week or two (hardcode cookie name, and use ternary test for length)
             tokenLimit: 1
         });
         $("#myrival").tokenInput(data, {
@@ -239,8 +269,8 @@ $(document).ready(function () {
             hintText: "Type in a DJ name",
             theme: "facebook",
             onAdd: prune,
-            prePopulate: load_cookie("DJR_myrival"),
-            //prePopulate: load_cookie().rival,  switch to this in a week or two (hardcode cookie name)
+            prePopulate: load_settings("DJR_myrival"),
+            //prePopulate: load_settings().rival,  switch to this in a week or two (hardcode cookie name, and use ternary test for length)
             preventDuplicates: true
         });
         save_settings();
@@ -256,7 +286,7 @@ $(document).ready(function () {
         cookieExpires: 365,
         cookieName: "DJRivals_Theme",
         height: 345,
-        loadTheme: "UI lightness",
+        loadTheme: "UI lightness"
     });
 
     // save button :V
