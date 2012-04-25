@@ -2,6 +2,12 @@ table {
     table-layout: fixed;
 }
 
+input, input:focus {
+    border: 1px solid #8496BA;
+    outline: none;
+    width: 110px;
+}
+
 /* pop accordion disc icons */
 h3 img {
     width: 66px;
