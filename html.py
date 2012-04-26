@@ -32,11 +32,11 @@ def index():
     ps.start("script", ['type="text/javascript"', 'src="./js/djrivals.js"'], newline=False).end()
     ps.end()  # head
     ps.start("body")
-    ps.start("div", ['class="accordion"'])  # start main accordion
+    ps.start("div", ['id="main"'])  # start main accordion
     for chart in charts:
         ps.start("h3", newline=False).start("a", ['href="#"'], "Pop: " + chart.upper(), False).end(False).end()
         ps.start("div")  # start pop section
-        ps.start("div", ['class="pop accordion"'])
+        ps.start("div", ['class="pop"'])
         for disc in disc_list:
             with open(pop_db_dir + disc, "rb") as f:
                 data = json.loads(f.read().decode())
@@ -50,6 +50,10 @@ def index():
                 ps.start("div", newline=False).start("p", value="Loading...", newline=False).end(False).end()
         ps.end()
         ps.end()  # end pop section
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Pop Master", False).end(False).end()
+    ps.start("div")  # start pop master section
+    ps.start("p", value="Loading...", newline=False).end()
+    ps.end()  # end pop master section
     ps.start("h3", newline=False).start("a", ['href="#"'], "DJ Empty", False).end(False).end()
     ps.start("div", ['id="me"'])  # start me section
     ps.start("p", value="Go to settings to enter your DJ name.", newline=False).end()
@@ -58,7 +62,7 @@ def index():
     ps.start("div", ['id="rival"'])  # start rival section
     ps.start("p", value="Go to settings to enter your rivals.", newline=False).end()
     ps.end()  # end rival section
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Settings", False).start("span", attr=['id="status"'], newline=False).end(False).end(False).end()
+    ps.start("h3", newline=False).start("a", ['href="#"'], "Settings", False).end(False).end()
     ps.start("div")  # start settings section
     ps.start("label", ['for="myname"'], "My DJ Name", False).end()
     ps.empty("input", ['id="myname"', 'type="text"'], False).empty("br")
@@ -70,7 +74,7 @@ def index():
     ps.empty("input", ['id="popmastercut"', 'type="text"', 'maxlength="9"'], False).empty("br", newline=False).empty("br")
     ps.start("label", ['for="themeswitcher"'], "Theme", False).end()
     ps.start("div", ['id="themeswitcher"'], newline=False).end(False).empty("br")
-    ps.start("button", ['id="save"', 'type="button"'], ":'D", False).end()
+    ps.start("button", ['id="save"', 'type="button"'], ":'D", False).end(False).start("span", attr=['id="status"'], newline=False).end()
     ps.end()  # end settings section
     ps.end()  # end main accordion
     ps.end_all()  # body, html
