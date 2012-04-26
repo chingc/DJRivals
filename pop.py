@@ -82,25 +82,20 @@ def index(refresh=False):
     return index
 
 
-def database(disc_list=[]):
-    """database([disc_list=list]) -> None
+def database(disc_list):
+    """database(list) -> None
 
     Create a local database of scores with information obtained from the DJMAX
-    site.  The database is implemented as a collection of JSON files.  One JSON
-    file is created for each disc.  The optional argument is a list of strings
-    (default: []) of clean disc names.  The entire database is created by
-    default, but incremental updates can be performed by utilizing the optional
-    argument.  Refer to data_structures.txt for the format and contents of these
-    files.
+    site.  The argument is a list of strings of disc names.  The database is
+    implemented as a collection of JSON files.  One JSON file is created for
+    each disc name in the argument.  Refer to data_structures.txt for the format
+    and contents of these files.
 
     """
-    start_time = time.time()
     pop_db_dir = _make_dir(_link("pop_database_directory"))
     pop_index_file = _link("pop_index_file")
     identifier = _f_identifier()
     info = index()
-    if not disc_list:
-        disc_list = [disc for disc in sorted(info.keys(), key=lambda x: info[x]["page"])]  # sort by page to maximize identifier() cache hits
     while len(disc_list):
         print("{} discs remaining.".format(len(disc_list)))
         disc = disc_list.pop()
@@ -127,6 +122,4 @@ def database(disc_list=[]):
             f.write(json.dumps(data, indent=4).encode())
         with open("{}{}.json".format(pop_db_dir, clean_disc), "wb") as f:
             f.write(json.dumps(output).encode())
-        print('Wrote: "{}{}.json"\n'.format(pop_db_dir, clean_disc))
-    elapsed_time = round((time.time() - start_time) / 60)
-    print("Database creation took {} minutes.".format(elapsed_time))
+        print('Wrote: "{}{}.json"'.format(pop_db_dir, clean_disc))
