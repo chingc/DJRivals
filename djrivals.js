@@ -97,7 +97,7 @@ $(document).ready(function () {
                         if (ranking[i][3] >= cutoff) {
                             dj_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
                         }
-                        if (rival_found || settings.me[0].name === ranking[i][2]) {
+                        if (rival_found || (settings.me.length > 0 && settings.me[0].name === ranking[i][2])) {
                             rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
                         }
                     }
