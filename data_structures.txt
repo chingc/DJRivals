@@ -170,21 +170,18 @@ This structure is generated automatically and should not be edited manually.
 JSON Master Ranking Data Structure
 ==================================
 
-{
-    "pop": [
-        [ 1, "djicon", "djname", 1500000 ],
-        [ 2, "djicon", "djname", 1500000 ],
-        [ 3, "djicon", "djname", 1500000 ],
-        ...
-    ]
-}
+[
+    [ 1, "djicon", "djname", 1500000 ],
+    [ 2, "djicon", "djname", 1500000 ],
+    [ 3, "djicon", "djname", 1500000 ],
+    ...
+]
 
 Details
 -------
 This represents the master rankings.  e.g. Pop Master.  It is identical to the
 ranking key of the Disc data structure, except the scores in this case is the
-sum total of all the charts a DJ has played.  This structure can be expanded to
-create and hold the scores of other master rankings if desired.
+sum total of all the charts a DJ has played.
 
 Special Values
 --------------
