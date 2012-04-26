@@ -8,49 +8,6 @@ $(document).ready(function () {
             autoHeight: false,
             collapsible: true
         },
-        pop_accordion = function (event, ui) {
-            // generate the rankings table for the main pop sections
-            if (ui.newHeader.next().children("p").length > 0) {  // activate on expand and only if "<p>" is found
-                var disc = ui.newHeader.text().replace(/\W/g, "").toLowerCase(),
-                    chart = ui.newHeader.parent().parent().prev().text().slice(-2).toLowerCase();
-                $.ajax({
-                    url: "./database/pop/" + disc + ".json",
-                    dataType: "json"
-                }).done(function (data) {
-                    var ranking = data[chart].ranking,
-                        dj_records = [],
-                        rival_records = [],
-                        rival_copy = $.extend(true, [], settings.rival),  // local copy for modification
-                        rival_found,
-                        i,
-                        j,
-                        ilen,
-                        jlen;
-                    dj_records.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
-                    rival_records.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
-                    for (i = 0, ilen = ranking.length; i < ilen; i += 1) {
-                        rival_found = false;
-                        for (j = 0, jlen = rival_copy.length; j < jlen; j += 1) {
-                            if (rival_copy[j].name === ranking[i][2]) {
-                                rival_copy.splice(j, 1);
-                                rival_found = true;
-                                break;
-                            }
-                        }
-                        if (ranking[i][3] >= settings.popcut) {
-                            dj_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
-                        }
-                        if (rival_found || settings.me[0].name === ranking[i][2]) {
-                            rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
-                        }
-                    }
-                    for (i = 0, ilen = rival_copy.length; i < ilen; i += 1) {
-                        rival_records.push("<tr><td>.</td><td></td><td>" + rival_copy[i].name + "</td><td>0</td></tr>");
-                    }
-                    ui.newHeader.next().empty().html('<table><tr><td class="djrank">' + dj_records.join("") + '</table></td><td class="rivalrank">' + rival_records.join("") + "</table></td></tr></table>");
-                });
-            }
-        },
         prune = function () {
             // remove DJ from #myrival if the same DJ is in #myname
             var new_me = $("#myname").tokenInput("get"),
@@ -91,7 +48,64 @@ $(document).ready(function () {
                     }
                 }
             }
-            return (found) ? true : false;
+            return found ? true : false;
+        },
+        ranking_table = function (event, ui) {
+            // generate the ranking table if it does not exist
+            if (ui.newHeader.next().children("p").length > 0) {  // activate on expand and only if "<p>" is found
+                var disc,
+                    chart,
+                    link,
+                    cutoff;
+                switch (ui.newHeader.text()) {
+                case "Pop Master":
+                    chart = false;
+                    link = "./database/master/pop.json";
+                    cutoff = settings.popmastercut;
+                    break;
+                default:
+                    disc = ui.newHeader.text().replace(/\W/g, "").toLowerCase();
+                    chart = ui.newHeader.parent().parent().prev().text().slice(-2).toLowerCase();
+                    link = "./database/pop/" + disc + ".json";
+                    cutoff = settings.popcut;
+                }
+                $.ajax({
+                    url: link,
+                    dataType: "json"
+                }).done(function (data) {
+                    var ranking = chart ? data[chart].ranking : data,
+                        dj_records = [],
+                        rival_records = [],
+                        rival_copy = $.extend(true, [], settings.rival),  // local copy for modification
+                        rival_found,
+                        i,
+                        j,
+                        ilen,
+                        jlen;
+                    dj_records.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
+                    rival_records.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
+                    for (i = 0, ilen = ranking.length; i < ilen; i += 1) {
+                        rival_found = false;
+                        for (j = 0, jlen = rival_copy.length; j < jlen; j += 1) {
+                            if (rival_copy[j].name === ranking[i][2]) {
+                                rival_copy.splice(j, 1);
+                                rival_found = true;
+                                break;
+                            }
+                        }
+                        if (ranking[i][3] >= cutoff) {
+                            dj_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
+                        }
+                        if (rival_found || settings.me[0].name === ranking[i][2]) {
+                            rival_records.push("<tr><td>" + ranking[i][0] + '</td><td><img src="./images/icon/' + ranking[i][1] + '" /></td><td>' + ranking[i][2] + "</td><td>" + ranking[i][3] + "</td></tr>");
+                        }
+                    }
+                    for (i = 0, ilen = rival_copy.length; i < ilen; i += 1) {
+                        rival_records.push("<tr><td>.</td><td></td><td>" + rival_copy[i].name + "</td><td>0</td></tr>");
+                    }
+                    ui.newHeader.next().empty().html('<table><tr><td class="djrank">' + dj_records.join("") + '</table></td><td class="rivalrank">' + rival_records.join("") + "</table></td></tr></table>");
+                });
+            }
         },
         me_section = function (new_me) {
             // generate the me section only if #myname has changed
@@ -191,18 +205,18 @@ $(document).ready(function () {
             }
         },
         save_settings = function () {
-            // save the current settings and deconstruct tables
+            // save current settings
             var new_me = $("#myname").tokenInput("get"),
                 new_rival = $("#myrival").tokenInput("get"),
                 new_cutoff = [$("#popcut").val(), $("#popmastercut").val()],
                 expire = new Date(),
                 result = false;
             if (new_me.length === 0 && new_rival.length > 0) {
-                result = "(Please enter your DJ name!)";
+                result = "Please enter your DJ name!";
             }
             if (new_cutoff[0].length === 0 || new_cutoff[0].search(/\D/) > -1 ||
                     new_cutoff[1].length === 0 || new_cutoff[1].search(/\D/) > -1) {
-                result = "(Cutoff values must be positive whole numbers!)";
+                result = "Invalid cutoff score!";
             }
             if (!result) {
                 me_section(new_me);
@@ -211,28 +225,26 @@ $(document).ready(function () {
                 settings.popmastercut = parseInt(new_cutoff[1], 10);
                 expire.setDate(expire.getDate() + 365);
                 document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire.toUTCString();
-                // delete the bottom two after a week or two
-                document.cookie = "DJR_myname=" + JSON.stringify(settings.me) + "; expires=" + expire.toUTCString();
-                document.cookie = "DJR_myrival=" + JSON.stringify(settings.rival) + "; expires=" + expire.toUTCString();
-                $(".pop > div > table").replaceWith("<p>Loading...</p>");
-                result = "(Saved!)";
+                $("#main > div > table").replaceWith("<p>Loading...</p>");  // tables need to be rebuild due to new settings
+                $(".pop > div > table").replaceWith("<p>Loading...</p>");  // tables need to be rebuild due to new settings
+                result = "Saved!";
             }
             return result;
         },
-        load_settings = function (name) {
+        load_settings = function () {
             // load settings from cookies or use defaults if no cookies found
             var defaults = {
                     me: [],
                     rival: [],
                     popcut: 270000,
-                    popmastercut: 30000000
+                    popmastercut: 40000000
                 },
                 cookie = document.cookie.split(/;\s*/),
                 result = [],
                 i,
                 ilen;
             for (i = 0, ilen = cookie.length; i < ilen; i += 1) {
-                if (cookie[i].indexOf(name) === 0) {
+                if (cookie[i].indexOf("DJRivals_Settings") === 0) {
                     result = cookie[i].slice(cookie[i].indexOf("=") + 1);
                     break;
                 }
@@ -249,8 +261,8 @@ $(document).ready(function () {
     $("#popmastercut").val(settings.popmastercut);
 
     // accordions
-    $(".accordion").accordion(default_accordion);
-    $(".pop").bind("accordionchange", pop_accordion);
+    $("#main, .pop").accordion(default_accordion);
+    $("#main").bind("accordionchange", ranking_table);
 
     // autocomplete fields
     $.ajax({
@@ -262,8 +274,7 @@ $(document).ready(function () {
             hintText: "Type in a DJ name",
             theme: "facebook",
             onAdd: prune,
-            prePopulate: load_settings("DJR_myname"),
-            //prePopulate: load_settings().me, switch to this in a week or two (hardcode cookie name, and use ternary test for length)
+            prePopulate: (settings.me.length > 0) ? settings.me : null,
             tokenLimit: 1
         });
         $("#myrival").tokenInput(data, {
@@ -271,15 +282,16 @@ $(document).ready(function () {
             hintText: "Type in a DJ name",
             theme: "facebook",
             onAdd: prune,
-            prePopulate: load_settings("DJR_myrival"),
-            //prePopulate: load_settings().rival,  switch to this in a week or two (hardcode cookie name, and use ternary test for length)
+            prePopulate: (settings.rival.length > 0) ? settings.rival : null,
             preventDuplicates: true
         });
         save_settings();
     }).fail(function () {
-        $("#save").prop("disabled", true);
         $("#myname").prop("disabled", true);
         $("#myrival").prop("disabled", true);
+        $("#popcut").prop("disabled", true);
+        $("#popmastercut").prop("disabled", true);
+        $("#save").prop("disabled", true);
     });
 
     // themes
