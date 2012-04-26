@@ -1,6 +1,5 @@
 """DJ database creation."""
 import json
-import time
 import zlib
 
 from common import _dir_listing, _link, _make_dir
@@ -15,7 +14,6 @@ def database():
     files.
 
     """
-    start_time = time.time()
     pop_db_dir = _make_dir(_link("pop_database_directory"))
     dj_db_dir = _make_dir(_link("dj_database_directory"))
     dj_index_file = _link("dj_index_file")
@@ -57,5 +55,3 @@ def database():
             f.write(json.dumps(v).encode())
     with open(dj_index_file, "wb") as f:
         f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())]).encode())
-    elapsed_time = round(time.time() - start_time)
-    print("Database creation took {} seconds.".format(elapsed_time))
