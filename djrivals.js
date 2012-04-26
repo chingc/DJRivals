@@ -1,6 +1,7 @@
 $(document).ready(function () {
     "use strict";
     var settings,
+        loading,
         charts = ["nm", "hd", "mx"],
         default_accordion = {
             active: false,
@@ -108,8 +109,8 @@ $(document).ready(function () {
             }
         },
         me_section = function (new_me) {
-            // generate the me section only if #myname has changed
-            if (!dj_list_equal(new_me, settings.me)) {
+            // generate the me section only if #myname has changed or on page reload
+            if (!dj_list_equal(new_me, settings.me) || loading) {
                 if (new_me.length === 0) {
                     $("#me").prev().children("a").text("DJ Empty");
                     $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
@@ -147,8 +148,8 @@ $(document).ready(function () {
             }
         },
         rival_section = function (new_rival) {
-            // generate the rival section only if #myrival has changed
-            if (!dj_list_equal(new_rival, settings.rival)) {
+            // generate the rival section only if #myrival has changed or on page reload
+            if (!dj_list_equal(new_rival, settings.rival) || loading) {
                 if (new_rival.length === 0) {
                     $("#rival").empty().html("<p>Go to settings to enter your rivals.</p>");
                 } else {
@@ -256,6 +257,7 @@ $(document).ready(function () {
         };
 
     // load settings
+    loading = true;
     settings = load_settings();
     $("#popcut").val(settings.popcut);
     $("#popmastercut").val(settings.popmastercut);
@@ -286,6 +288,7 @@ $(document).ready(function () {
             preventDuplicates: true
         });
         save_settings();
+        loading = false;
     }).fail(function () {
         $("#myname").prop("disabled", true);
         $("#myrival").prop("disabled", true);
