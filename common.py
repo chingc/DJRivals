@@ -29,6 +29,7 @@ def _link(name):
 
         "pop_database_directory": "./DJRivals/database/pop/",
         "dj_database_directory": "./DJRivals/database/dj/",
+        "master_database_directory": "./DJRivals/database/master/",
 
         "pop_index_file": "./DJRivals/database/pop_index.json",
         "dj_index_file": "./DJRivals/database/dj_index.json",
