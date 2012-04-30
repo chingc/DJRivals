@@ -32,7 +32,7 @@ def database():
             data = json.loads(f.read().decode())
         for chart in charts:
             djs = djs.union([(record[1], record[2]) for record in data[chart]["ranking"]])
-            if data[chart]["difficulty"]:
+            if data[chart]["records"]:
                 disc_list[chart][data["name"]] = [9999, 0]
     djs = {dj[1]: dict([("name", dj[1]), ("icon", dj[0])] + [("pop", {chart: dict(disc_list[chart]) for chart in charts})]) for dj in djs}
     for json_file in db_contents:
