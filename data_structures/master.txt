@@ -1,0 +1,24 @@
+JSON Master Ranking Data Structure
+==================================
+
+{
+    "ranking": [
+        [ 1, "djicon", "djname", 1500000 ],
+        [ 2, "djicon", "djname", 1500000 ],
+        [ 3, "djicon", "djname", 1500000 ],
+        ...
+    ]
+}
+
+Details
+-------
+This represents the master rankings.  It is identical to the ranking key of the
+database data structures, except the scores in this case is the sum total.
+
+Special Values
+--------------
+None.
+
+Notes
+-----
+This structure is generated automatically and should not be edited manually.

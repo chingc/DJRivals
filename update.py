@@ -1,44 +1,57 @@
 """DJRivals database updater."""
 from time import localtime, sleep, strftime, time
 
-import dj
-import html
+from common import _
+import database
 import image
-import master
-import pop
+import index
 
 
-def database():
-    """database() -> None
+def indexes():
+    """Update indexes, retrieve new images if any, and generate the html."""
+    index.touch(_.STAR, True)
+    index.touch(_.POP, True)
+    index.touch(_.CLUB, True)
+    index.touch(_.MISSION, True)
+    image.mode(_.STAR)
+    image.mode(_.POP)
+    image.mode(_.CLUB)
+    image.mode(_.MISSION)
+    index.html()
 
-    Continuous incremental updates of the database.
 
-    """
+def mode(mode):
+    """Continuous incremental updates of the specified database."""
+    if mode == _.STAR:
+        data  = index.touch(_.STAR)
+        hours = 12
+    elif mode == _.POP:
+        data  = index.touch(_.POP)
+        hours = 20
+    elif mode == _.CLUB:
+        data  = index.touch(_.CLUB)
+        hours = 8
+    elif mode == _.MISSION:
+        data  = index.touch(_.MISSION)
+        hours = 8
+    else:
+        raise ValueError("invalid argument")
     try:
         while(True):
-            disc_list = pop.index()
-            disc_list = sorted(disc_list.keys(), key=lambda x: disc_list[x]["timestamp"])
-            interval = int(24 * 60 * 60 / len(disc_list))
-            for disc in disc_list:
-                pop.database([disc])
-                print("\nNext incremental update at: " + strftime("%H:%M:%S", localtime(time() + interval)))
-                print("Ctrl-C to quit.\n")
+            names = sorted(data.keys(), key=lambda x: data[x]["timestamp"])
+            interval = (hours * 60 * 60 / len(names))
+            while names:
+                database.build(mode, names.pop(0))
+                print("\n{} items remaining in this update cycle.".format(len(names)))
+                print("Next incremental update at: {} (Ctrl-C to Quit)\n".format(strftime("%H:%M:%S", localtime(time() + interval))))
                 sleep(interval)
     except KeyboardInterrupt:
-        print("Please wait...")
-        dj.database()
-        master.database()
-        image.icons()
         print("Done.")
 
 
-def index():
-    """index() -> None
-
-    Update the index file, generate the html for DJRivals, and retrieve new disc
-    images if any.
-
-    """
-    pop.index(True)
-    html.index()
-    image.discs()
+def finish():
+    """Build non-game mode databases."""
+    database.dj()
+    database.master()
+    image.icon()
+    print("Done.")
