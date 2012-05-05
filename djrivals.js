@@ -120,7 +120,8 @@ $(document).ready(function () {
                 }
                 $.ajax({
                     url: link,
-                    dataType: "json"
+                    dataType: "json",
+                    cache: false
                 }).done(function (data) {
                     var ranking = chart ? data[chart].ranking : data.ranking,
                         dj_records = [],
@@ -165,7 +166,8 @@ $(document).ready(function () {
                 } else {
                     $.ajax({
                         url: "./database/dj/" + new_me[0].id + ".json",
-                        dataType: "json"
+                        dataType: "json",
+                        cache: false
                     }).done(function (data) {
                         var records = [],
                             i,
@@ -224,7 +226,8 @@ $(document).ready(function () {
                 } else {
                     $.ajax({
                         url: "./database/dj/" + settings.me[0].id + ".json",
-                        dataType: "json"
+                        dataType: "json",
+                        cache: false
                     }).done(function (myscores) {
                         var records = [],
                             name,
@@ -241,7 +244,8 @@ $(document).ready(function () {
                             $.ajax({
                                 async: false,
                                 url: "./database/dj/" + new_rival[i].id + ".json",
-                                dataType: "json"
+                                dataType: "json",
+                                cache: false
                             }).done(function (rivalscores) {
                                 records.push('<h3><a href="#">' + new_rival[i].name + "</a></h3><div>");
                                 records.push('<div class="accordion">');
@@ -394,7 +398,8 @@ $(document).ready(function () {
     // autocomplete fields
     $.ajax({
         url: "./database/dj_index.json",
-        dataType: "json"
+        dataType: "json",
+        cache: false
     }).done(function (data) {
         $("#myname").tokenInput(data, {
             animateDropdown: false,
