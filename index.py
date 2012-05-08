@@ -223,7 +223,7 @@ def html():
     ps.end()
     ps.start("label", ['for="themeswitcher"'], "Theme", False).end()
     ps.start("div", ['id="themeswitcher"'], newline=False).end(False).empty("br")
-    ps.start("button", ['id="save"', 'type="button"'], ":'D", False).end(False).start("span", attr=['id="status"'], newline=False).end()
+    ps.start("button", ['id="save"', 'type="button"'], ":'D", False).end(False).raw(" ", False).start("span", attr=['id="status"'], newline=False).end()
     ps.end()
 
     # messages

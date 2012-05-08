@@ -119,9 +119,9 @@ $(document).ready(function () {
                     }
                 }
                 $.ajax({
-                    url: link,
+                    cache: false,
                     dataType: "json",
-                    cache: false
+                    url: link
                 }).done(function (data) {
                     var ranking = chart ? data[chart].ranking : data.ranking,
                         dj_records = [],
@@ -165,9 +165,9 @@ $(document).ready(function () {
                     $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
                 } else {
                     $.ajax({
-                        url: "./database/dj/" + new_me[0].id + ".json",
+                        cache: false,
                         dataType: "json",
-                        cache: false
+                        url: "./database/dj/" + new_me[0].id + ".json"
                     }).done(function (data) {
                         var records = [],
                             i,
@@ -225,9 +225,9 @@ $(document).ready(function () {
                     $("#rival").empty().html("<p>Go to settings to enter your rivals.</p>");
                 } else {
                     $.ajax({
-                        url: "./database/dj/" + settings.me[0].id + ".json",
+                        cache: false,
                         dataType: "json",
-                        cache: false
+                        url: "./database/dj/" + settings.me[0].id + ".json"
                     }).done(function (myscores) {
                         var records = [],
                             name,
@@ -243,9 +243,9 @@ $(document).ready(function () {
                         for (i = 0, ilen = new_rival.length; i < ilen; i += 1) {
                             $.ajax({
                                 async: false,
-                                url: "./database/dj/" + new_rival[i].id + ".json",
+                                cache: false,
                                 dataType: "json",
-                                cache: false
+                                url: "./database/dj/" + new_rival[i].id + ".json"
                             }).done(function (rivalscores) {
                                 records.push('<h3><a href="#">' + new_rival[i].name + "</a></h3><div>");
                                 records.push('<div class="accordion">');
@@ -364,11 +364,12 @@ $(document).ready(function () {
                 if (cookie[i].indexOf("DJRivals_Settings") === 0) {
                     saved = JSON.parse(cookie[i].slice(cookie[i].indexOf("=") + 1));
                     for (i in saved) {
-                        if (i === "me" || i === "rival") {
-                            settings[i] = $.extend(true, [], saved[i]);
-                        }
-                        else {
-                            settings[i] = saved[i];
+                        if (saved.hasOwnProperty(i)) {
+                            if (i === "me" || i === "rival") {
+                                settings[i] = $.extend(true, [], saved[i]);
+                            } else {
+                                settings[i] = saved[i];
+                            }
                         }
                     }
                     break;
@@ -376,7 +377,8 @@ $(document).ready(function () {
             }
         },
         status_message = function (message) {
-            $("<span> " + message + "</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
+            $("#status").empty();
+            $("<span>" + message + "</span>").prependTo("#status").fadeOut(5000, function () { $(this).remove(); });
         };
 
     // load settings
@@ -397,9 +399,9 @@ $(document).ready(function () {
 
     // autocomplete fields
     $.ajax({
-        url: "./database/dj_index.json",
+        cache: false,
         dataType: "json",
-        cache: false
+        url: "./database/dj_index.json"
     }).done(function (data) {
         $("#myname").tokenInput(data, {
             animateDropdown: false,
