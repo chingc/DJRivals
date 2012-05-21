@@ -348,8 +348,14 @@ $(document).ready(function () {
                 settings.missionmastercutoff = parseInt(new_cutoff[7], 10);
                 expire.setDate(expire.getDate() + 365);
                 document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire.toUTCString();
-                $("#main > div > table").replaceWith("<p>Loading...</p>");  // tables need to be rebuild due to new settings
-                $(".pop > div > table").replaceWith("<p>Loading...</p>");  // tables need to be rebuild due to new settings
+                $("#star > div > table").replaceWith("<p>Loading...</p>");
+                $(".pop > div > table").replaceWith("<p>Loading...</p>");
+                $("#club > div > table").replaceWith("<p>Loading...</p>");
+                $("#mission > div > table").replaceWith("<p>Loading...</p>");
+                $("#starmaster > table").replaceWith("<p>Loading...</p>");
+                $("#popmaster > table").replaceWith("<p>Loading...</p>");
+                $("#clubmaster > table").replaceWith("<p>Loading...</p>");
+                $("#missionmaster > table").replaceWith("<p>Loading...</p>");
                 result = "Saved!";
             }
             return result;
