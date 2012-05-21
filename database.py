@@ -18,7 +18,7 @@ def build(mode, name):
 
     """
     def _nonpop():
-        output = {}
+        output = OrderedDict()
         output["name"] = name
         output["eyecatch"] = clean_name + ".png"
         output["icon"] = clean_name + "_1.png"
@@ -37,11 +37,11 @@ def build(mode, name):
         return output
 
     def _pop():
-        output = {}
+        output = OrderedDict()
         output["name"] = name
         output["eyecatch"] = clean_name + ".png"
         for chart in _.CHARTS:
-            output[chart] = {}
+            output[chart] = OrderedDict()
             output[chart]["icon"] = "{}_{}.png".format(clean_name, 1 if chart == "nm" else 2 if chart == "hd" else 3 if chart == "mx" else 4)
             output[chart]["level"] = idata[name][chart]
             while True:
@@ -98,23 +98,23 @@ def dj():
     """
     # todo: code cleanup
     def _dj_struct(name, icon, star, pop, club, mission):
-        dj = {}
+        dj = OrderedDict()
         dj["name"] = name
         dj["icon"] = icon
-        dj["star"] = {}
-        dj["star"]["scores"] = dict(star)
+        dj["star"] = OrderedDict()
+        dj["star"]["scores"] = OrderedDict(star)
         dj["star"]["master"] = []
-        dj["pop"] = {}
-        dj["pop"]["nm"] = dict(pop["nm"])
-        dj["pop"]["hd"] = dict(pop["hd"])
-        dj["pop"]["mx"] = dict(pop["mx"])
-        dj["pop"]["ex"] = dict(pop["ex"])
+        dj["pop"] = OrderedDict()
+        dj["pop"]["nm"] = OrderedDict(pop["nm"])
+        dj["pop"]["hd"] = OrderedDict(pop["hd"])
+        dj["pop"]["mx"] = OrderedDict(pop["mx"])
+        dj["pop"]["ex"] = OrderedDict(pop["ex"])
         dj["pop"]["master"] = []
-        dj["club"] = {}
-        dj["club"]["scores"] = dict(club)
+        dj["club"] = OrderedDict()
+        dj["club"]["scores"] = OrderedDict(club)
         dj["club"]["master"] = []
-        dj["mission"] = {}
-        dj["mission"]["scores"] = dict(mission)
+        dj["mission"] = OrderedDict()
+        dj["mission"]["scores"] = OrderedDict(mission)
         dj["mission"]["master"] = []
         return dj
 
@@ -130,10 +130,10 @@ def dj():
     mission_dir_list = _list_dir(mission_db_dir)
 
     djs     = set()
-    star    = {}
-    pop     = {"nm": {}, "hd": {}, "mx": {}, "ex": {}}
-    club    = {}
-    mission = {}
+    star    = OrderedDict()
+    pop     = {"nm": OrderedDict(), "hd": OrderedDict(), "mx": OrderedDict(), "ex": OrderedDict()}
+    club    = OrderedDict()
+    mission = OrderedDict()
 
     star_master    = []
     pop_master     = []
