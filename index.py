@@ -226,17 +226,6 @@ def html():
     ps.start("button", ['id="save"', 'type="button"'], ":'D", False).end(False).raw(" ", False).start("span", attr=['id="status"'], newline=False).end()
     ps.end()
 
-    # messages
-    ps.start("h3", newline=False).start("a", ['href="#"'], "Messages", False).end(False).end()
-    ps.start("div")
-    ps.start("div", ['id="messages"'])
-    ps.empty("hr")
-    ps.start("a", ['href="http://www.cyphergate.net/wiki/"', 'target="_blank"'], "Cypher Gate Wiki", False).end(False).empty("br")
-    ps.start("a", ['href="http://www.bemanistyle.com/forum/forumdisplay.php?7-DJMAX"', 'target="_blank"'], "DJMAX Forum (BMS)", False).end(False).empty("br")
-    ps.start("a", ['href="http://djmaxcrew.com/"', 'target="_blank"'], "DJMAX Technika", False).end()
-    ps.end()
-    ps.end()
-
     # about
     ps.start("h3", newline=False).start("a", ['href="#"'], "About", False).end(False).end()
     ps.start("div")
@@ -253,6 +242,10 @@ def html():
     ps.start("div", ['id="dedication"'])
     ps.raw("Dedicated to Shoreline", False).empty("br")
     ps.raw("and all Technika players.")
+    ps.empty("hr")
+    ps.start("a", ['href="http://www.cyphergate.net/wiki/"', 'target="_blank"'], "Cypher Gate Wiki", False).end(False).empty("br")
+    ps.start("a", ['href="http://www.bemanistyle.com/forum/forumdisplay.php?7-DJMAX"', 'target="_blank"'], "DJMAX Forum (BMS)", False).end(False).empty("br")
+    ps.start("a", ['href="http://djmaxcrew.com/"', 'target="_blank"'], "DJMAX Technika", False).end()
     ps.end()
     ps.end()
 
