@@ -41,7 +41,7 @@ def _f_id():
         else:
             raise ValueError("invalid argument")
         if name not in cache:
-            if len(cache) > 40:  # value of 40 means at most 60 entries
+            if len(cache) > 20:  # value of 20 means at most 40 entries
                 cache.clear()
             data = json.loads(urlopen(url.format(idata[name]["page"])).read().decode())["DATA"]["RECORD"]
             cache.update({record[nkey]: record[idkey] for record in data})
