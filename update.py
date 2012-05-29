@@ -24,16 +24,16 @@ def mode(mode):
     """Continuous incremental updates of the specified database."""
     if mode == _.STAR:
         data  = index.touch(_.STAR)
-        hours = 12
+        hours = 36
     elif mode == _.POP:
         data  = index.touch(_.POP)
         hours = 20
     elif mode == _.CLUB:
         data  = index.touch(_.CLUB)
-        hours = 8
+        hours = 12
     elif mode == _.MISSION:
         data  = index.touch(_.MISSION)
-        hours = 8
+        hours = 12
     else:
         raise ValueError("invalid argument")
     try:
