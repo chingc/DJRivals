@@ -66,7 +66,7 @@ def touch(mode, refresh=False):
                 index[name]["timestamp"] = 0
                 index[name]["page"] = page
         with open(ifile, "wb") as f:
-            f.write(json.dumps(OrderedDict(sorted(index.items())), indent=4).encode())
+            f.write(json.dumps(OrderedDict(sorted(index.items())), indent=2).encode())
         print('Wrote: "{}"'.format(ifile))
     return index
 

@@ -83,9 +83,9 @@ def build(mode, name):
         idata = json.loads(f.read().decode(), object_pairs_hook=OrderedDict)
     idata[name]["timestamp"] = int(time.time())
     with open(ifile, "wb") as f:
-        f.write(json.dumps(idata, indent=4).encode())
+        f.write(json.dumps(idata, indent=2).encode())
     with open("{}{}.json".format(db_dir, clean_name), "wb") as f:
-        f.write(json.dumps(output).encode())
+        f.write(json.dumps(output, indent=1).encode())
     print('Wrote: "{}{}.json"'.format(db_dir, clean_name))
 
 
@@ -232,11 +232,11 @@ def dj():
     # write the DJ files
     for k, v in djs.items():
         with open("{}{}.json".format(dj_db_dir, zlib.crc32(k.encode())), "wb") as f:
-            f.write(json.dumps(v).encode())
+            f.write(json.dumps(v, indent=1).encode())
 
     # write the DJ index
     with open(_.DJ_INDEX, "wb") as f:
-        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())]).encode())
+        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())], indent=1).encode())
 
 
 def master():
@@ -258,4 +258,4 @@ def master():
     for mode in ["star", "pop", "club", "mission"]:
         results[mode].sort()
         with open(master_db_dir + mode + ".json", "wb") as f:
-            f.write(json.dumps({"ranking": results[mode]}).encode())
+            f.write(json.dumps({"ranking": results[mode]}, indent=1).encode())
