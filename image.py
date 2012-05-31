@@ -87,6 +87,8 @@ def mode(mode):
                 myname = "{}_{}{}".format(_clean(record[name_key]), i, extension)
                 if _exists(img_dir + myname):
                     continue
+                if mode == _.POP:
+                    theirname = "{}{}{}".format(name[:-1], i, extension)
                 with open(img_dir + myname, "wb") as f:
                     f.write(urlopen(img_url.format(theirname)).read())
                 print('Wrote: "{}{}"'.format(img_dir, myname))
