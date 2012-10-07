@@ -7,7 +7,8 @@ Star Master, Club Master, and Mission Master rankings available nowhere else!
 
 <br />
 
-[Website][2]
+[Website][2] | [Commit History][3]
 
-[1]: http://djmaxcrew.com/ "DJMAX Technika"
+[1]: http://en.wikipedia.org/wiki/DJMax_Technika_3 "DJMAX Technika 3"
 [2]: http://smwst.github.com/DJRivals/ "DJRivals"
+[3]: https://github.com/smwst/DJRivals/commits/master/ "Commit History"
