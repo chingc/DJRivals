@@ -25,14 +25,14 @@ def touch(mode, refresh=False):
         url     = _.STAR_ID_URL
         ifile   = _.STAR_INDEX
         db_dir  = _make_dir(_.STAR_DB_DIR)
-        stop    = 9
+        stop    = 10
         key     = "DISCNAME"
         members = [("timestamp", 0), ("page", 0), ("level", 0)]
     elif mode == _.POP:
         url     = _.POP_ID_URL
         ifile   = _.POP_INDEX
         db_dir  = _make_dir(_.POP_DB_DIR)
-        stop    = 9
+        stop    = 10
         key     = "DISCNAME"
         members = [("timestamp", 0), ("page", 0), ("nm", 0), ("hd", 0), ("mx", 0), ("ex", 0)]
     elif mode == _.CLUB:
