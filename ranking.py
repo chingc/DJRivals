@@ -16,35 +16,31 @@ def _f_id():
         # clear itself and rebuild once it exceeds a certain capacity.
         if mode == _.STAR:
             url   = _.STAR_ID_URL
+            keys  = _.DISC_KEYS
             idata = star_index
             cache = star_cache
-            nkey  = "DISCNAME"
-            idkey = "DISCID"
         elif mode == _.POP:
             url   = _.POP_ID_URL
+            keys  = _.DISC_KEYS
             idata = pop_index
             cache = pop_cache
-            nkey  = "DISCNAME"
-            idkey = "DISCID"
         elif mode == _.CLUB:
             url   = _.CLUB_ID_URL
+            keys  = _.CLUB_KEYS
             idata = club_index
             cache = club_cache
-            nkey  = "DISCSETNAME"
-            idkey = "DISCSETID"
         elif mode == _.MISSION:
             url   = _.MISSION_ID_URL
+            keys  = _.MISSION_KEYS
             idata = mission_index
             cache = mission_cache
-            nkey  = "MISSIONPACKNAME"
-            idkey = "MISSIONPACKID"
         else:
             raise ValueError("invalid argument")
         if name not in cache:
             if len(cache) > 20:  # value of 20 means at most 40 entries
                 cache.clear()
             data = json.loads(urlopen(url.format(idata[name]["page"])).read().decode())["DATA"]["RECORD"]
-            cache.update({record[nkey]: record[idkey] for record in data})
+            cache.update({record[keys["name"]]: record[keys["id"]] for record in data})
         return cache[name]
 
     star_index    = index.touch(_.STAR)

@@ -26,29 +26,29 @@ def touch(mode, refresh=False):
         url     = _.STAR_ID_URL
         ifile   = _.STAR_INDEX
         db_dir  = _make_dir(_.STAR_DB_DIR)
-        stop    = 10
-        key     = "DISCNAME"
+        stop    = _.STAR_PAGES
+        key     = _.DISC_KEYS["name"]
         members = [("timestamp", 0), ("page", 0), ("level", 0)]
     elif mode == _.POP:
         url     = _.POP_ID_URL
         ifile   = _.POP_INDEX
         db_dir  = _make_dir(_.POP_DB_DIR)
-        stop    = 10
-        key     = "DISCNAME"
+        stop    = _.POP_PAGES
+        key     = _.DISC_KEYS["name"]
         members = [("timestamp", 0), ("page", 0), ("nm", 0), ("hd", 0), ("mx", 0), ("ex", 0)]
     elif mode == _.CLUB:
         url     = _.CLUB_ID_URL
         ifile   = _.CLUB_INDEX
         db_dir  = _make_dir(_.CLUB_DB_DIR)
-        stop    = 2
-        key     = "DISCSETNAME"
+        stop    = _.CLUB_PAGES
+        key     = _.CLUB_KEYS["name"]
         members = [("timestamp", 0), ("page", 0)]
     elif mode == _.MISSION:
         url     = _.MISSION_ID_URL
         ifile   = _.MISSION_INDEX
         db_dir  = _make_dir(_.MISSION_DB_DIR)
-        stop    = 2
-        key     = "MISSIONPACKNAME"
+        stop    = _.MISSION_PAGES
+        key     = _.MISSION_KEYS["name"]
         members = [("timestamp", 0), ("page", 0)]
     else:
         raise ValueError("invalid argument")
@@ -58,7 +58,7 @@ def touch(mode, refresh=False):
     else:
         index = {}
     if refresh or not index:
-        for page in range(1, stop):
+        for page in range(1, stop + 1):
             data = json.loads(urlopen(url.format(page)).read().decode())["DATA"]["RECORD"]
             for record in data:
                 name = record[key]

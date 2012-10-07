@@ -47,44 +47,40 @@ def mode(mode):
         id_url   = _.STAR_ID_URL
         img_url  = _.DISC_IMAGE_URL
         img_dir  = _make_dir(_.DISC_IMAGE_DIR)
-        stop     = 9
+        stop     = _.STAR_PAGES
+        keys     = _.DISC_KEYS
         suffix   = 2
-        img_key  = "DISCIMG"
-        name_key = "DISCNAME"
     elif mode == _.POP:
         id_url   = _.POP_ID_URL
         img_url  = _.DISC_IMAGE_URL
         img_dir  = _make_dir(_.DISC_IMAGE_DIR)
-        stop     = 9
+        stop     = _.POP_PAGES
+        keys     = _.DISC_KEYS
         suffix   = 5
-        img_key  = "DISCIMG"
-        name_key = "DISCNAME"
     elif mode == _.CLUB:
         id_url   = _.CLUB_ID_URL
         img_url  = _.CLUB_IMAGE_URL
         img_dir  = _make_dir(_.CLUB_IMAGE_DIR)
-        stop     = 2
+        stop     = _.CLUB_PAGES
+        keys     = _.CLUB_KEYS
         suffix   = 2
-        img_key  = "DISCSETIMG"
-        name_key = "DISCSETNAME"
     elif mode == _.MISSION:
         id_url   = _.MISSION_ID_URL
         img_url  = _.MISSION_IMAGE_URL
         img_dir  = _make_dir(_.MISSION_IMAGE_DIR)
-        stop     = 2
+        stop     = _.MISSION_PAGES
+        keys     = _.MISSION_KEYS
         suffix   = 2
-        img_key  = "MISSIONPACKICON"
-        name_key = "MISSIONPACKNAME"
     else:
         raise ValueError("invalid argument")
-    for page in range(1, stop):
+    for page in range(1, stop + 1):
         data = json.loads(urlopen(id_url.format(page)).read().decode())["DATA"]["RECORD"]
         for record in data:
-            theirname = record[img_key] + (".png" if mode == _.MISSION else "")
+            theirname = record[keys["image"]] + (".png" if mode == _.MISSION else "")
             i = theirname.rfind(".")
             name, extension = theirname[:i], theirname[i:]
             for i in range(1, suffix):
-                myname = "{}_{}{}".format(_clean(record[name_key]), i, extension)
+                myname = "{}_{}{}".format(_clean(record[keys["name"]]), i, extension)
                 if _exists(img_dir + myname):
                     continue
                 if mode == _.POP:

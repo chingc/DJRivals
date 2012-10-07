@@ -37,7 +37,16 @@ _.POP     = 1
 _.CLUB    = 2
 _.MISSION = 3
 
+_.STAR_PAGES    = 9
+_.POP_PAGES     = 9
+_.CLUB_PAGES    = 1
+_.MISSION_PAGES = 1
+
 _.CHARTS = ["nm", "hd", "mx"]
+
+_.DISC_KEYS    = {"name": "DISCNAME", "id": "DISCID", "image": "DISCIMG"}
+_.CLUB_KEYS    = {"name": "DISCSETNAME", "id": "DISCSETID", "image": "DISCSETIMG"}
+_.MISSION_KEYS = {"name": "MISSIONPACKNAME", "id": "MISSIONPACKID", "image": "MISSIONPACKICON"}
 
 _.RANKING_URL = "http://djmaxcrew.com/ranking/"
 _.ICON_URL    = "http://img3.djmaxcrew.com/icon/"
