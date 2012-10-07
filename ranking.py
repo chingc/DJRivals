@@ -9,48 +9,33 @@ import index
 def _f_id():
     """The identifier for a given mode and name."""
     def _id(mode, name):
-        # DJMAX returns up to 20 identifiers at a time (each page contains 20
-        # except the last page which may contain less), so this function uses a
-        # cache to expedite future lookups.  However, since it is unknown how
-        # long these identifiers stay valid, the cache is set to automatically
-        # clear itself and rebuild once it exceeds a certain capacity.
         if mode == _.STAR:
             url   = _.STAR_ID_URL
             keys  = _.DISC_KEYS
             idata = star_index
-            cache = star_cache
         elif mode == _.POP:
             url   = _.POP_ID_URL
             keys  = _.DISC_KEYS
             idata = pop_index
-            cache = pop_cache
         elif mode == _.CLUB:
             url   = _.CLUB_ID_URL
             keys  = _.CLUB_KEYS
             idata = club_index
-            cache = club_cache
         elif mode == _.MISSION:
             url   = _.MISSION_ID_URL
             keys  = _.MISSION_KEYS
             idata = mission_index
-            cache = mission_cache
         else:
             raise ValueError("invalid argument")
-        if name not in cache:
-            if len(cache) > 20:  # value of 20 means at most 40 entries
-                cache.clear()
-            data = json.loads(urlopen(url.format(idata[name]["page"])).read().decode())["DATA"]["RECORD"]
-            cache.update({record[keys["name"]]: record[keys["id"]] for record in data})
-        return cache[name]
+        data = json.loads(urlopen(url.format(idata[name]["page"])).read().decode())["DATA"]["RECORD"]
+        for record in data:
+            if record[keys["name"]] == name:
+                return record[keys["id"]]
 
     star_index    = index.touch(_.STAR)
     pop_index     = index.touch(_.POP)
     club_index    = index.touch(_.CLUB)
     mission_index = index.touch(_.MISSION)
-    star_cache    = {}
-    pop_cache     = {}
-    club_cache    = {}
-    mission_cache = {}
     return _id
 
 
