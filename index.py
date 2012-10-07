@@ -2,6 +2,7 @@
 from collections import OrderedDict
 from urllib.request import urlopen
 import json
+import time
 
 from common import _, _clean, _exists, _list_dir, _make_dir
 import psxml
@@ -259,6 +260,8 @@ def html():
     ps.empty("br", newline=False).empty("br")
     ps.raw("Images copyright (c), NEOWIZ and PENTAVISION", False).empty("br")
     ps.raw("All rights reserved.")
+    ps.empty("br", newline=False).empty("br")
+    ps.raw("Updated: " + time.strftime("%Y%m%d"))
     ps.end()
 
     # body, html
