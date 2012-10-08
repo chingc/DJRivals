@@ -63,7 +63,7 @@ JSON DJ
 Details
 -------
 This data structure represents a DJ.  All scores for all modes are contained
-within this structure.  The master score is also included.
+within this structure.  The master scores are also included.
 
 Special Values
 --------------

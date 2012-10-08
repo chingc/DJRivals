@@ -1,5 +1,5 @@
-JSON Master Ranking Data Structure
-==================================
+JSON Master Ranking
+===================
 
 {
     "ranking": [
@@ -13,7 +13,7 @@ JSON Master Ranking Data Structure
 Details
 -------
 This represents the master rankings.  It is identical to the ranking key of the
-database data structures, except the scores in this case is the sum total.
+database data structure, except the scores in this case are the sum total.
 
 Special Values
 --------------
