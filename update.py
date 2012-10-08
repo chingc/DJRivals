@@ -54,4 +54,5 @@ def finish():
     database.dj()
     database.master()
     image.icon()
+    index.html()
     print("Done.")
