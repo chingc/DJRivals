@@ -25,8 +25,7 @@ def _list_dir(path):
 
 def _make_dir(path):
     """Create the given directory path if it doesn't already exist."""
-    if not os.path.exists(path):
-        os.makedirs(path)
+    os.makedirs(path, exist_ok=True)
     return path
 
 
