@@ -8,13 +8,15 @@ from common import _, _clean, _exists, _list_dir, _make_dir
 import psxml
 
 
-def touch(mode, refresh=False):
+def touch(mode, refresh=False, reset=False):
     """Create, update, or retrieve an index.
 
     Any of the four integer constants defined in the common module can be given
     as an argument.  It will create, update, or retrieve an index of that type.
-    An optional boolean value (default: False) controls whether or not to
-    perform a refresh by checking the DJMAX site.
+    The first boolean value (default: False) controls whether or not to perform
+    an index refresh by checking the DJMAX site.  The second boolean, when set
+    to True, will reset the timestamp to zero (default: False).  The timestamps
+    track when a particular database has been updated.
 
     Note: The Star and Pop indexes contain elements that need to be manually
     maintained because the DJMAX site does not list the difficulty level of
@@ -64,7 +66,8 @@ def touch(mode, refresh=False):
                 name = record[key]
                 if name not in index:
                     index[name] = OrderedDict(members)
-                index[name]["timestamp"] = 0
+                if reset:
+                    index[name]["timestamp"] = 0
                 index[name]["page"] = page
         with open(ifile, "wb") as f:
             f.write(json.dumps(OrderedDict(sorted(index.items())), indent=2).encode())
