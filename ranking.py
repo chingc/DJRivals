@@ -1,8 +1,7 @@
 """Ranking retrieval."""
-from urllib.request import urlopen
 import json
 
-from common import _
+from common import _, _open_url
 import index
 
 
@@ -10,25 +9,24 @@ def _f_id():
     """The identifier for a given mode and name."""
     def _id(mode, name):
         if mode == _.STAR:
-            url   = _.STAR_ID_URL
-            keys  = _.DISC_KEYS
-            idata = star_index
+            url  = _.STAR_ID_URL
+            keys = _.DISC_KEYS
+            data = star_index
         elif mode == _.POP:
-            url   = _.POP_ID_URL
-            keys  = _.DISC_KEYS
-            idata = pop_index
+            url  = _.POP_ID_URL
+            keys = _.DISC_KEYS
+            data = pop_index
         elif mode == _.CLUB:
-            url   = _.CLUB_ID_URL
-            keys  = _.CLUB_KEYS
-            idata = club_index
+            url  = _.CLUB_ID_URL
+            keys = _.CLUB_KEYS
+            data = club_index
         elif mode == _.MISSION:
-            url   = _.MISSION_ID_URL
-            keys  = _.MISSION_KEYS
-            idata = mission_index
+            url  = _.MISSION_ID_URL
+            keys = _.MISSION_KEYS
+            data = mission_index
         else:
-            raise ValueError("invalid argument")
-        data = json.loads(urlopen(url.format(idata[name]["page"])).read().decode())["DATA"]["RECORD"]
-        for record in data:
+            raise ValueError("invalid game mode")
+        for record in json.loads(_open_url(url.format(data[name]["page"])).read().decode())["DATA"]["RECORD"]:
             if record[keys["name"]] == name:
                 return record[keys["id"]]
 
@@ -51,14 +49,16 @@ def _ranking(mode, name, chart=None):
     elif mode == _.MISSION:
         url = _.MISSION_RANKING_URL
     else:
-        raise ValueError("invalid argument")
-    identifier = _id(mode, name)
+        raise ValueError("invalid game mode")
+    page = 1
     results = []
-    for page in range(1, 100):
-        data = json.loads(urlopen(url.format(identifier, page) + (("&pt=" + chart) if mode == _.POP else "")).read().decode())["DATA"]["RECORD"]
-        results.extend([(record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in data])
-        if len(data) < 20:
+    identifier = _id(mode, name)
+    while True:
+        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + chart) if mode == _.POP else "")).read().decode())["DATA"]["RECORD"]
+        results.extend([(record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply])
+        if len(reply) < 20:
             break
+        page += 1
     return results
 
 

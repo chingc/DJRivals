@@ -33,16 +33,13 @@ def _make_dir(path):
 
 def _open_url(url):
     """Retrieve data from the specified url."""
-    data = None
-    while data is None:
+    while True:
         try:
-            data = urllib.request.urlopen(url)
-            break
+            return urllib.request.urlopen(url)
         except OSError as error:
             print("An error occurred:", error)
             print("Trying again in", 180, "seconds.")
             time.sleep(180)
-    return data
 
 
 _ = _Constant()
