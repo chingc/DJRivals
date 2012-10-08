@@ -1,6 +1,8 @@
 """Variables and functions common to other modules."""
 import os
 import re
+import time
+import urllib
 
 
 class _Constant():
@@ -27,6 +29,20 @@ def _make_dir(path):
     """Create the given directory path if it doesn't already exist."""
     os.makedirs(path, exist_ok=True)
     return path
+
+
+def _open_url(url):
+    """Retrieve data from the specified url."""
+    data = None
+    while data is None:
+        try:
+            data = urllib.request.urlopen(url)
+            break
+        except OSError as error:
+            print("An error occurred:", error)
+            print("Trying again in", 180, "seconds.")
+            time.sleep(180)
+    return data
 
 
 _ = _Constant()
