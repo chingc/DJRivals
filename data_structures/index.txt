@@ -1,57 +1,24 @@
 JSON Index
 ==========
 
-Club and Mission Index
-----------------------
-
 {
     "name": {
-        "timestamp": 0,
-        "page": 0
-    }
-}
-
-Star Index
-----------
-
-{
-    "name": {
-        "timestamp": 0,
         "page": 0,
-        "level": 0
-    }
-}
-
-Pop Index
----------
-
-{
-    "name": {
-        "timestamp": 0,
-        "page": 0,
-        "nm": 0,
-        "hd": 0,
-        "mx": 0,
-        "ex": 0
+        "timestamp": 0
     }
 }
 
 Details
 -------
-The index is a dictionary of all available names.  Each game mode has a slightly
-different structure, but are essentially identical.  Each name key accesses a
-dictionary that contains the page where the disc shows up in the ranking section
-of the DJMAX site.  For the Star and Pop structure, the difficulty levels are
-included.  The difficulty key is called "level" in the Star structure, and
-referred to by the chart in the Pop structure.  Difficulty levels must be
-maintained manually since DJMAX does not list them anywhere.  Timestamp is a
+The index is a dictionary of all available names.  Each game mode has its own
+index.  Each name key accesses a dictionary that contains the page where the
+disc shows up in the ranking section of the DJMAX site.  The timestamp is a
 value indicating when this particular database was updated.
 
 Special Values
 --------------
-A difficulty level of 0 is used to indicate the non-existence of a chart for the
-Star and Pop structures.  However, this value currently serves no purpose.
+None.
 
 Notes
 -----
-The Star and Pop structure has elements that must be maintained by hand.
+This structure is generated automatically and should not be edited manually.

@@ -1,9 +1,6 @@
 JSON Database
 =============
 
-Club and Mission Database
--------------------------
-
 {
     "name": "",
     "eyecatch": "",
@@ -15,75 +12,6 @@ Club and Mission Database
         [ 3, "djicon", "djname", 300000 ],
         ...
     ]
-}
-
-Star Database
--------------
-
-{
-    "name": "",
-    "eyecatch": "",
-    "icon": "",
-    "level": 0,
-    "records": 0,
-    "ranking": [
-        [ 1, "djicon", "djname", 300000 ],
-        [ 2, "djicon", "djname", 300000 ],
-        [ 3, "djicon", "djname", 300000 ],
-        ...
-    ]
-}
-
-Pop Database
-------------
-
-{
-    "name": "",
-    "eyecatch": "",
-    "nm": {
-        "icon": "",
-        "level": 0,
-        "records": 0,
-        "ranking": [
-            [ 1, "djicon", "djname", 300000 ],
-            [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ],
-            ...
-        ]
-    },
-    "hd": {
-        "icon": "",
-        "level": 0,
-        "records": 0,
-        "ranking": [
-            [ 1, "djicon", "djname", 300000 ],
-            [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ],
-            ...
-        ]
-    },
-    "mx": {
-        "icon": "",
-        "level": 0,
-        "records": 0,
-        "ranking": [
-            [ 1, "djicon", "djname", 300000 ],
-            [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ],
-            ...
-        ]
-    },
-    "ex": {
-        "icon": "",
-        "level": 0,
-        "records": 0,
-        "ranking": [
-            [ 1, "djicon", "djname", 300000 ],
-            [ 2, "djicon", "djname", 300000 ],
-            [ 3, "djicon", "djname", 300000 ],
-            ...
-        ]
-    }
 }
 
 Details
@@ -98,8 +26,7 @@ name, and finally index 3 is the score.
 
 Special Values
 --------------
-A difficulty level of 0 is used to indicate the non-existence of a chart for the
-Star and Pop structures.  However, this value currently serves no purpose.
+None.
 
 Notes
 -----
