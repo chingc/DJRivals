@@ -30,14 +30,14 @@ def _f_id():
             if record[key["name"]] == name:
                 return record[key["id"]]
 
-    star_index    = index.touch(_.STAR)
-    pop_index     = index.touch(_.POP)
-    club_index    = index.touch(_.CLUB)
-    mission_index = index.touch(_.MISSION)
+    star_index    = index.index(_.STAR)
+    pop_index     = index.index(_.POP)
+    club_index    = index.index(_.CLUB)
+    mission_index = index.index(_.MISSION)
     return _id
 
 
-def _ranking(mode, name, chart=None):
+def ranking(mode, name, chart=None):
     """The complete ranking of the specified mode and name."""
     if mode == _.STAR:
         url = _.STAR_RANKING_URL
