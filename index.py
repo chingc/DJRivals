@@ -9,9 +9,9 @@ def index(mode, refresh=False):
     """Create, update, or retrieve an index.
 
     Any of the four game mode constants defined in the common module can be
-    given as an argument.  It will create, update, or retrieve an index of the
-    specified game mode.  The boolean value (default: False) controls whether or
-    not to perform an index refresh by checking the DJMAX site.
+    given as the first argument.  It will create, update, or retrieve an index
+    of the specified game mode.  The boolean value (default: False) controls
+    whether or not to perform an index refresh by checking the DJMAX site.
 
     """
     if mode == _.STAR:

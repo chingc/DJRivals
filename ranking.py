@@ -37,8 +37,16 @@ def _f_id():
     return _id
 
 
-def ranking(mode, name, chart=None):
-    """The complete ranking of the specified mode and name."""
+def ranking(mode, name, chart=_.CHART["nm"]):
+    """The complete ranking of the specified mode and name.
+
+    Any of the four game mode constants defined in the common module can be
+    given as the first argument.  The name must be the complete name of a disc,
+    disc set, or mission.  The chart is a value from the CHART dictionary
+    defined in the common module.  It is only relevant to Pop Mode, and defaults
+    to the value of the "nm" key.
+
+    """
     if mode == _.STAR:
         url = _.STAR_RANKING_URL
     elif mode == _.POP:
