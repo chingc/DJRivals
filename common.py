@@ -2,7 +2,7 @@
 import os
 import re
 import time
-import urllib
+import urllib.request
 
 
 class _Constant():
@@ -62,7 +62,7 @@ _.MISSION_KEY = {"name": "MISSIONPACKNAME", "id": "MISSIONPACKID", "image": "MIS
 
 _.RANKING_URL = "http://djmaxcrew.com/ranking/"
 _.ICON_URL    = "http://img3.djmaxcrew.com/icon/"
-_.OUTPUT_DIR  = "../smwst.github.com/DJRivals/"
+_.OUTPUT_DIR  = "../smwst.github.com/DJRivals-test/"
 
 _.STAR_ID_URL    = _.RANKING_URL + "GetRankStarMixing.asp?p={}"
 _.POP_ID_URL     = _.RANKING_URL + "GetRankPopMixing.asp?p={}"
@@ -81,7 +81,10 @@ _.MISSION_IMAGE_URL = _.ICON_URL + "missionpack/{}"
 
 _.DJ_DB_DIR      = _.OUTPUT_DIR + "database/dj/"
 _.STAR_DB_DIR    = _.OUTPUT_DIR + "database/star/"
-_.POP_DB_DIR     = _.OUTPUT_DIR + "database/pop/"
+_.POP_NM_DB_DIR  = _.OUTPUT_DIR + "database/pop_nm/"
+_.POP_HD_DB_DIR  = _.OUTPUT_DIR + "database/pop_hd/"
+_.POP_MX_DB_DIR  = _.OUTPUT_DIR + "database/pop_mx/"
+_.POP_EX_DB_DIR  = _.OUTPUT_DIR + "database/pop_ex/"
 _.CLUB_DB_DIR    = _.OUTPUT_DIR + "database/club/"
 _.MISSION_DB_DIR = _.OUTPUT_DIR + "database/mission/"
 _.MASTER_DB_DIR  = _.OUTPUT_DIR + "database/master/"
