@@ -14,7 +14,7 @@ def build(mode, name):
 
     Any of the four integer constants defined in the common module can be given
     as the first argument.  The second argument is a name of a disc, disc set,
-    or mission.  The name must be appropriate for the specified mode.
+    or mission.  The name must belong to the specified mode.
 
     """
     def _nonpop():

@@ -38,8 +38,8 @@ def _open_url(url):
             return urllib.request.urlopen(url)
         except OSError as error:
             print("An error occurred:", error)
-            print("Trying again in", 180, "seconds.")
-            time.sleep(180)
+            print("Trying again in", 60, "seconds.")
+            time.sleep(60)
 
 
 _ = _Constant()
@@ -54,11 +54,11 @@ _.POP_PAGES     = 9
 _.CLUB_PAGES    = 1
 _.MISSION_PAGES = 1
 
-_.CHARTS = ["nm", "hd", "mx"]
+_.CHART = {"nm": "1", "hd": "2", "mx": "3", "ex": "4"}
 
-_.DISC_KEYS    = {"name": "DISCNAME", "id": "DISCID", "image": "DISCIMG"}
-_.CLUB_KEYS    = {"name": "DISCSETNAME", "id": "DISCSETID", "image": "DISCSETIMG"}
-_.MISSION_KEYS = {"name": "MISSIONPACKNAME", "id": "MISSIONPACKID", "image": "MISSIONPACKICON"}
+_.DISC_KEY    = {"name": "DISCNAME", "id": "DISCID", "image": "DISCIMG"}
+_.CLUB_KEY    = {"name": "DISCSETNAME", "id": "DISCSETID", "image": "DISCSETIMG"}
+_.MISSION_KEY = {"name": "MISSIONPACKNAME", "id": "MISSIONPACKID", "image": "MISSIONPACKICON"}
 
 _.RANKING_URL = "http://djmaxcrew.com/ranking/"
 _.ICON_URL    = "http://img3.djmaxcrew.com/icon/"

@@ -29,28 +29,28 @@ def touch(mode, refresh=False, reset=False):
         ifile   = _.STAR_INDEX
         db_dir  = _make_dir(_.STAR_DB_DIR)
         stop    = _.STAR_PAGES
-        key     = _.DISC_KEYS["name"]
+        key     = _.DISC_KEY["name"]
         members = [("timestamp", 0), ("page", 0), ("level", 0)]
     elif mode == _.POP:
         url     = _.POP_ID_URL
         ifile   = _.POP_INDEX
         db_dir  = _make_dir(_.POP_DB_DIR)
         stop    = _.POP_PAGES
-        key     = _.DISC_KEYS["name"]
+        key     = _.DISC_KEY["name"]
         members = [("timestamp", 0), ("page", 0), ("nm", 0), ("hd", 0), ("mx", 0), ("ex", 0)]
     elif mode == _.CLUB:
         url     = _.CLUB_ID_URL
         ifile   = _.CLUB_INDEX
         db_dir  = _make_dir(_.CLUB_DB_DIR)
         stop    = _.CLUB_PAGES
-        key     = _.CLUB_KEYS["name"]
+        key     = _.CLUB_KEY["name"]
         members = [("timestamp", 0), ("page", 0)]
     elif mode == _.MISSION:
         url     = _.MISSION_ID_URL
         ifile   = _.MISSION_INDEX
         db_dir  = _make_dir(_.MISSION_DB_DIR)
         stop    = _.MISSION_PAGES
-        key     = _.MISSION_KEYS["name"]
+        key     = _.MISSION_KEY["name"]
         members = [("timestamp", 0), ("page", 0)]
     else:
         raise ValueError("invalid argument")

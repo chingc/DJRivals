@@ -10,25 +10,25 @@ def _f_id():
     def _id(mode, name):
         if mode == _.STAR:
             url  = _.STAR_ID_URL
-            keys = _.DISC_KEYS
+            key  = _.DISC_KEY
             data = star_index
         elif mode == _.POP:
             url  = _.POP_ID_URL
-            keys = _.DISC_KEYS
+            key  = _.DISC_KEY
             data = pop_index
         elif mode == _.CLUB:
             url  = _.CLUB_ID_URL
-            keys = _.CLUB_KEYS
+            key  = _.CLUB_KEY
             data = club_index
         elif mode == _.MISSION:
             url  = _.MISSION_ID_URL
-            keys = _.MISSION_KEYS
+            key  = _.MISSION_KEY
             data = mission_index
         else:
             raise ValueError("invalid game mode")
         for record in json.loads(_open_url(url.format(data[name]["page"])).read().decode())["DATA"]["RECORD"]:
-            if record[keys["name"]] == name:
-                return record[keys["id"]]
+            if record[key["name"]] == name:
+                return record[key["id"]]
 
     star_index    = index.touch(_.STAR)
     pop_index     = index.touch(_.POP)
@@ -43,7 +43,6 @@ def _ranking(mode, name, chart=None):
         url = _.STAR_RANKING_URL
     elif mode == _.POP:
         url = _.POP_RANKING_URL
-        chart = (lambda x: "1" if x == "nm" else "2" if x == "hd" else "3" if x == "mx" else "4")(chart)
     elif mode == _.CLUB:
         url = _.CLUB_RANKING_URL
     elif mode == _.MISSION:
