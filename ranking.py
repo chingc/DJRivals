@@ -2,7 +2,7 @@
 import json
 
 from common import _, _open_url
-import index
+from index import index
 
 
 def _f_id():
@@ -30,10 +30,10 @@ def _f_id():
             if record[key["name"]] == name:
                 return record[key["id"]]
 
-    star_index    = index.index(_.STAR)
-    pop_index     = index.index(_.POP)
-    club_index    = index.index(_.CLUB)
-    mission_index = index.index(_.MISSION)
+    star_index    = index(_.STAR)
+    pop_index     = index(_.POP)
+    club_index    = index(_.CLUB)
+    mission_index = index(_.MISSION)
     return _id
 
 

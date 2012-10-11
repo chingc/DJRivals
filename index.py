@@ -1,5 +1,5 @@
 """Index management."""
-from collections import OrderedDict
+from collections import OrderedDict as dict
 import json
 
 from common import _, _make_dir, _open_url
@@ -55,7 +55,3 @@ def index(mode, refresh=False):
             f.write(json.dumps(dict(sorted(index.items())), indent=2).encode())
         print('Wrote: "{}"'.format(path))
     return index
-
-
-# reroute all dict calls to OrderedDict
-dict = OrderedDict
