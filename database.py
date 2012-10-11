@@ -1,92 +1,58 @@
 """Database creation."""
-from collections import OrderedDict
+from collections import OrderedDict as dict
 import json
 import time
 import zlib
 
 from common import _, _clean, _list_dir, _make_dir
-from ranking import _ranking
-import index
+from ranking import ranking
 
 
 def build(mode, name):
     """Build a local database of the specified mode and name.
 
-    Any of the four integer constants defined in the common module can be given
-    as the first argument.  The second argument is a name of a disc, disc set,
-    or mission.  The name must belong to the specified mode.
+    Any of the four game mode constants defined in the common module can be
+    given as the first argument.  The name must be the complete name of a disc,
+    disc set, or mission.
 
     """
-    def _nonpop():
-        output = OrderedDict()
-        output["name"] = name
-        output["eyecatch"] = clean_name + ".png"
-        output["icon"] = clean_name + "_1.png"
-        if mode == _.STAR:
-            output["level"] = idata[name]["level"]
-        while True:
-            try:
-                results = _ranking(mode, name)
-                output["records"] = len(results)
-                output["ranking"] = results
-                print(clean_name, "ok.")
-                break
-            except:
-                print(clean_name, "error.  (retrying in 5 minutes)")
-                time.sleep(300)
-        return output
-
-    def _pop():
-        output = OrderedDict()
-        output["name"] = name
-        output["eyecatch"] = clean_name + ".png"
-        for chart in _.CHARTS:
-            output[chart] = OrderedDict()
-            output[chart]["icon"] = "{}_{}.png".format(clean_name, 1 if chart == "nm" else 2 if chart == "hd" else 3 if chart == "mx" else 4)
-            output[chart]["level"] = idata[name][chart]
-            while True:
-                try:
-                    results = _ranking(mode, name, chart)
-                    output[chart]["records"] = len(results)
-                    output[chart]["ranking"] = results
-                    print("{} {} ok.".format(clean_name, chart))
-                    break
-                except:
-                    print("{} {} error.  (retrying in 5 minutes)".format(clean_name, chart))
-                    time.sleep(300)
-        return output
-
-    clean_name = _clean(name)
     if mode == _.STAR:
-        ifile  = _.STAR_INDEX
-        idata  = index.touch(_.STAR)
-        db_dir = _make_dir(_.STAR_DB_DIR)
-        output = _nonpop()
+        path  = _.STAR_INDEX
+        level = [("nm", _make_dir(_.STAR_DB_DIR))]
     elif mode == _.POP:
-        ifile  = _.POP_INDEX
-        idata  = index.touch(_.POP)
-        db_dir = _make_dir(_.POP_DB_DIR)
-        output = _pop()
+        path  = _.POP_INDEX
+        level = [("nm", _make_dir(_.POP_NM_DB_DIR)),
+                 ("hd", _make_dir(_.POP_HD_DB_DIR)),
+                 ("mx", _make_dir(_.POP_MX_DB_DIR)),
+                 ("ex", _make_dir(_.POP_EX_DB_DIR))]
     elif mode == _.CLUB:
-        ifile  = _.CLUB_INDEX
-        idata  = index.touch(_.CLUB)
-        db_dir = _make_dir(_.CLUB_DB_DIR)
-        output = _nonpop()
+        path  = _.CLUB_INDEX
+        level = [("nm", _make_dir(_.CLUB_DB_DIR))]
     elif mode == _.MISSION:
-        ifile  = _.MISSION_INDEX
-        idata  = index.touch(_.MISSION)
-        db_dir = _make_dir(_.MISSION_DB_DIR)
-        output = _nonpop()
+        path  = _.MISSION_INDEX
+        level = [("nm", _make_dir(_.MISSION_DB_DIR))]
     else:
-        raise ValueError("invalid argument")
-    with open(ifile, "rb") as f:
-        idata = json.loads(f.read().decode(), object_pairs_hook=OrderedDict)
-    idata[name]["timestamp"] = int(time.time())
-    with open(ifile, "wb") as f:
-        f.write(json.dumps(idata, indent=2).encode())
-    with open("{}{}.json".format(db_dir, clean_name), "wb") as f:
-        f.write(json.dumps(output, indent=1).encode())
-    print('Wrote: "{}{}.json"'.format(db_dir, clean_name))
+        raise ValueError("invalid game mode")
+    clean_name = _clean(name)
+    data = dict()
+    data["name"] = name
+    data["eyecatch"] = "{}.png".format(clean_name)
+    for a, b in level:
+        results = ranking(mode, name, _.CHART[a])
+        if len(results) == 0:
+            continue
+        data["icon"] = "{}_{}.png".format(clean_name, _.CHART[a])
+        data["records"] = len(results)
+        data["ranking"] = results
+        with open("{}{}.json".format(b, clean_name), "wb") as f:
+            f.write(json.dumps(data, indent=2).encode())
+        print('Wrote: "{}{}.json"'.format(b, clean_name))
+    # update timestamp (clobbers the now useless 'data' variable)
+    with open(path, "rb") as f:
+        data = json.loads(f.read().decode(), object_pairs_hook=dict)
+        data[name]["timestamp"] = int(time.time())
+    with open(path, "wb") as f:
+        f.write(json.dumps(data, indent=2).encode())
 
 
 def dj():
