@@ -2,7 +2,7 @@
 from collections import OrderedDict
 import json
 
-from common import _, _exists, _open_url
+from common import _, _make_dir, _open_url
 
 
 def index(mode, refresh=False):
@@ -14,6 +14,7 @@ def index(mode, refresh=False):
     whether or not to perform an index refresh by checking the DJMAX site.
 
     """
+    _make_dir(_.DB_DIR)
     if mode == _.STAR:
         url  = _.STAR_ID_URL
         key  = _.DISC_KEY["name"]
@@ -36,10 +37,10 @@ def index(mode, refresh=False):
         last = _.MISSION_PAGES
     else:
         raise ValueError("invalid game mode")
-    if _exists(data):
+    try:
         with open(data, "rb") as f:
             index = json.loads(f.read().decode(), object_pairs_hook=dict)
-    else:
+    except FileNotFoundError:
         index = {}
     if refresh or not index:
         for page in range(1, last + 1):
