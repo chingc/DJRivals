@@ -40,7 +40,7 @@ def index(mode, refresh=False):
     try:
         with open(path, "rb") as f:
             index = json.loads(f.read().decode(), object_pairs_hook=dict)
-    except FileNotFoundError:
+    except (FileNotFoundError, ValueError):
         index = {}
     if refresh or not index:
         for page in range(1, last + 1):
