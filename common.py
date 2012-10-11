@@ -79,6 +79,7 @@ _.DISC_IMAGE_URL    = _.ICON_URL + "disc/110/{}"
 _.CLUB_IMAGE_URL    = _.ICON_URL + "discset/134/{}"
 _.MISSION_IMAGE_URL = _.ICON_URL + "missionpack/{}"
 
+_.DB_DIR         = _.OUTPUT_DIR + "database/"
 _.DJ_DB_DIR      = _.OUTPUT_DIR + "database/dj/"
 _.STAR_DB_DIR    = _.OUTPUT_DIR + "database/star/"
 _.POP_NM_DB_DIR  = _.OUTPUT_DIR + "database/pop_nm/"
