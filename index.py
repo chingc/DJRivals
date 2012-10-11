@@ -18,27 +18,27 @@ def index(mode, refresh=False):
     if mode == _.STAR:
         url  = _.STAR_ID_URL
         key  = _.DISC_KEY["name"]
-        data = _.STAR_INDEX
+        path = _.STAR_INDEX
         last = _.STAR_PAGES
     elif mode == _.POP:
         url  = _.POP_ID_URL
         key  = _.DISC_KEY["name"]
-        data = _.POP_INDEX
+        path = _.POP_INDEX
         last = _.POP_PAGES
     elif mode == _.CLUB:
         url  = _.CLUB_ID_URL
         key  = _.CLUB_KEY["name"]
-        data = _.CLUB_INDEX
+        path = _.CLUB_INDEX
         last = _.CLUB_PAGES
     elif mode == _.MISSION:
         url  = _.MISSION_ID_URL
         key  = _.MISSION_KEY["name"]
-        data = _.MISSION_INDEX
+        path = _.MISSION_INDEX
         last = _.MISSION_PAGES
     else:
         raise ValueError("invalid game mode")
     try:
-        with open(data, "rb") as f:
+        with open(path, "rb") as f:
             index = json.loads(f.read().decode(), object_pairs_hook=dict)
     except FileNotFoundError:
         index = {}
@@ -51,9 +51,9 @@ def index(mode, refresh=False):
                     index[name] = dict([("page", page), ("timestamp", 0)])
                 else:
                     index[name]["page"] = page
-        with open(data, "wb") as f:
+        with open(path, "wb") as f:
             f.write(json.dumps(dict(sorted(index.items())), indent=2).encode())
-        print('Wrote: "{}"'.format(data))
+        print('Wrote: "{}"'.format(path))
     return index
 
 
