@@ -3,17 +3,19 @@ JSON Index
 
 {
     "name": {
-        "page": 0,
-        "timestamp": 0
-    }
+        "timestamp": 0,
+        "page": 0
+    },
+    ...
 }
 
 Details
 -------
-The index is a dictionary of all available names.  Each game mode has its own
-index.  Each name key accesses a dictionary that contains the page where the
-disc shows up in the ranking section of the DJMAX site.  The timestamp is a
-value indicating when this particular database was updated.
+The index is a dictionary of all available disc, disc set, or mission names.
+Each game mode has its own index, and the names within the index represents a
+database in DJRivals.  The timestamp marks when the database was last updated.
+Page indicates where the disc, disc set, or mission shows up in the ranking
+section of the DJMAX site.
 
 Special Values
 --------------
