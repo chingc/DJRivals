@@ -5,24 +5,21 @@ JSON Database
     "name": "",
     "eyecatch": "",
     "icon": "",
-    "records": 0,
     "ranking": [
-        [ 1, "djicon", "djname", 300000 ],
-        [ 2, "djicon", "djname", 300000 ],
-        [ 3, "djicon", "djname", 300000 ],
+        [1, "djicon", "djname", 300000],
+        [2, "djicon", "djname", 300000],
+        [3, "djicon", "djname", 300000],
         ...
     ]
 }
 
 Details
 -------
-This data structure represents a database of information for a particular disc,
-disc set, or mission.  Most entries are self-evident.  A few less obvious ones:
-"eyecatch" holds the filename of the eyecatch; "icon" holds the filename of the
-disc, disc set, or mission icon; and "records" is the amount of scores in the
-ranking.  The ranking is a list of lists.  Each list represents the score for
-one DJ.  List index 0 is the DJ rank, followed by the DJ icon filename, the DJ
-name, and finally index 3 is the score.
+This data structure represents a disc, disc set, or mission.  The "eyecatch"
+holds the filename of the eyecatch, "icon" holds the filename of the disc, disc
+set, or mission icon, and the ranking is a list of lists.  Each list represents
+the score for one DJ.  List index 0 is the DJ rank, followed by the DJ icon
+filename, the DJ name, and finally index 3 is the score.
 
 Special Values
 --------------
