@@ -33,21 +33,19 @@ def build(mode, name):
         level = [("nm", _make_dir(_.MISSION_DB_DIR))]
     else:
         raise ValueError("invalid game mode")
-    clean_name = _clean(name)
-    data = dict()
-    data["name"] = name
-    data["eyecatch"] = "{}.png".format(clean_name)
     for a, b in level:
         results = ranking(mode, name, _.CHART[a])
         if len(results) == 0:
             continue
+        clean_name = _clean(name)
+        data = dict()
+        data["name"] = name
+        data["eyecatch"] = "{}.png".format(clean_name)
         data["icon"] = "{}_{}.png".format(clean_name, _.CHART[a])
-        data["records"] = len(results)
         data["ranking"] = results
         with open("{}{}.json".format(b, clean_name), "wb") as f:
             f.write(json.dumps(data, indent=2).encode())
         print('Wrote: "{}{}.json"'.format(b, clean_name))
-    # update timestamp (clobbers the now useless 'data' variable)
     with open(path, "rb") as f:
         data = json.loads(f.read().decode(), object_pairs_hook=dict)
         data[name]["timestamp"] = int(time.time())

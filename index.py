@@ -48,7 +48,7 @@ def index(mode, refresh=False):
             for record in reply:
                 name = record[key]
                 if name not in index:
-                    index[name] = dict([("page", page), ("timestamp", 0)])
+                    index[name] = dict([("timestamp", 0), ("page", page)])
                 else:
                     index[name]["page"] = page
         with open(path, "wb") as f:
