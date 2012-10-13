@@ -14,7 +14,6 @@ def index(mode, refresh=False):
     whether or not to perform an index refresh by checking the DJMAX site.
 
     """
-    _make_dir(_.DB_DIR)
     if mode == _.STAR:
         url  = _.STAR_ID_URL
         key  = _.DISC_KEY["name"]
@@ -55,3 +54,6 @@ def index(mode, refresh=False):
             f.write(json.dumps(dict(sorted(index.items())), indent=2).encode())
         print('Wrote: "{}"'.format(path))
     return index
+
+
+_make_dir(_.DB_DIR)
