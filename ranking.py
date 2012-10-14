@@ -62,7 +62,7 @@ def ranking(mode, name, chart=_.CHART["nm"]):
     identifier = _id(mode, name)
     while True:
         reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + chart) if mode == _.POP else "")).read().decode())["DATA"]["RECORD"]
-        results.extend([(record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply])
+        results.extend((record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply)
         if len(reply) < 20:
             break
         page += 1

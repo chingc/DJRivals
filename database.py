@@ -65,12 +65,12 @@ def dj():
         for json_file in _list_dir(directory):
             with open(directory + json_file, "rb") as f:
                 data = json.loads(f.read().decode())
-            dj_set.update([(record[1], record[2]) for record in data["ranking"]])
+            dj_set.update((record[1], record[2]) for record in data["ranking"])
             names[data["name"]] = [9999, 0]
         return names
 
     def _fill(dj_dict, directory, mode):
-        """Fill in scores for each DJ."""
+        """Fill scores for each DJ."""
         for json_file in _list_dir(directory):
             with open(directory + json_file, "rb") as f:
                 data = json.loads(f.read().decode())
@@ -100,7 +100,7 @@ def dj():
             djs[dj][mode]["scores"] = dict(extracted[mode])
             djs[dj][mode]["master"] = [9999, 0]
 
-    # fill in scores
+    # fill scores
     _fill(djs, _.STAR_DB_DIR, "star")
     _fill(djs, _.POP_NM_DB_DIR, "pop_nm")
     _fill(djs, _.POP_HD_DB_DIR, "pop_hd")
@@ -109,14 +109,11 @@ def dj():
     _fill(djs, _.CLUB_DB_DIR, "club")
     _fill(djs, _.MISSION_DB_DIR, "mission")
 
-    # convert score dictionaries to lists
+    # convert score dictionaries to lists, then calculate and fill master scores
     for mode in extracted:
         for dj in djs:
             djs[dj][mode]["scores"] = [(name, score[0], score[1]) for name, score in djs[dj][mode]["scores"].items()]
-
-    # calculate and fill master scores
-    for mode in extracted:
-        extracted[mode] = sorted(filter(lambda x: x[1] > 0, [(dj, sum([score[2] for score in djs[dj][mode]["scores"]])) for dj in djs]), key=lambda x: x[1], reverse=True)
+        extracted[mode] = sorted(filter(lambda x: x[1] > 0, ((dj, sum(score[2] for score in djs[dj][mode]["scores"])) for dj in djs)), key=lambda x: x[1], reverse=True)
         for rank, score in enumerate(extracted[mode]):
             djs[score[0]][mode]["master"] = [rank + 1, score[1]]
 
