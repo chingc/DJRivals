@@ -5,79 +5,69 @@ JSON DJ
     "name": "",
     "icon": "",
     "star": {
-        "scores": [
-            ["disc 1", 1, 300000],
-            ["disc 2", 2, 300000],
-            ["disc 3", 3, 300000],
-            ...
-        ],
-        "master": [1, 15000000]
+        "_master_": [1, 15000000],
+        "disc 1": [1, 300000],
+        "disc 2": [2, 300000],
+        "disc 3": [3, 300000],
+        ...
     },
     "pop_nm": {
-        "scores": [
-            ["disc 1", 1, 300000],
-            ["disc 2", 2, 300000],
-            ["disc 3", 3, 300000],
-            ...
-        ],
-        "master": [1, 15000000]
+        "_master_": [1, 15000000],
+        "disc 1": [1, 300000],
+        "disc 2": [2, 300000],
+        "disc 3": [3, 300000],
+        ...
     },
     "pop_hd": {
-        "scores": [
-            ["disc 1", 1, 300000],
-            ["disc 2", 2, 300000],
-            ["disc 3", 3, 300000],
-            ...
-        ],
-        "master": [1, 15000000]
+        "_master_": [1, 15000000],
+        "disc 1": [1, 300000],
+        "disc 2": [2, 300000],
+        "disc 3": [3, 300000],
+        ...
     },
     "pop_mx": {
-        "scores": [
-            ["disc 1", 1, 300000],
-            ["disc 2", 2, 300000],
-            ["disc 3", 3, 300000],
-            ...
-        ],
-        "master": [1, 15000000]
+        "_master_": [1, 15000000],
+        "disc 1": [1, 300000],
+        "disc 2": [2, 300000],
+        "disc 3": [3, 300000],
+        ...
     },
     "pop_ex": {
-        "scores": [
-            ["disc 1", 1, 300000],
-            ["disc 2", 2, 300000],
-            ["disc 3", 3, 300000],
-            ...
-        ],
-        "master": [1, 15000000]
+        "_master_": [1, 15000000],
+        "disc 1": [1, 300000],
+        "disc 2": [2, 300000],
+        "disc 3": [3, 300000],
+        ...
     },
     "club": {
-        "scores": [
-            ["discset 1", 1, 300000],
-            ["discset 2", 2, 300000],
-            ["discset 3", 3, 300000],
-            ...
-        ],
-        "master": [1, 15000000]
+        "_master_": [1, 15000000],
+        "discset 1": [1, 300000],
+        "discset 2": [2, 300000],
+        "discset 3": [3, 300000],
+        ...
     },
     "mission": {
-        "scores": [
-            ["mission 1", 1, 300000],
-            ["mission 2", 2, 300000],
-            ["mission 3", 3, 300000],
-            ...
-        ],
-        "master": [1, 15000000]
+        "_master_": [1, 15000000],
+        "mission 1": [1, 300000],
+        "mission 2": [2, 300000],
+        "mission 3": [3, 300000],
+        ...
     }
 }
 
 Details
 -------
 This data structure represents a DJ.  All scores for all modes are contained
-within this structure.  The master scores are also included.
+within this structure.  The "name" key is the full DJ name, "icon" is the
+filename of the DJ icon being using, and the remaining keys represent each game
+mode and difficulty.  Each of these remaining keys accesses a dictionary keyed
+by the full title of the disc, disc set, or mission.  The title keys accesses a
+list of two elements, the rank and score for that particular title.
 
 Special Values
 --------------
-A score of 0 means the DJ has not played the particular disc, disc set, or
-mission.
+A score of 0 means the title has not been played.  Each mode has a special key
+called "_master_" which contains the overall rank and score for that mode.
 
 Notes
 -----
