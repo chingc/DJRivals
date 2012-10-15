@@ -75,7 +75,7 @@ def dj():
             with open(directory + json_file, "rb") as f:
                 data = json.loads(f.read().decode())
             for record in data["ranking"]:
-                dj_dict[record[2]][mode]["scores"][data["name"]] = [record[0], record[3]]
+                dj_dict[record[2]][mode][data["name"]] = [record[0], record[3]]
 
     djs = set()
 
@@ -96,9 +96,7 @@ def dj():
     # insert extracted into the DJ set
     for mode in extracted:
         for dj in djs:
-            djs[dj][mode] = dict()
-            djs[dj][mode]["scores"] = dict(extracted[mode])
-            djs[dj][mode]["master"] = [9999, 0]
+            djs[dj][mode] = dict(extracted[mode])
 
     # fill scores
     _fill(djs, _.STAR_DB_DIR, "star")
@@ -109,42 +107,36 @@ def dj():
     _fill(djs, _.CLUB_DB_DIR, "club")
     _fill(djs, _.MISSION_DB_DIR, "mission")
 
-    # convert score dictionaries to lists, then calculate and fill master scores
+    # calculate, fill, and write master scores
     for mode in extracted:
-        for dj in djs:
-            djs[dj][mode]["scores"] = [(name, score[0], score[1]) for name, score in djs[dj][mode]["scores"].items()]
-        extracted[mode] = sorted(filter(lambda x: x[1] > 0, ((dj, sum(score[2] for score in djs[dj][mode]["scores"])) for dj in djs)), key=lambda x: x[1], reverse=True)
-        for rank, score in enumerate(extracted[mode]):
-            djs[score[0]][mode]["master"] = [rank + 1, score[1]]
+        extracted[mode] = filter(lambda x: x[2] > 0, ((djs[dj]["icon"], dj, sum(score[1] for score in djs[dj][mode].values())) for dj in djs))
+        extracted[mode] = [(rank + 1, info[0], info[1], info[2]) for rank, info in enumerate(sorted(extracted[mode], key=lambda x: x[2], reverse=True))]
+        for info in extracted[mode]:
+            djs[info[2]][mode]["_master_"] = [info[0], info[3]]
+        with open(_.MASTER_DB_DIR + mode + ".json", "wb") as f:
+            f.write(json.dumps({"ranking": extracted[mode]}, indent=2).encode())
+
+    # write pop master (overall) scores
+    for mode in ["star", "club", "mission"]:
+        del extracted[mode]
+    extracted = sorted(([info[1], info[2], info[3]] for mode in extracted for info in extracted[mode]), key=lambda x: x[1])
+    pop = [extracted.pop()]
+    while (len(extracted) > 1):
+        next = extracted.pop()
+        if next[1] == pop[-1][1]:
+            pop[-1][2] += next[2]
+        else:
+            pop.append(next)
+    pop = [(rank + 1, score[0], score[1], score[2]) for rank, score in enumerate(sorted(pop, key=lambda x: x[2], reverse=True))]
+    with open(_.MASTER_DB_DIR + "pop.json", "wb") as f:
+        f.write(json.dumps({"ranking": pop}, indent=2).encode())
 
     # write DJ files and index
-    for k, v in djs.items():
-        with open("{}{}.json".format(_.DJ_DB_DIR, zlib.crc32(k.encode())), "wb") as f:
-            f.write(json.dumps(v, indent=2).encode())
+    for dj, scores in djs.items():
+        with open("{}{}.json".format(_.DJ_DB_DIR, zlib.crc32(dj.encode())), "wb") as f:
+            f.write(json.dumps(scores, indent=2).encode())
     with open(_.DJ_INDEX, "wb") as f:
         f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())], indent=2).encode())
-
-
-def master():
-    """Build a master score database using information from the local database.
-
-    The database is implemented as a collection of JSON files.  One JSON file is
-    created for each game mode (except Crew Race).
-
-    """
-    dj_db_dir = _make_dir(_.DJ_DB_DIR)
-    master_db_dir = _make_dir(_.MASTER_DB_DIR)
-    results = {"star": [], "pop": [], "club": [], "mission": []}
-    print("Writing master ranking files...")
-    for json_file in _list_dir(dj_db_dir):
-        with open(dj_db_dir + json_file, "rb") as f:
-            data = json.loads(f.read().decode())
-        for mode in ["star", "pop", "club", "mission"]:
-            results[mode].append([data[mode]["master"][0], data["icon"], data["name"], data[mode]["master"][1]])
-    for mode in ["star", "pop", "club", "mission"]:
-        results[mode].sort()
-        with open(master_db_dir + mode + ".json", "wb") as f:
-            f.write(json.dumps({"ranking": results[mode]}, indent=1).encode())
 
 
 _make_dir(_.DJ_DB_DIR)
@@ -155,3 +147,4 @@ _make_dir(_.POP_MX_DB_DIR)
 _make_dir(_.POP_EX_DB_DIR)
 _make_dir(_.CLUB_DB_DIR)
 _make_dir(_.MISSION_DB_DIR)
+_make_dir(_.MASTER_DB_DIR)
