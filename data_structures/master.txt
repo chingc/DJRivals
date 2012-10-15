@@ -12,8 +12,9 @@ JSON Master Ranking
 
 Details
 -------
-This represents the master rankings.  It is identical to the ranking key of the
-database data structure, except the scores in this case are the sum total.
+This data structure is for the master rankings, which is the overall rank and
+score for each DJ.  It has a single key called "ranking" and is identical to the
+ranking key of the database data structure.
 
 Special Values
 --------------
