@@ -40,7 +40,7 @@ def index(mode, refresh=False):
         with open(path, "rb") as f:
             index = json.loads(f.read().decode(), object_pairs_hook=dict)
     except (FileNotFoundError, ValueError):
-        index = {}
+        index = dict()
     if refresh or not index:
         for page in range(1, last + 1):
             reply = json.loads(_open_url(url.format(page)).read().decode())["DATA"]["RECORD"]
@@ -51,7 +51,7 @@ def index(mode, refresh=False):
                 else:
                     index[name]["page"] = page
         with open(path, "wb") as f:
-            f.write(json.dumps(dict(sorted(index.items())), indent=2).encode())
+            f.write(json.dumps(index, indent=2).encode())
         print('Wrote: "{}"'.format(path))
     return index
 
