@@ -58,6 +58,9 @@ def build(mode, name):
 def dj():
     """Build a DJ database using information from the local database.
 
+    The master rankings will also be generated along with the DJ database.
+    Requires a database to build from.
+
     """
     def _extract(dj_set, directory):
         """Extract DJ and name data."""
@@ -120,16 +123,20 @@ def dj():
     for mode in ["star", "club", "mission"]:
         del extracted[mode]
     extracted = sorted(([info[1], info[2], info[3]] for mode in extracted for info in extracted[mode]), key=lambda x: x[1])
-    pop = [extracted.pop()]
-    while (len(extracted) > 1):
-        next = extracted.pop()
-        if next[1] == pop[-1][1]:
-            pop[-1][2] += next[2]
-        else:
-            pop.append(next)
-    pop = [(rank + 1, score[0], score[1], score[2]) for rank, score in enumerate(sorted(pop, key=lambda x: x[2], reverse=True))]
-    with open(_.MASTER_DB_DIR + "pop.json", "wb") as f:
-        f.write(json.dumps({"ranking": pop}, indent=2).encode())
+    try:
+        pop = [extracted.pop()]
+    except IndexError:
+        pass
+    else:
+        while (len(extracted) > 1):
+            next = extracted.pop()
+            if next[1] == pop[-1][1]:
+                pop[-1][2] += next[2]
+            else:
+                pop.append(next)
+        pop = [(rank + 1, score[0], score[1], score[2]) for rank, score in enumerate(sorted(pop, key=lambda x: x[2], reverse=True))]
+        with open(_.MASTER_DB_DIR + "pop.json", "wb") as f:
+            f.write(json.dumps({"ranking": pop}, indent=2).encode())
 
     # write DJ files and index
     for dj, scores in djs.items():
