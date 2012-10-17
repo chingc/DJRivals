@@ -1,7 +1,6 @@
 """Database creation."""
 from collections import OrderedDict as dict
 import json
-import time
 import zlib
 
 from common import _, _clean, _list_dir, _make_dir
@@ -17,10 +16,8 @@ def build(mode, name):
 
     """
     if mode == _.STAR:
-        path  = _.STAR_INDEX
         level = [("nm", _.STAR_DB_DIR)]
     elif mode == _.POP:
-        path  = _.POP_INDEX
         level = [
             ("nm", _.POP_NM_DB_DIR),
             ("hd", _.POP_HD_DB_DIR),
@@ -28,10 +25,8 @@ def build(mode, name):
             ("ex", _.POP_EX_DB_DIR)
         ]
     elif mode == _.CLUB:
-        path  = _.CLUB_INDEX
         level = [("nm", _.CLUB_DB_DIR)]
     elif mode == _.MISSION:
-        path  = _.MISSION_INDEX
         level = [("nm", _.MISSION_DB_DIR)]
     else:
         raise ValueError("invalid game mode")
@@ -48,11 +43,6 @@ def build(mode, name):
         with open("{}{}.json".format(db_dir, clean_name), "wb") as f:
             f.write(json.dumps(data, indent=2).encode())
         print('Wrote: "{}{}.json"'.format(db_dir, clean_name))
-    with open(path, "rb") as f:
-        data = json.loads(f.read().decode(), object_pairs_hook=dict)
-        data[name]["timestamp"] = int(time.time())
-    with open(path, "wb") as f:
-        f.write(json.dumps(data, indent=2).encode())
 
 
 def dj():

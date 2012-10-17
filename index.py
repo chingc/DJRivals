@@ -1,6 +1,7 @@
 """Index management."""
 from collections import OrderedDict as dict
 import json
+import time
 
 from common import _, _make_dir, _open_url
 
@@ -54,6 +55,30 @@ def index(mode, refresh=False):
             f.write(json.dumps(index, indent=2).encode())
         print('Wrote: "{}"'.format(path))
     return index
+
+
+def touch_time(mode, name):
+    """Update timestamp.
+
+    Given a path to an index and the name of a database, this will set the time
+    the database was last updated to the current time.
+
+    """
+    if mode == _.STAR:
+        path = _.STAR_INDEX
+    elif mode == _.POP:
+        path = _.POP_INDEX
+    elif mode == _.CLUB:
+        path = _.CLUB_INDEX
+    elif mode == _.MISSION:
+        path = _.MISSION_INDEX
+    else:
+        raise ValueError("invalid game mode")
+    with open(path, "rb") as f:
+        data = json.loads(f.read().decode(), object_pairs_hook=dict)
+        data[name]["timestamp"] = int(time.time())
+    with open(path, "wb") as f:
+        f.write(json.dumps(data, indent=2).encode())
 
 
 _make_dir(_.DB_DIR)
