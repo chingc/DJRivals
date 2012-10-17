@@ -10,8 +10,7 @@ def index(mode, refresh=False):
     """Create, update, or retrieve an index.
 
     Any of the four game mode constants defined in the common module can be
-    given as the first argument.  It will create, update, or retrieve an index
-    of the specified game mode.  The boolean value (default: False) controls
+    given as the first argument.  The boolean value (default: False) controls
     whether or not to perform an index refresh by checking the DJMAX site.
 
     """
@@ -44,7 +43,7 @@ def index(mode, refresh=False):
         index = dict()
     if refresh or not index:
         for page in range(1, last + 1):
-            reply = json.loads(_open_url(url.format(page)).read().decode())["DATA"]["RECORD"]
+            reply = json.loads(_open_url(url.format(page), "building index").read().decode())["DATA"]["RECORD"]
             for record in reply:
                 name = record[key]
                 if name not in index:
@@ -60,8 +59,9 @@ def index(mode, refresh=False):
 def touch_time(mode, name):
     """Update timestamp.
 
-    Given a path to an index and the name of a database, this will set the time
-    the database was last updated to the current time.
+    Any of the four game mode constants defined in the common module can be
+    given as the first argument.  The name must be the complete name of a disc,
+    disc set, or mission.
 
     """
     if mode == _.STAR:

@@ -7,9 +7,8 @@ from common import _, _clean, _exists, _list_dir, _make_dir, _open_url
 def image(mode):
     """Download disc, disc set, and mission icons from the DJMAX site.
 
-    Scans the local database and downloads the necessary disc, disc set, or
-    mission icons.  An icon will be skipped if it is determined that it already
-    exists.  Existence is checked by simple filename lookup.
+    An icon will be skipped if it is determined that it already exists.
+    Existence is checked by a simple path check.
 
     """
     if mode == _.STAR:
@@ -43,7 +42,7 @@ def image(mode):
     else:
         raise ValueError("invalid game mode")
     for page in range(1, last + 1):
-        data = json.loads(_open_url(id_url.format(page)).read().decode())["DATA"]["RECORD"]
+        data = json.loads(_open_url(id_url.format(page), "retrieving image name").read().decode())["DATA"]["RECORD"]
         for record in data:
             theirname = record[keys["image"]] + (".png" if mode == _.MISSION else "")
             i = theirname.rfind(".")
@@ -55,7 +54,7 @@ def image(mode):
                 if mode == _.POP:
                     theirname = "{}{}{}".format(name[:-1], i, extension)
                 with open(img_dir + myname, "wb") as f:
-                    f.write(_open_url(img_url.format(theirname)).read())
+                    f.write(_open_url(img_url.format(theirname), "downloading image").read())
                 print('Wrote: "{}{}"'.format(img_dir, myname))
 
 
@@ -64,7 +63,7 @@ def icon():
 
     Scans the local database and downloads the necessary DJ icons.  An icon will
     be skipped if it is determined that it already exists.  Existence is checked
-    by simple filename lookup.
+    by a simple path check.
 
     """
     icons = set()
@@ -77,7 +76,7 @@ def icon():
         if _exists(_.ICON_IMAGE_DIR + icon):
             continue
         with open(_.ICON_IMAGE_DIR + icon, "wb") as f:
-            f.write(_open_url(_.ICON_IMAGE_URL.format(icon)).read())
+            f.write(_open_url(_.ICON_IMAGE_URL.format(icon), "downloading DJ icon").read())
         print('Wrote: "{}{}"'.format(_.ICON_IMAGE_DIR, icon))
 
 
