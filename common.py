@@ -31,15 +31,14 @@ def _make_dir(path):
     return path
 
 
-def _open_url(url):
+def _open_url(url, task):
     """Retrieve data from the specified url."""
     while True:
         try:
             return urllib.request.urlopen(url)
-        except OSError as error:
-            print("An error occurred:", error)
-            print("Trying again in", 60, "seconds.")
-            time.sleep(60)
+        except OSError:
+            print("Error while {}.  Retrying in {} seconds.".format(task, 180))
+            time.sleep(180)
 
 
 _ = _Constant()
