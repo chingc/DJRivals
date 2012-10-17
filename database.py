@@ -36,7 +36,7 @@ def build(mode, name):
     else:
         raise ValueError("invalid game mode")
     for mode_str, db_dir in level:
-        results = ranking(mode, name, _.CHART[mode_str])
+        results = ranking(mode, name, mode_str)
         if len(results) == 0:
             continue
         clean_name = _clean(name)
@@ -128,7 +128,7 @@ def dj():
     except IndexError:
         pass
     else:
-        while (len(extracted) > 1):
+        while len(extracted) > 1:
             next = extracted.pop()
             if next[1] == pop[-1][1]:
                 pop[-1][2] += next[2]

@@ -37,7 +37,7 @@ def _f_id():
     return _id
 
 
-def ranking(mode, name, chart=_.CHART["nm"]):
+def ranking(mode, name, chart="nm"):
     """The complete ranking of the specified mode and name.
 
     Any of the four game mode constants defined in the common module can be
@@ -61,7 +61,7 @@ def ranking(mode, name, chart=_.CHART["nm"]):
     results = []
     identifier = _id(mode, name)
     while True:
-        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + chart) if mode == _.POP else "")).read().decode())["DATA"]["RECORD"]
+        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + _.CHART[chart]) if mode == _.POP else "")).read().decode())["DATA"]["RECORD"]
         results.extend((record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply)
         if len(reply) < 20:
             break
