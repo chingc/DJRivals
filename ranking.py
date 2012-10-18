@@ -26,7 +26,7 @@ def _f_id():
             data = mission_index
         else:
             raise ValueError("invalid game mode")
-        for record in json.loads(_open_url(url.format(data[name]["page"])).read().decode())["DATA"]["RECORD"]:
+        for record in json.loads(_open_url(url.format(data[name]["page"]), "retrieving ID").read().decode())["DATA"]["RECORD"]:
             if record[key["name"]] == name:
                 return record[key["id"]]
 
@@ -42,9 +42,9 @@ def ranking(mode, name, chart="nm"):
 
     Any of the four game mode constants defined in the common module can be
     given as the first argument.  The name must be the complete name of a disc,
-    disc set, or mission.  The chart is a value from the CHART dictionary
-    defined in the common module.  It is only relevant to Pop Mode, and defaults
-    to the value of the "nm" key.
+    disc set, or mission.  The chart is a key from the CHART dictionary defined
+    in the common module.  It is only relevant to Pop Mode, and defaults to the
+    value of the "nm" key.
 
     """
     if mode == _.STAR:
@@ -61,7 +61,7 @@ def ranking(mode, name, chart="nm"):
     results = []
     identifier = _id(mode, name)
     while True:
-        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + _.CHART[chart]) if mode == _.POP else "")).read().decode())["DATA"]["RECORD"]
+        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + _.CHART[chart]) if mode == _.POP else ""), "retrieving rankings").read().decode())["DATA"]["RECORD"]
         results.extend((record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply)
         if len(reply) < 20:
             break

@@ -32,17 +32,16 @@ def build(mode, name):
         raise ValueError("invalid game mode")
     for mode_str, db_dir in level:
         results = ranking(mode, name, mode_str)
-        if len(results) == 0:
-            continue
-        clean_name = _clean(name)
-        data = dict()
-        data["name"] = name
-        data["eyecatch"] = "{}.png".format(clean_name)
-        data["icon"] = "{}_{}.png".format(clean_name, _.CHART[mode_str])
-        data["ranking"] = results
-        with open("{}{}.json".format(db_dir, clean_name), "wb") as f:
-            f.write(json.dumps(data, indent=2).encode())
-        print('Wrote: "{}{}.json"'.format(db_dir, clean_name))
+        if len(results) > 0:
+            clean_name = _clean(name)
+            data = dict()
+            data["name"] = name
+            data["eyecatch"] = "{}.png".format(clean_name)
+            data["icon"] = "{}_{}.png".format(clean_name, _.CHART[mode_str])
+            data["ranking"] = results
+            with open(db_dir + clean_name + ".json", "wb") as f:
+                f.write(json.dumps(data, indent=2).encode())
+            print('Wrote: "{}{}.json"'.format(db_dir, clean_name))
 
 
 def dj():
@@ -118,7 +117,7 @@ def dj():
     except IndexError:
         pass
     else:
-        while len(extracted) > 1:
+        while len(extracted) > 0:
             next = extracted.pop()
             if next[1] == pop[-1][1]:
                 pop[-1][2] += next[2]
