@@ -1,8 +1,88 @@
 """Generate HTML."""
 import json
+import time
 
-from common import _, _clean, _list_dir, _make_dir
+from common import _, _clean, _exists, _list_dir, _make_dir
+from index import index
 import psxml
+
+
+def _page(name, tabs):
+    """Write doc."""
+    ps = psxml.PrettySimpleXML(2)
+
+    # doctype, html
+    ps.rawln("<!DOCTYPE html>")
+    ps.beginln("html")
+
+    # head
+    ps.beginln("head")
+    ps.emptyln("meta", ['charset="UTF-8"'])
+    ps.begin("title", value="DJRivals").endln()
+
+    # stylesheet
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="../extern/smoothness/jquery-ui-1.9.0.custom.min.css"'])
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="../extern/djrivals.css"'])
+
+    # javascript
+    ps.begin("script", ['type="text/javascript"', 'src="../extern/jquery-1.8.2.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="../extern/jquery-ui-1.9.0.custom.min.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="../extern/djrivals.js"']).endln()
+
+    # head
+    ps.endln()
+
+    # body
+    ps.beginln("body")
+
+    # jquery tabs
+    ps.beginln("div", ['id="tabs"'])
+    ps.beginln("ul")
+    for tab in tabs:
+        ps.begin("li").begin("a", ['href="#{}"'.format(tab)], tab).end().endln()
+    ps.endln()
+    for tab in tabs:
+        ps.beginln("div", ['id="{}"'.format(tab)])
+        ps.begin("p")
+        ps.empty("img", ['src="../images/disc/{}_{}.png"'.format(_clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
+        ps.raw(name)
+        ps.endln()
+        ps.begin("p", value="Loading...").endln()
+        ps.endln()
+    ps.endln()
+
+    # copyright
+    ps.beginln("div", ['id="copyright"'])
+    ps.begin("p", value="DJRivals copyright (c), DJ cgcgngng<br />All rights reserved.").endln()
+    ps.begin("p", value="Images copyright (c), NEOWIZ and PENTAVISION<br />All rights reserved.").endln()
+    ps.endln()
+
+    # body, html
+    ps.endln()
+    ps.endln()
+
+    with open(_.HTML_PAGES + _clean(name) + ".html", "wb") as f:
+        f.write(ps.output().encode())
+    print('Wrote: "{}{}.html"'.format(_.HTML_PAGES, _clean(name)))
+
+
+def pages():
+    """Doc."""
+    for name in set(key for mode in (_.STAR, _.POP) for key in index(mode)):
+        tabs = []
+        clean_name = _clean(name)
+        if _exists(_.STAR_DB_DIR + clean_name + ".json"):
+            tabs.append("Star")
+        if _exists(_.POP_NM_DB_DIR + clean_name + ".json"):
+            tabs.append("NM")
+        if _exists(_.POP_HD_DB_DIR + clean_name + ".json"):
+            tabs.append("HD")
+        if _exists(_.POP_MX_DB_DIR + clean_name + ".json"):
+            tabs.append("MX")
+        if _exists(_.POP_EX_DB_DIR + clean_name + ".json"):
+            tabs.append("EX")
+        if len(tabs) > 0:
+            _page(name, tabs[:])
 
 
 def html():
@@ -204,3 +284,6 @@ def html():
     with open(_.HTML_INDEX, "wb") as f:
         f.write(ps.get().encode())
     print('Wrote: "{}"'.format(_.HTML_INDEX))
+
+
+_make_dir(_.HTML_PAGES)
