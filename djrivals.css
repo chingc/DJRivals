@@ -1,25 +1,14 @@
+/*body {
+    font: 62.5% "Trebuchet MS", sans-serif;
+}*/
+
+/* all tables */
 table {
     table-layout: fixed;
 }
 
-/* star and pop disc icons */
-#star a img, .pop a img {
-    width: 66px;
-    height: 66px;
-    vertical-align: middle;
-}
-
-/* club icons */
-#club a img {
-    width: 113px;
-    height: 66px;
-    vertical-align: middle;
-}
-
-/* mission icons */
-#mission a img {
-    width: 89px;
-    height: 66px;
+/* ranking page disc icons */
+#tabs p > img {
     vertical-align: middle;
 }
 
@@ -28,7 +17,7 @@ table {
     vertical-align: top;
 }
 
-/* ranking table djicons */
+/* ranking table dj icons */
 .djrank td:nth-child(2) img, .rivalrank td:nth-child(2) img {
     width: 52px;
     height: 32px;
@@ -60,41 +49,6 @@ table {
 .rivalrank th:nth-child(4), .rivalrank td:nth-child(4) {
     text-align: left;
     width: 100px;
-}
-
-/* 1st column of the personal/rival score tables */
-#me th:nth-child(1), #me td:nth-child(1),
-#rival th:nth-child(1), #rival td:nth-child(1) {
-    text-align: left;
-    width: 300px;
-}
-
-/* 2nd, 3rd, and 4th column of the personal/rival score tables */
-#me th:nth-child(2), #me td:nth-child(2),
-#me th:nth-child(3), #me td:nth-child(3),
-#rival th:nth-child(2), #rival td:nth-child(2),
-#rival th:nth-child(3), #rival td:nth-child(3),
-#rival th:nth-child(4), #rival td:nth-child(4) {
-    text-align: left;
-    width: 100px;
-}
-
-/* cutoff table */
-#cutoff td {
-    border-collapse: collapse;
-    width: 180px;
-}
-
-/* cutoff input fields */
-input, input:focus {
-    border: 1px solid #8496BA;
-    outline: none;
-    width: 110px;
-}
-
-#dedication {
-    font-size: 16px;
-    margin: 100px 0px 0px 0px;
 }
 
 #copyright {
