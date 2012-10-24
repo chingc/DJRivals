@@ -30,10 +30,10 @@ $(document).ready(function () {
             dj_records.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
             rival_records.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
             for (i = 0, ilen = data.length; i < ilen; i += 1) {
-                dj_records.push("<tr><td>" + data[i][0] + '</td><td><img src="../images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
+                dj_records.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
                 found = $.inArray(data[i][2], players);
                 if (found > -1) {
-                    rival_records.push("<tr><td>" + data[i][0] + '</td><td><img src="../images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
+                    rival_records.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
                     players.splice(found, 1);
                 }
                 if (players.length < 1) {
@@ -56,7 +56,7 @@ $(document).ready(function () {
                 $.ajax({
                     cache: false,
                     dataType: "json",
-                    url: "../database/" + (chart.length === 2 ? "pop_" + chart : chart).toLowerCase() + "/" + name + ".json"
+                    url: "./database/" + (chart.length === 2 ? "pop_" + chart : chart).toLowerCase() + "/" + name + ".json"
                 }).done(function (data) {
                     div.last().empty().html(ranking_table(data.ranking));
                 }).fail(function () {

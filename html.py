@@ -21,13 +21,13 @@ def _page(name, tabs, directory):
     ps.begin("title", value="DJRivals").endln()
 
     # stylesheet
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="../extern/smoothness/jquery-ui-1.9.0.custom.min.css"'])
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="../extern/djrivals.css"'])
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/smoothness/jquery-ui-1.9.0.custom.min.css"'])
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/djrivals.css"'])
 
     # javascript
-    ps.begin("script", ['type="text/javascript"', 'src="../extern/jquery-1.8.2.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="../extern/jquery-ui-1.9.0.custom.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="../extern/djrivals.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.0.custom.min.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.js"']).endln()
 
     # head
     ps.endln()
@@ -44,7 +44,7 @@ def _page(name, tabs, directory):
     for tab in tabs:
         ps.beginln("div", ['id="{}"'.format(tab)])
         ps.begin("p")
-        ps.empty("img", ['src="../images/{}/{}_{}.png"'.format(directory, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
+        ps.empty("img", ['src="./images/{}/{}_{}.png"'.format(directory, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
         ps.raw(name)
         ps.endln()
         ps.begin("p", value="Loading...").endln()
@@ -61,9 +61,9 @@ def _page(name, tabs, directory):
     ps.endln()
     ps.endln()
 
-    with open(_.HTML_PAGES + _clean(name) + ".html", "wb") as f:
+    with open(_.OUTPUT_DIR + _clean(name) + ".html", "wb") as f:
         f.write(ps.output().encode())
-    print('Wrote: "{}{}.html"'.format(_.HTML_PAGES, _clean(name)))
+    print('Wrote: "{}{}.html"'.format(_.OUTPUT_DIR, _clean(name)))
 
 
 def pages():
@@ -294,4 +294,4 @@ def html():
     print('Wrote: "{}"'.format(_.HTML_INDEX))
 
 
-_make_dir(_.HTML_PAGES)
+_make_dir(_.OUTPUT_DIR)

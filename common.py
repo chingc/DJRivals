@@ -100,5 +100,4 @@ _.DISC_IMAGE_DIR    = _.OUTPUT_DIR + "images/disc/"
 _.CLUB_IMAGE_DIR    = _.OUTPUT_DIR + "images/club/"
 _.MISSION_IMAGE_DIR = _.OUTPUT_DIR + "images/mission/"
 
-_.HTML_PAGES = _.OUTPUT_DIR + "pages/"
 _.HTML_INDEX = _.OUTPUT_DIR + "index.html"
