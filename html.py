@@ -53,8 +53,8 @@ def _page(name, tabs):
 
     # copyright
     ps.beginln("div", ['id="copyright"'])
-    ps.begin("p", value="DJRivals copyright (c), DJ cgcgngng<br />All rights reserved.").endln()
-    ps.begin("p", value="Images copyright (c), NEOWIZ and PENTAVISION<br />All rights reserved.").endln()
+    ps.begin("p", value="DJRivals &copy; DJ cgcgngng<br />All rights reserved.").endln()
+    ps.begin("p", value="Images &copy; NEOWIZ and PENTAVISION<br />All rights reserved.").endln()
     ps.endln()
 
     # body, html
