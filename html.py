@@ -7,7 +7,7 @@ from index import index
 import psxml
 
 
-def _page(name, tabs):
+def _page(name, tabs, directory):
     """Write doc."""
     ps = psxml.PrettySimpleXML(2)
 
@@ -44,7 +44,7 @@ def _page(name, tabs):
     for tab in tabs:
         ps.beginln("div", ['id="{}"'.format(tab)])
         ps.begin("p")
-        ps.empty("img", ['src="../images/disc/{}_{}.png"'.format(_clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
+        ps.empty("img", ['src="../images/{}/{}_{}.png"'.format(directory, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
         ps.raw(name)
         ps.endln()
         ps.begin("p", value="Loading...").endln()
@@ -82,7 +82,15 @@ def pages():
         if _exists(_.POP_EX_DB_DIR + clean_name + ".json"):
             tabs.append("EX")
         if len(tabs) > 0:
-            _page(name, tabs[:])
+            _page(name, tabs[:], "disc")
+
+    for name in (key for key in index(_.CLUB)):
+        if _exists(_.CLUB_DB_DIR + _clean(name) + ".json"):
+            _page(name, ["Club"], "club")
+
+    for name in (key for key in index(_.MISSION)):
+        if _exists(_.MISSION_DB_DIR + _clean(name) + ".json"):
+            _page(name, ["Mission"], "mission")
 
 
 def html():
