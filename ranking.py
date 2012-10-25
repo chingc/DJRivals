@@ -5,36 +5,29 @@ from common import _, _open_url
 from index import index
 
 
-def _f_id():
+def _id(mode, name):
     """The identifier for a given mode and name."""
-    def _id(mode, name):
-        if mode == _.STAR:
-            url  = _.STAR_ID_URL
-            key  = _.DISC_KEY
-            data = star_index
-        elif mode == _.POP:
-            url  = _.POP_ID_URL
-            key  = _.DISC_KEY
-            data = pop_index
-        elif mode == _.CLUB:
-            url  = _.CLUB_ID_URL
-            key  = _.CLUB_KEY
-            data = club_index
-        elif mode == _.MISSION:
-            url  = _.MISSION_ID_URL
-            key  = _.MISSION_KEY
-            data = mission_index
-        else:
-            raise ValueError("invalid game mode")
-        for record in json.loads(_open_url(url.format(data[name]["page"]), "retrieving ID").read().decode())["DATA"]["RECORD"]:
-            if record[key["name"]] == name:
-                return record[key["id"]]
-
-    star_index    = index(_.STAR)
-    pop_index     = index(_.POP)
-    club_index    = index(_.CLUB)
-    mission_index = index(_.MISSION)
-    return _id
+    if mode == _.STAR:
+        url  = _.STAR_ID_URL
+        key  = _.DISC_KEY
+        data = index(_.STAR)
+    elif mode == _.POP:
+        url  = _.POP_ID_URL
+        key  = _.DISC_KEY
+        data = index(_.POP)
+    elif mode == _.CLUB:
+        url  = _.CLUB_ID_URL
+        key  = _.CLUB_KEY
+        data = index(_.CLUB)
+    elif mode == _.MISSION:
+        url  = _.MISSION_ID_URL
+        key  = _.MISSION_KEY
+        data = index(_.MISSION)
+    else:
+        raise ValueError("invalid game mode")
+    for record in json.loads(_open_url(url.format(data[name]["page"]), "retrieving ID").read().decode())["DATA"]["RECORD"]:
+        if record[key["name"]] == name:
+            return record[key["id"]]
 
 
 def ranking(mode, name, chart="nm"):
@@ -67,6 +60,3 @@ def ranking(mode, name, chart="nm"):
             break
         page += 1
     return results
-
-
-_id = _f_id()
