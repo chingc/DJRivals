@@ -58,18 +58,12 @@ def indexes():
     """Update indexes."""
     for mode in (_.STAR, _.POP, _.CLUB, _.MISSION):
         index.index(mode, True)
-
-
-def images():
-    """Retrieve new images, if any."""
-    for mode in (_.STAR, _.POP, _.CLUB, _.MISSION):
         image.image(mode)
-    image.icon()
 
 
 def finish():
     """Build the DJ database and html index."""
     database.dj()
-    images()
+    image.icon()
     html.index()
     print("Done.")
