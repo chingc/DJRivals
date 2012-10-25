@@ -7,8 +7,29 @@ from index import index
 import psxml
 
 
+def _head(ps):
+    """Append sections that belong at the top of each page."""
+    ps.beginln("head")
+    ps.emptyln("meta", ['charset="UTF-8"'])
+    ps.begin("title", value="DJRivals").endln()
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/smoothness/jquery-ui-1.9.0.custom.min.css"'])
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/djrivals.css"'])
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.0.custom.min.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.js"']).endln()
+    ps.endln()
+
+
+def _tail(ps):
+    """Append sections that belong at the bottom of each page."""
+    ps.beginln("div", ['id="copyright"'])
+    ps.begin("p", value="DJRivals &copy; DJ cgcgngng<br />All rights reserved.").endln()
+    ps.begin("p", value="Images &copy; NEOWIZ and PENTAVISION<br />All rights reserved.").endln()
+    ps.endln()
+
+
 def _page(name, tabs, directory):
-    """Write doc."""
+    """Generate a ranking page."""
     ps = psxml.PrettySimpleXML(2)
 
     # doctype, html
@@ -16,21 +37,7 @@ def _page(name, tabs, directory):
     ps.beginln("html")
 
     # head
-    ps.beginln("head")
-    ps.emptyln("meta", ['charset="UTF-8"'])
-    ps.begin("title", value="DJRivals").endln()
-
-    # stylesheet
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/smoothness/jquery-ui-1.9.0.custom.min.css"'])
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/djrivals.css"'])
-
-    # javascript
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.0.custom.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.js"']).endln()
-
-    # head
-    ps.endln()
+    _head(ps)
 
     # body
     ps.beginln("body")
@@ -52,10 +59,7 @@ def _page(name, tabs, directory):
     ps.endln()
 
     # copyright
-    ps.beginln("div", ['id="copyright"'])
-    ps.begin("p", value="DJRivals &copy; DJ cgcgngng<br />All rights reserved.").endln()
-    ps.begin("p", value="Images &copy; NEOWIZ and PENTAVISION<br />All rights reserved.").endln()
-    ps.endln()
+    _tail(ps)
 
     # body, html
     ps.endln()
@@ -66,8 +70,45 @@ def _page(name, tabs, directory):
     print('Wrote: "{}{}.html"'.format(_.OUTPUT_DIR, _clean(name)))
 
 
+def _index():
+    """Generate the HTML index."""
+    ps = psxml.PrettySimpleXML(2)
+
+    # doctype, html
+    ps.rawln("<!DOCTYPE html>")
+    ps.beginln("html")
+
+    # head
+    _head(ps)
+
+    # body
+    ps.beginln("body")
+
+    # jquery accordion
+    ps.beginln("div", ['id="accordion"'])
+
+    ps.begin("h3", value="Rankings").endln()
+    ps.beginln("div")
+    ps.beginln("p")
+    ps.endln()
+    ps.endln()
+
+    ps.endln()
+
+    # copyright
+    _tail(ps)
+
+    # body, html
+    ps.endln()
+    ps.endln()
+
+    with open(_.HTML_INDEX, "wb") as f:
+        f.write(ps.output().encode())
+    print('Wrote: "{}"'.format(_.HTML_INDEX))
+
+
 def pages():
-    """Doc."""
+    """Generate all ranking pages and the HTML index."""
     for name in set(key for mode in (_.STAR, _.POP) for key in index(mode)):
         tabs = []
         clean_name = _clean(name)
@@ -83,14 +124,13 @@ def pages():
             tabs.append("EX")
         if len(tabs) > 0:
             _page(name, tabs[:], "disc")
-
     for name in (key for key in index(_.CLUB)):
         if _exists(_.CLUB_DB_DIR + _clean(name) + ".json"):
             _page(name, ["Club"], "club")
-
     for name in (key for key in index(_.MISSION)):
         if _exists(_.MISSION_DB_DIR + _clean(name) + ".json"):
             _page(name, ["Mission"], "mission")
+    _index()
 
 
 def html():
