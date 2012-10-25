@@ -45,7 +45,7 @@ def _page(name, tabs, directory):
         ps.beginln("div", ['id="{}"'.format(tab)])
         ps.begin("p")
         ps.empty("img", ['src="./images/{}/{}_{}.png"'.format(directory, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
-        ps.raw(name)
+        ps.raw("&nbsp; " + name)
         ps.endln()
         ps.begin("p", value="Loading...").endln()
         ps.endln()

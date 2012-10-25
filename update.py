@@ -59,6 +59,7 @@ def indexes():
     for mode in (_.STAR, _.POP, _.CLUB, _.MISSION):
         index.index(mode, True)
         image.image(mode)
+    print("Done.")
 
 
 def finish():
