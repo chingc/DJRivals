@@ -17,29 +17,31 @@ def _head(ps):
     ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.js"']).endln()
     ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.0.custom.min.js"']).endln()
     ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.js"']).endln()
-    ps.endln()
+    ps.endln()  # head
 
 
 def _tail(ps):
     """Append sections that belong at the bottom of each page."""
-    ps.beginln("div", ['id="copyright"'])
-    ps.begin("p", value="DJRivals &copy; DJ cgcgngng<br />All rights reserved.").endln()
-    ps.begin("p", value="Images &copy; NEOWIZ and PENTAVISION<br />All rights reserved.").endln()
-    ps.endln()
+    ps.beginln("div", ['id="footer"'])
+    ps.beginln("p")
+    ps.begin("a", ['href="http://www.cyphergate.net/wiki/"', 'target="_blank"'], "Cypher Gate Wiki").end().rawln("&nbsp;&nbsp;")
+    ps.begin("a", ['href="http://www.bemanistyle.com/forum/forumdisplay.php?7-DJMAX"', 'target="_blank"'], "DJMAX Forum (BMS)").end().rawln("&nbsp;&nbsp;")
+    ps.begin("a", ['href="http://djmaxcrew.com/"', 'target="_blank"'], "DJMAX Technika").end().rawln("<br /><br />")
+    ps.raw("&copy; 2012 DJ cgcgngng&#47;Cherry<br />All rights reserved.").rawln("<br /><br />")
+    ps.rawln(time.strftime("%Y%m%d.%H"))
+    ps.endln()  # p
+    ps.endln()  # div
 
 
-def _page(name, tabs, directory):
+def _page(tabs, name, img_dir=None):
     """Generate a ranking page."""
     ps = psxml.PrettySimpleXML(2)
 
-    # doctype, html
     ps.rawln("<!DOCTYPE html>")
     ps.beginln("html")
 
-    # head
     _head(ps)
 
-    # body
     ps.beginln("body")
 
     # jquery tabs
@@ -47,23 +49,24 @@ def _page(name, tabs, directory):
     ps.beginln("ul")
     for tab in tabs:
         ps.begin("li").begin("a", ['href="#{}"'.format(tab)], tab).end().endln()
-    ps.endln()
+    ps.endln()  # ul
     for tab in tabs:
         ps.beginln("div", ['id="{}"'.format(tab)])
         ps.begin("p")
-        ps.empty("img", ['src="./images/{}/{}_{}.png"'.format(directory, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
-        ps.raw("&nbsp; " + name)
-        ps.endln()
+        if img_dir is None:
+            ps.raw(name)
+        else:
+            ps.empty("img", ['src="./images/{}/{}_{}.png"'.format(img_dir, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
+            ps.raw("&nbsp; " + name)
+        ps.endln()  # p
         ps.begin("p", value="Loading...").endln()
-        ps.endln()
-    ps.endln()
+        ps.endln()  # div
+    ps.endln()  # div (tabs)
 
-    # copyright
     _tail(ps)
 
-    # body, html
-    ps.endln()
-    ps.endln()
+    ps.endln()  # body
+    ps.endln()  # html
 
     with open(_.OUTPUT_DIR + _clean(name) + ".html", "wb") as f:
         f.write(ps.output().encode())
@@ -74,33 +77,80 @@ def _index():
     """Generate the HTML index."""
     ps = psxml.PrettySimpleXML(2)
 
-    # doctype, html
     ps.rawln("<!DOCTYPE html>")
     ps.beginln("html")
 
-    # head
     _head(ps)
 
-    # body
     ps.beginln("body")
 
     # jquery accordion
-    ps.beginln("div", ['id="accordion"'])
+    ps.beginln("div", ['class="accordion"'])
 
     ps.begin("h3", value="Rankings").endln()
-    ps.beginln("div")
+    ps.beginln("div", ['id="rankings"'])
+    discs = sorted(set(key for mode in (_.STAR, _.POP) for key in index(mode)))
+    discsets = sorted(key for key in index(_.CLUB))
+    missions = sorted(key for key in index(_.MISSION))
+    ps.beginln("table")
+    ps.beginln("tr")
+    ps.beginln("td", ['class="index"'])
+    for count, name in enumerate(discs[:]):
+        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
+        discs.pop(0)
+        if count > 107:
+            break
+    ps.endln()  # td
+    ps.beginln("td", ['class="index"'])
+    for name in discs:
+        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
+    ps.rawln("<br /><br />")
+    for name in discsets:
+        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
+    ps.rawln("<br /><br />")
+    for name in missions:
+        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
+    ps.rawln("<br /><br />")
+    ps.begin("a", ['href="./master.html"'], "Master").end().emptyln("br")
+    ps.endln()  # td
+    ps.endln()  # tr
+    ps.endln()  # table
+    ps.endln()  # div
+
+    ps.begin("h3", value="Rivals").endln()
+    ps.beginln("div", ['id="rivals"'])
+    ps.begin("p", value="Go to settings to enter your rivals.")
+    ps.endln()  # p
+    ps.endln()  # div
+
+    ps.begin("h3", value="Settings").endln()
+    ps.beginln("div", ['id="settings"'])
     ps.beginln("p")
-    ps.endln()
-    ps.endln()
+    ps.endln()  # p
+    ps.endln()  # div
 
-    ps.endln()
+    ps.begin("h3", value="About").endln()
+    ps.beginln("div", ['id="about"'])
+    ps.beginln("p")
+    ps.rawln("DJRivals is a score tracker for DJMAX Technika 3.<br />")
+    ps.rawln("Quickly and easily see your scores as well as those<br />")
+    ps.rawln("from your rivals.  Score comparisons show how far<br />")
+    ps.rawln("or behind you are, and sortable columns makes it<br />")
+    ps.rawln("simple to see your best and worst scores.<br />")
+    ps.emptyln("br")
+    ps.rawln("Star, Club, and Mission Master rankings!")
+    ps.endln()  # p
+    ps.beginln("p", ['id="dedication"'])
+    ps.rawln("Dedicated to Shoreline<br />and all Technika players.")
+    ps.endln()  # p
+    ps.endln()  # div
 
-    # copyright
+    ps.endln()  # div (accordion)
+
     _tail(ps)
 
-    # body, html
-    ps.endln()
-    ps.endln()
+    ps.endln()  # body
+    ps.endln()  # html
 
     with open(_.HTML_INDEX, "wb") as f:
         f.write(ps.output().encode())
@@ -123,13 +173,14 @@ def pages():
         if _exists(_.POP_EX_DB_DIR + clean_name + ".json"):
             tabs.append("EX")
         if len(tabs) > 0:
-            _page(name, tabs[:], "disc")
+            _page(tabs, name, "disc")
     for name in (key for key in index(_.CLUB)):
         if _exists(_.CLUB_DB_DIR + _clean(name) + ".json"):
-            _page(name, ["Club"], "club")
+            _page(["Club"], name, "club")
     for name in (key for key in index(_.MISSION)):
         if _exists(_.MISSION_DB_DIR + _clean(name) + ".json"):
-            _page(name, ["Mission"], "mission")
+            _page(["Mission"], name, "mission")
+    _page(["Star", "NM", "HD", "MX", "EX", "Pop", "Club", "Mission"], "Master")
     _index()
 
 
@@ -317,7 +368,7 @@ def html():
 
     # copyright
     ps.start("div", ['id="copyright"'])
-    ps.raw("DJRivals copyright (c), DJ cgcgngng", False).empty("br")
+    ps.raw("DJRivals copyright (c), DJ cgcgngng&#47;cherry", False).empty("br")
     ps.raw("All rights reserved.")
     ps.empty("br", newline=False).empty("br")
     ps.raw("Images copyright (c), NEOWIZ and PENTAVISION", False).empty("br")
