@@ -51,12 +51,17 @@ $(document).ready(function () {
         load_tab = function (event, ui) {
             var chart = ui.newTab.children().text(),
                 div = $("#" + chart).children(),
-                name = div.first().text().replace(/\W/g, "").toLowerCase();
+                name = div.first().text().replace(/\W/g, ""),
+                url;
+            if (chart.length === 2) {
+                chart = "pop_" + chart;
+            }
+            url = "./database/" + ((name === "Master") ? (name + "/" + chart) : (chart + "/" + name)) + ".json";
             if (div.last().text() === "Loading...") {
                 $.ajax({
                     cache: false,
                     dataType: "json",
-                    url: "./database/" + (chart.length === 2 ? "pop_" + chart : chart).toLowerCase() + "/" + name + ".json"
+                    url: url.toLowerCase()
                 }).done(function (data) {
                     div.last().empty().html(ranking_table(data.ranking));
                 }).fail(function () {
@@ -69,7 +74,13 @@ $(document).ready(function () {
     $("#tabs").tabs({
         active: false,
         collapsible: true,
+        event: "mouseover",
         heightStyle: "content",
         activate: load_tab
+    });
+
+    // accordion
+    $(".accordion").accordion({
+        heightStyle: "content"
     });
 });
