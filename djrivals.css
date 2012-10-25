@@ -1,8 +1,7 @@
-/*body {
-    font: 62.5% "Trebuchet MS", sans-serif;
-}*/
+body {
+    font-size: 82%;
+}
 
-/* all tables */
 table {
     table-layout: fixed;
 }
@@ -51,6 +50,16 @@ table {
     width: 100px;
 }
 
-#copyright {
+/* index cells of the main page */
+.index {
+    vertical-align: top;
+    width: 350px;
+}
+
+#dedication {
+    margin: 100px 0px 0px 0px;
+}
+
+#footer {
     margin: 0px 0px 50px 10px;
 }
