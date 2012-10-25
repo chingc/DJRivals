@@ -66,5 +66,5 @@ def finish():
     """Build the DJ database and html index."""
     database.dj()
     image.icon()
-    html.index()
+    html.pages()
     print("Done.")
