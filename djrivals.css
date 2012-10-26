@@ -1,3 +1,12 @@
+a:link, a:visited {
+    color: #0000CC;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 body {
     font-size: 82%;
 }
