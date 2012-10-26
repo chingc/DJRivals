@@ -5,6 +5,7 @@ $(document).ready(function () {
             rivals: []
         },
         ranking_table = function (data) {
+            // generate a ranking table with the given data
             var players = $.extend([], settings.rivals).concat(settings.me),
                 no_play = [],
                 dj_records = [],
@@ -49,6 +50,7 @@ $(document).ready(function () {
             return '<table><tr><td class="djrank">' + dj_records.join("") + '</table></td><td class="rivalrank">' + rival_records.join("") + "</table></td></tr></table>";
         },
         load_tab = function (event, ui) {
+            // load tab content
             var chart = ui.newTab.children().text(),
                 div = $("#" + chart).children(),
                 name = div.first().text().replace(/\W/g, ""),
@@ -56,7 +58,7 @@ $(document).ready(function () {
             if (chart.length === 2) {
                 chart = "pop_" + chart;
             }
-            url = "./database/" + ((name === "Master") ? (name + "/" + chart) : (chart + "/" + name)) + ".json";
+            url = "./database/" + (name === "Master" ? (name + "/" + chart) : (chart + "/" + name)) + ".json";
             if (div.last().text() === "Loading...") {
                 $.ajax({
                     cache: false,
@@ -68,6 +70,37 @@ $(document).ready(function () {
                     div.last().empty().html("Unable to retrieve data.");
                 });
             }
+        },
+        prune = {
+            // functions to help ensure all field content from settings are unique
+            f: function (field) {
+                return $.map(field.tokenInput("get"), function (item) {
+                    return item.id;
+                });
+            },
+            g: function (value, array1, array2) {
+                return ($.inArray(value, array1) > -1 || $.inArray(value, array2) > -1) ? true : false;
+            },
+            m: function (item) {
+                if (prune.g(item.id, prune.f($("#set_rival")), prune.f($("#set_temp")))) {
+                    $("#set_me").tokenInput("remove", {id: item.id});
+                }
+            },
+            r: function (item) {
+                if (prune.g(item.id, prune.f($("#set_me")), prune.f($("#set_temp")))) {
+                    $("#set_rival").tokenInput("remove", {id: item.id});
+                }
+            },
+            t: function (item) {
+                if (prune.g(item.id, prune.f($("#set_me")), prune.f($("#set_rival")))) {
+                    $("#set_temp").tokenInput("remove", {id: item.id});
+                }
+            }
+        },
+        status_message = function (message) {
+            // display a message to the user
+            $("#set_status").empty();
+            $("<span>" + message + "</span>").prependTo("#set_status").fadeOut(5000, function () { $(this).remove(); });
         };
 
     // tabs
@@ -83,4 +116,40 @@ $(document).ready(function () {
     $(".accordion").accordion({
         heightStyle: "content"
     });
+
+    // autocomplete fields
+    $.ajax({
+        cache: false,
+        dataType: "json",
+        url: "./database/dj_index.json"
+    }).done(function (data) {
+        $("#set_me").tokenInput(data, {
+            hintText: "Type a DJ name",
+            theme: "facebook",
+            onAdd: prune.m,
+            prePopulate: settings.me !== "" ? [settings.me] : null,
+            tokenLimit: 1
+        });
+        $("#set_rival").tokenInput(data, {
+            hintText: "Type a DJ name",
+            theme: "facebook",
+            onAdd: prune.r,
+            prePopulate: settings.rivals.length > 0 ? settings.rivals : null,
+            preventDuplicates: true
+        });
+        $("#set_temp").tokenInput(data, {
+            hintText: "Type a DJ name",
+            theme: "facebook",
+            onAdd: prune.t,
+            preventDuplicates: true
+        });
+    }).fail(function () {
+        $("#set_me").prop("disabled", true);
+        $("#set_rival").prop("disabled", true);
+        $("#set_temp").prop("disabled", true);
+        $("#set_apply").prop("disabled", true);
+    });
+
+    // apply button :V
+    $("#set_apply").button().click(function () { status_message("Hi. :)"); });
 });
