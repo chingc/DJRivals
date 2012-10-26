@@ -33,7 +33,7 @@ def _update(mode, stop, lock):
             next = sorted(data.keys(), key=lambda x: data[x]["timestamp"], reverse=True).pop()
             index.touch_time(mode, next)
         database.build(mode, next)
-        stop.wait(cycle * 60 * 60 / len(data))
+        time.sleep(cycle * 60 * 60 / len(data))
 
 
 def update():
