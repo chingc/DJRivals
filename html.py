@@ -194,7 +194,7 @@ def pages():
     for name in (key for key in index(_.MISSION)):
         if _exists(_.MISSION_DB_DIR + _clean(name) + ".json"):
             _page(["Mission"], name, "mission")
-    _page(["Star", "NM", "HD", "MX", "EX", "Pop", "Club", "Mission"], "Master")
+    _page(["Star", "NM", "HD", "MX", "Pop", "Club", "Mission"], "Master")
     _index()
 
 

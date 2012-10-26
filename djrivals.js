@@ -1,7 +1,7 @@
 $(document).ready(function () {
     "use strict";
     var settings = {
-            me: "",
+            me: [],
             rivals: []
         },
         ranking_table = function (data) {
@@ -10,7 +10,7 @@ $(document).ready(function () {
                 no_play = [],
                 dj_records = [],
                 rival_records = [],
-                exit_on_zero = 5,
+                exit_on_zero = 10,
                 found,
                 i,
                 ilen;
@@ -74,24 +74,29 @@ $(document).ready(function () {
         prune = {
             // functions to help ensure all field content from settings are unique
             f: function (field) {
+                // get all ids from a field
                 return $.map(field.tokenInput("get"), function (item) {
                     return item.id;
                 });
             },
-            g: function (value, array1, array2) {
-                return ($.inArray(value, array1) > -1 || $.inArray(value, array2) > -1) ? true : false;
+            g: function (id, array1, array2) {
+                // check if an id exists in either of the arrays
+                return ($.inArray(id, array1) > -1 || $.inArray(id, array2) > -1) ? true : false;
             },
             m: function (item) {
+                // remove id from #set_me if it exists elsewhere
                 if (prune.g(item.id, prune.f($("#set_rival")), prune.f($("#set_temp")))) {
                     $("#set_me").tokenInput("remove", {id: item.id});
                 }
             },
             r: function (item) {
+                // remove id from #set_rival if it exists elsewhere
                 if (prune.g(item.id, prune.f($("#set_me")), prune.f($("#set_temp")))) {
                     $("#set_rival").tokenInput("remove", {id: item.id});
                 }
             },
             t: function (item) {
+                // remove id from #set_temp if it exists elsewhere
                 if (prune.g(item.id, prune.f($("#set_me")), prune.f($("#set_rival")))) {
                     $("#set_temp").tokenInput("remove", {id: item.id});
                 }
@@ -127,7 +132,7 @@ $(document).ready(function () {
             hintText: "Type a DJ name",
             theme: "facebook",
             onAdd: prune.m,
-            prePopulate: settings.me !== "" ? [settings.me] : null,
+            prePopulate: settings.me.length > 0 ? settings.me : null,
             tokenLimit: 1
         });
         $("#set_rival").tokenInput(data, {
