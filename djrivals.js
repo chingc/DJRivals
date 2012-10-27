@@ -14,22 +14,19 @@ $(document).ready(function () {
             // apply settings and save cookie
             var me = $("#set_me").tokenInput("get"),
                 rival = $("#set_rival").tokenInput("get"),
-                expire = new Date(new Date().setDate(new Date().getDate() + 365)).toUTCString();
-            if (me.length > 0) {
-                if (changed(me, settings.me) || changed(rival, settings.rival)) {
+                expire = new Date(new Date().setDate(new Date().getDate() + 365)).toUTCString(),
+                message = "";
+            if (changed(me, settings.me) || changed(rival, settings.rival)) {
+                if (me.length > 0 || (me.length === 0 && rival.length === 0)) {
                     settings.me = me;
                     settings.rival = rival;
                     document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
-                    console.log("saved!!");
+                    message = ":D";
+                } else {
+                    message = "Please enter your DJ name!";
                 }
-            } else if (me.length === 0 && rival.length === 0 && temp.length === 0) {
-                settings.me = me;
-                settings.rival = rival;
-                document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
-                console.log("cleared");
-            } else {
-                console.log("Please enter your DJ name!");
             }
+            return message;
         },
         load_settings = function () {
             // load settings from cookie
@@ -132,7 +129,7 @@ $(document).ready(function () {
             },
             r: function (token) {
                 // remove id from #set_rival if it exists in #set_me
-                if (prune.g(item.id, prune.f($("#set_me")))) {
+                if (prune.g(token.id, prune.f($("#set_me")))) {
                     $("#set_rival").tokenInput("remove", {id: token.id});
                 }
             }
@@ -184,7 +181,7 @@ $(document).ready(function () {
     });
 
     // apply button :V
-    $("#set_apply").button().click(function () { apply_settings(); });
+    $("#set_apply").button().click(function () { set_status(apply_settings()); });
 
     load_settings();
 });
