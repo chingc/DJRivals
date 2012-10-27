@@ -4,7 +4,6 @@ $(document).ready(function () {
             me: [],
             rival: []
         },
-        temp_rival = [],
         changed = function (array1, array2) {
             // compare two token input object arrays for equality (order is irrelevant)
             var a = $.map(array1, function (token) { return token.id; }).sort(),
@@ -15,7 +14,6 @@ $(document).ready(function () {
             // apply settings and save cookie
             var me = $("#set_me").tokenInput("get"),
                 rival = $("#set_rival").tokenInput("get"),
-                temp = $("#set_temp").tokenInput("get"),
                 expire = new Date(new Date().setDate(new Date().getDate() + 365)).toUTCString();
             if (me.length > 0) {
                 if (changed(me, settings.me) || changed(rival, settings.rival)) {
@@ -23,10 +21,6 @@ $(document).ready(function () {
                     settings.rival = rival;
                     document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
                     console.log("saved!!");
-                }
-                if (changed(temp, temp_rival)) {
-                    temp_rival = temp;
-                    console.log("temp changed");
                 }
             } else if (me.length === 0 && rival.length === 0 && temp.length === 0) {
                 settings.me = me;
@@ -53,7 +47,7 @@ $(document).ready(function () {
         },
         ranking_table = function (data) {
             // generate a ranking table with the given data
-            var players = settings.me.concat(settings.rival, temp_rival),
+            var players = settings.me.concat(settings.rival),
                 no_play = [],
                 dj_records = [],
                 rival_records = [],
@@ -122,30 +116,24 @@ $(document).ready(function () {
             // functions to help ensure all field content from settings are unique
             f: function (field) {
                 // get all ids from a field
-                return $.map(field.tokenInput("get"), function (item) {
-                    return item.id;
+                return $.map(field.tokenInput("get"), function (token) {
+                    return token.id;
                 });
             },
-            g: function (id, array1, array2) {
-                // check if an id exists in either of the arrays
-                return ($.inArray(id, array1) > -1 || $.inArray(id, array2) > -1) ? true : false;
+            g: function (id, array) {
+                // check if an id exists in the given array
+                return $.inArray(id, array) > -1 ? true : false;
             },
-            m: function (item) {
-                // remove id from #set_me if it exists elsewhere
-                if (prune.g(item.id, prune.f($("#set_rival")), prune.f($("#set_temp")))) {
-                    $("#set_me").tokenInput("remove", {id: item.id});
+            m: function (token) {
+                // remove id from #set_me if it exists in #set_rival
+                if (prune.g(token.id, prune.f($("#set_rival")))) {
+                    $("#set_me").tokenInput("remove", {id: token.id});
                 }
             },
-            r: function (item) {
-                // remove id from #set_rival if it exists elsewhere
-                if (prune.g(item.id, prune.f($("#set_me")), prune.f($("#set_temp")))) {
-                    $("#set_rival").tokenInput("remove", {id: item.id});
-                }
-            },
-            t: function (item) {
-                // remove id from #set_temp if it exists elsewhere
-                if (prune.g(item.id, prune.f($("#set_me")), prune.f($("#set_rival")))) {
-                    $("#set_temp").tokenInput("remove", {id: item.id});
+            r: function (token) {
+                // remove id from #set_rival if it exists in #set_me
+                if (prune.g(item.id, prune.f($("#set_me")))) {
+                    $("#set_rival").tokenInput("remove", {id: token.id});
                 }
             }
         },
@@ -189,21 +177,14 @@ $(document).ready(function () {
             prePopulate: settings.rival.length > 0 ? settings.rival : null,
             preventDuplicates: true
         });
-        $("#set_temp").tokenInput(data, {
-            hintText: "Type a DJ name",
-            theme: "facebook",
-            onAdd: prune.t,
-            prePopulate: temp_rival.length > 0 ? temp_rival : null,
-            preventDuplicates: true
-        });
     }).fail(function () {
         $("#set_me").prop("disabled", true);
         $("#set_rival").prop("disabled", true);
-        $("#set_temp").prop("disabled", true);
         $("#set_apply").prop("disabled", true);
     });
 
     // apply button :V
     $("#set_apply").button().click(function () { apply_settings(); });
+
     load_settings();
 });

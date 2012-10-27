@@ -133,14 +133,7 @@ def _index():
     ps.empty("input", ['id="set_me"', 'type="text"']).emptyln("br")
     ps.begin("label", ['for="set_rival"'], "DJ Rivals").end().empty("br")
     ps.empty("input", ['id="set_rival"', 'type="text"']).emptyln("br")
-    ps.begin("label", ['for="set_temp"'], "Temporary Rivals *").end().empty("br")
-    ps.empty("input", ['id="set_temp"', 'type="text"']).emptyln("br")
     ps.begin("button", ['id="set_apply"', 'type="button"'], "Apply").end().raw(" ").begin("span", ['id="set_status"']).endln()
-    ps.beginln("p")
-    ps.rawln("* Temporary rivals lets you compare scores with<br />")
-    ps.rawln("someone without modifying your main rival list,<br />")
-    ps.rawln("and are lost when DJRivals is closed.")
-    ps.endln()  # p
     ps.endln()  # div
 
     ps.begin("h3", value="About").endln()
