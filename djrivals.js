@@ -65,7 +65,7 @@ $(document).ready(function () {
                 }
             });
             players = $.map(players, function (token) {
-                if (token !== false) {
+                if (token) {
                     return token.name;
                 }
             });
