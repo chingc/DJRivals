@@ -40,7 +40,7 @@ def build(mode, name):
             data["icon"] = "{}_{}.png".format(clean_name, _.CHART[mode_str])
             data["ranking"] = results
             with open(db_dir + clean_name + ".json", "wb") as f:
-                f.write(json.dumps(data, indent=2).encode())
+                f.write(json.dumps(data, indent=None).encode())
             print('Wrote: "{}{}.json"'.format(db_dir, clean_name))
 
 
@@ -106,7 +106,7 @@ def dj():
         for info in extracted[mode]:
             djs[info[2]][mode]["_master_"] = [info[0], info[3]]
         with open(_.MASTER_DB_DIR + mode + ".json", "wb") as f:
-            f.write(json.dumps({"ranking": extracted[mode]}, indent=2).encode())
+            f.write(json.dumps({"ranking": extracted[mode]}, indent=None).encode())
 
     # write pop master (overall) scores
     for mode in ["star", "club", "mission"]:
@@ -125,14 +125,14 @@ def dj():
                 pop.append(next)
         pop = [(rank + 1, score[0], score[1], score[2]) for rank, score in enumerate(sorted(pop, key=lambda x: x[2], reverse=True))]
         with open(_.MASTER_DB_DIR + "pop.json", "wb") as f:
-            f.write(json.dumps({"ranking": pop}, indent=2).encode())
+            f.write(json.dumps({"ranking": pop}, indent=None).encode())
 
     # write DJ files and index
     for dj, scores in djs.items():
         with open("{}{}.json".format(_.DJ_DB_DIR, zlib.crc32(dj.encode())), "wb") as f:
-            f.write(json.dumps(scores, indent=2).encode())
+            f.write(json.dumps(scores, indent=None).encode())
     with open(_.DJ_INDEX, "wb") as f:
-        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())], indent=2).encode())
+        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())], indent=None).encode())
 
 
 _make_dir(_.DJ_DB_DIR)

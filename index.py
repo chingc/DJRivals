@@ -51,7 +51,7 @@ def index(mode, refresh=False):
                 else:
                     index[name]["page"] = page
         with open(path, "wb") as f:
-            f.write(json.dumps(index, indent=2).encode())
+            f.write(json.dumps(index, indent=None).encode())
         print('Wrote: "{}"'.format(path))
     return index
 
@@ -78,7 +78,7 @@ def touch_time(mode, name):
         data = json.loads(f.read().decode(), object_pairs_hook=dict)
         data[name]["timestamp"] = int(time.time())
     with open(path, "wb") as f:
-        f.write(json.dumps(data, indent=2).encode())
+        f.write(json.dumps(data, indent=None).encode())
 
 
 _make_dir(_.DB_DIR)
