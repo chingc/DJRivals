@@ -33,21 +33,26 @@ def _update(mode, stop, lock):
             next = sorted(data.keys(), key=lambda x: data[x]["timestamp"], reverse=True).pop()
             index.touch_time(mode, next)
         database.build(mode, next)
-        time.sleep(cycle * 60 * 60 / len(data))
+        stop.wait(cycle * 60 * 60 / len(data))
 
 
 def update():
     """Continuously update the databases."""
-    stop = threading.Event()
+    stops = []
     for mode in (_.STAR, _.POP, _.CLUB, _.MISSION):
+        threads = 2
         lock = threading.Lock()
-        threading.Thread(target=_update, args=(mode, stop, lock)).start()
-        threading.Thread(target=_update, args=(mode, stop, lock)).start()
+        while threads > 0:
+            stop = threading.Event()
+            threading.Thread(target=_update, args=(mode, stop, lock)).start()
+            stops.append(stop)
+            threads -= 1
     try:
         while True:
             time.sleep(10000)
     except KeyboardInterrupt:
-        stop.set()
+        for stop in stops:
+            stop.set()
         print("Finishing current jobs.  Please wait...")
         while threading.active_count() > 1:
             time.sleep(2)
