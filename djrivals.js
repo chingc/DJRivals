@@ -2,11 +2,58 @@ $(document).ready(function () {
     "use strict";
     var settings = {
             me: [],
-            rivals: []
+            rival: []
+        },
+        temp_rival = [],
+        changed = function (array1, array2) {
+            // compare two token input object arrays for equality (order is irrelevant)
+            var a = $.map(array1, function (token) { return token.id; }).sort(),
+                b = $.map(array2, function (token) { return token.id; }).sort();
+            return JSON.stringify(a) !== JSON.stringify(b);
+        },
+        apply_settings = function () {
+            // apply settings and save cookie
+            var me = $("#set_me").tokenInput("get"),
+                rival = $("#set_rival").tokenInput("get"),
+                temp = $("#set_temp").tokenInput("get"),
+                expire = new Date(new Date().setDate(new Date().getDate() + 365)).toUTCString();
+            if (me.length > 0) {
+                if (changed(me, settings.me) || changed(rival, settings.rival)) {
+                    settings.me = me;
+                    settings.rival = rival;
+                    document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
+                    console.log("saved!!");
+                }
+                if (changed(temp, temp_rival)) {
+                    temp_rival = temp;
+                    console.log("temp changed");
+                }
+            } else if (me.length === 0 && rival.length === 0 && temp.length === 0) {
+                settings.me = me;
+                settings.rival = rival;
+                document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
+                console.log("cleared");
+            } else {
+                console.log("Please enter your DJ name!");
+            }
+        },
+        load_settings = function () {
+            // load settings from cookie
+            var cookie = document.cookie.split(/;\s*/),
+                i,
+                ilen;
+            for (i = 0, ilen = cookie.length; i < ilen; i += 1) {
+                if (cookie[i].indexOf("DJRivals_Settings") === 0) {
+                    cookie = JSON.parse(cookie[i].slice(cookie[i].indexOf("=") + 1));
+                    settings.me = cookie.me;
+                    settings.rival = cookie.rival;
+                    break;
+                }
+            }
         },
         ranking_table = function (data) {
             // generate a ranking table with the given data
-            var players = $.extend([], settings.rivals).concat(settings.me),
+            var players = settings.me.concat(settings.rival, temp_rival),
                 no_play = [],
                 dj_records = [],
                 rival_records = [],
@@ -17,15 +64,15 @@ $(document).ready(function () {
             no_play = $.map(data, function (element) {
                 return element[2];
             });
-            no_play = $.map(players, function (name, index) {
-                if ($.inArray(name, no_play) < 0) {
+            no_play = $.map(players, function (token, index) {
+                if ($.inArray(token.name, no_play) < 0) {
                     players.splice(index, 1, false);
-                    return name;
+                    return token.name;
                 }
             });
-            players = $.map(players, function (name) {
-                if (name) {
-                    return name;
+            players = $.map(players, function (token) {
+                if (token !== false) {
+                    return token.name;
                 }
             });
             dj_records.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
@@ -102,7 +149,7 @@ $(document).ready(function () {
                 }
             }
         },
-        status_message = function (message) {
+        set_status = function (message) {
             // display a message to the user
             $("#set_status").empty();
             $("<span>" + message + "</span>").prependTo("#set_status").fadeOut(5000, function () { $(this).remove(); });
@@ -139,13 +186,14 @@ $(document).ready(function () {
             hintText: "Type a DJ name",
             theme: "facebook",
             onAdd: prune.r,
-            prePopulate: settings.rivals.length > 0 ? settings.rivals : null,
+            prePopulate: settings.rival.length > 0 ? settings.rival : null,
             preventDuplicates: true
         });
         $("#set_temp").tokenInput(data, {
             hintText: "Type a DJ name",
             theme: "facebook",
             onAdd: prune.t,
+            prePopulate: temp_rival.length > 0 ? temp_rival : null,
             preventDuplicates: true
         });
     }).fail(function () {
@@ -156,5 +204,6 @@ $(document).ready(function () {
     });
 
     // apply button :V
-    $("#set_apply").button().click(function () { status_message("Hi. :)"); });
+    $("#set_apply").button().click(function () { apply_settings(); });
+    load_settings();
 });
