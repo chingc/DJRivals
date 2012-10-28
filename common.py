@@ -33,12 +33,14 @@ def _make_dir(path):
 
 def _open_url(url, task):
     """Retrieve data from the specified url."""
-    while True:
+    retries = 10
+    while retries > 0:
         try:
             return urllib.request.urlopen(url)
         except OSError:
             print("Error while {}.  Retrying in {} seconds.".format(task, 180))
             time.sleep(180)
+    raise ConnectionError("Unable to retrieve data.  Connection down?")
 
 
 _ = _Constant()
