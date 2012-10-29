@@ -59,6 +59,7 @@ def dj():
                 data = json.loads(f.read().decode())
             dj_set.update((record[1], record[2]) for record in data["ranking"])
             names[data["name"]] = [9999, 0]
+        names["_master_"] = [9999, 0]
         return names
 
     def _fill(dj_dict, directory, mode):
