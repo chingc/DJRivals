@@ -15,17 +15,18 @@ table {
     table-layout: fixed;
 }
 
-/* ranking page disc icons */
-#tabs p > img {
-    vertical-align: middle;
+/* title listing cells of the main page */
+#rankings td {
+    vertical-align: top;
+    width: 350px;
 }
 
-/* the two cells that hold the ranking tables */
+/* ranking cells of the ranking page */
 .djrank, .rivalrank {
     vertical-align: top;
 }
 
-/* ranking table dj icons */
+/* ranking table djicons */
 .djrank td:nth-child(2) img, .rivalrank td:nth-child(2) img {
     width: 52px;
     height: 32px;
@@ -59,10 +60,31 @@ table {
     width: 100px;
 }
 
-/* index cells of the main page */
-.index {
-    vertical-align: top;
+/* personal/rival score tables */
+#me table, #rival table {
     width: 350px;
+}
+
+/* 1st column of the personal/rival score tables */
+#me th:nth-child(1), #me td:nth-child(1),
+#rival th:nth-child(1), #rival td:nth-child(1) {
+    text-align: left;
+    width: 250px;
+}
+
+/* 2nd, 3rd, and 4th column of the personal/rival score tables */
+#me th:nth-child(2), #me td:nth-child(2),
+#me th:nth-child(3), #me td:nth-child(3),
+#rival th:nth-child(2), #rival td:nth-child(2),
+#rival th:nth-child(3), #rival td:nth-child(3),
+#rival th:nth-child(4), #rival td:nth-child(4) {
+    text-align: left;
+    width: 50px;
+}
+
+/* tab icons */
+#tabs p > img {
+    vertical-align: middle;
 }
 
 #dedication {
