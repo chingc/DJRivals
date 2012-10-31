@@ -26,7 +26,7 @@ def _update(mode, stop, lock):
     while not stop.is_set():
         with lock:
             data = index.index(mode)
-            next = sorted(data.keys(), key=lambda x: data[x]["timestamp"], reverse=True).pop()
+            next = sorted(data.keys(), key=lambda x: data[x]["timestamp"], reverse=True)[-1]
             index.touch_time(mode, next)
         database.build(mode, next)
         stop.wait(interval)
