@@ -13,11 +13,13 @@ def _head(ps):
     ps.emptyln("meta", ['charset="UTF-8"'])
     ps.begin("title", value="DJRivals").endln()
     ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/smoothness/jquery-ui-1.9.0.custom.min.css"'])
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/token-input-facebook.css"'])
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/theme-tablesorter-default.css"'])
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/theme-tokeninput-facebook.css"'])
     ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/djrivals.css"'])
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.min.js"']).endln()
     ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.0.custom.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery.tokeninput.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-tablesorter-2.4.6.min.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-tokeninput-1.6.0.min.js"']).endln()
     ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.js"']).endln()
     ps.endln()  # head
 
@@ -98,14 +100,14 @@ def _index():
     missions = sorted(key for key in index(_.MISSION))
     ps.beginln("table")
     ps.beginln("tr")
-    ps.beginln("td", ['class="index"'])
+    ps.beginln("td")
     for count, name in enumerate(discs[:]):
         ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
         discs.pop(0)
         if count > 107:
             break
     ps.endln()  # td
-    ps.beginln("td", ['class="index"'])
+    ps.beginln("td")
     for name in discs:
         ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
     ps.rawln("<br /><br />")
@@ -121,9 +123,15 @@ def _index():
     ps.endln()  # table
     ps.endln()  # div
 
+    ps.begin("h3", value="Me").endln()
+    ps.beginln("div", ['id="me"'])
+    ps.begin("p", value="Go to settings to enter your DJ name.")
+    ps.endln()  # p
+    ps.endln()  # div
+
     ps.begin("h3", value="Rivals").endln()
     ps.beginln("div", ['id="rivals"'])
-    ps.begin("p", value="Go to settings to enter your rivals.")
+    ps.begin("p", value="Go to settings to enter your DJ rivals.")
     ps.endln()  # p
     ps.endln()  # div
 
