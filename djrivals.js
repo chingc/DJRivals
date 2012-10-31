@@ -10,6 +10,12 @@ $(document).ready(function () {
                 b = $.map(array2, function (token) { return token.id; }).sort();
             return JSON.stringify(a) !== JSON.stringify(b);
         },
+        key_to_array = function (dj, mode) {
+            // extract the mode from a dj database as an array
+            return $.map(dj[(mode.length === 2 ? "pop_" + mode : mode).toLowerCase()], function (value, key) {
+                return [[key, value[0], value[1]]];
+            });
+        },
         apply_settings = function () {
             // apply settings and save cookie
             var me = $("#set_me").tokenInput("get"),
@@ -21,6 +27,8 @@ $(document).ready(function () {
                     settings.me = me;
                     settings.rival = rival;
                     document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
+                    me_section(settings.me);
+                    rival_section(settings.me, settings.rival);
                     message = ":D";
                 } else {
                     message = "Please enter your DJ name!";
@@ -41,13 +49,15 @@ $(document).ready(function () {
                     break;
                 }
             }
+            me_section(settings.me);
+            rival_section(settings.me, settings.rival);
         },
         ranking_table = function (data) {
             // generate a ranking table with the given data
             var players = settings.me.concat(settings.rival),
                 no_play = [],
-                dj_records = [],
-                rival_records = [],
+                dj_section = [],
+                rival_section = [],
                 exit_on_zero = 10,
                 found,
                 i,
@@ -66,8 +76,8 @@ $(document).ready(function () {
                     return token.name;
                 }
             });
-            dj_records.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
-            rival_records.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
+            dj_section.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
+            rival_section.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
             for (i = 0, ilen = data.length; i < ilen; i += 1) {
                 if (players.length < 1) {
                     if (exit_on_zero < 1) {
@@ -75,17 +85,17 @@ $(document).ready(function () {
                     }
                     exit_on_zero -= 1;
                 }
-                dj_records.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
+                dj_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
                 found = $.inArray(data[i][2], players);
                 if (found > -1) {
-                    rival_records.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
+                    rival_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
                     players.splice(found, 1);
                 }
             }
             for (i = 0, ilen = no_play.length; i < ilen; i += 1) {
-                rival_records.push("<tr><td>-</td><td></td><td>" + no_play[i] + "</td><td>-</td></tr>");
+                rival_section.push("<tr><td>-</td><td></td><td>" + no_play[i] + "</td><td>-</td></tr>");
             }
-            return '<table><tr><td class="djrank">' + dj_records.join("") + '</table></td><td class="rivalrank">' + rival_records.join("") + "</table></td></tr></table>";
+            return '<table><tr><td class="djrank">' + dj_section.join("") + '</table></td><td class="rivalrank">' + rival_section.join("") + "</table></td></tr></table>";
         },
         load_tab = function (event, ui) {
             // load tab content
@@ -106,6 +116,131 @@ $(document).ready(function () {
                     div.last().empty().html(ranking_table(data.ranking));
                 }).fail(function () {
                     div.last().empty().html("Unable to retrieve data.");
+                });
+            }
+        },
+        me_section = function (me) {
+            if (me.length === 0) {
+                $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
+            } else {
+                $.ajax({
+                    cache: false,
+                    dataType: "json",
+                    url: "./database/dj/" + me[0].id + ".json"
+                }).done(function (me) {
+                    var tabs = ["Star", "NM", "HD", "MX", "Club", "Mission"],
+                        section = [],
+                        m,
+                        i,
+                        ilen,
+                        j,
+                        jlen;
+                    section.push('<div id="me_tabs"><ul>');
+                    for (i = 0, ilen = tabs.length; i < ilen; i += 1) {
+                        section.push('<li><a href="#' + tabs[i] + '">' + tabs[i] + '</a></li>');
+                    }
+                    section.push('</ul>');
+                    for (i = 0, ilen = tabs.length; i < ilen; i += 1) {
+                        section.push('<div id="' + tabs[i] + '"><p><img src="./images/icon/' + me.icon + '" />' + me.name + '</p>');
+                        section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
+                        m = key_to_array(me, tabs[i]);
+                        for (j = 0, jlen = m.length; j < jlen; j += 1) {
+                            section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + m[j][2] + "</td></tr>");
+                        }
+                        section.pop();
+                        section.push("</tbody></table></div>");
+                    }
+                    section.push('</div>');
+                    $("#me").empty().html(section.join(""));
+                    $("#me_tabs").tabs({
+                        active: false,
+                        collapsible: true,
+                        event: "mouseover",
+                        heightStyle: "content"
+                    });
+                    $(".tablesorter").tablesorter({
+                        sortReset: true,
+                        sortRestart: true
+                    });
+                });
+            }
+        },
+        rival_section = function (me, rival) {
+            if (rival.length === 0) {
+                $("#rivals").empty().html("<p>Go to settings to enter your DJ rivals.</p>");
+            } else {
+                $.ajax({
+                    cache: false,
+                    dataType: "json",
+                    url: "./database/dj/" + me[0].id + ".json"
+                }).done(function (me) {
+                    var tabs = ["Star", "NM", "HD", "MX", "Club", "Mission"],
+                        section = [],
+                        i,
+                        ilen;
+                    section.push('<div id="rivals_accordion">');
+                    for (i = 0, ilen = rival.length; i < ilen; i += 1) {
+                        section.push('<h3>' + rival[i].name + '</h3>');
+                        section.push('<div>');
+                        $.ajax({
+                            async: false,
+                            cache: false,
+                            dataType: "json",
+                            url: "./database/dj/" + rival[i].id + ".json"
+                        }).done(function (rival) {
+                            var stats,
+                                delta,
+                                m,
+                                r,
+                                j,
+                                jlen,
+                                k,
+                                klen;
+                            section.push('<div class="rival_tabs"><ul>');
+                            for (j = 0, jlen = tabs.length; j < jlen; j += 1) {
+                                section.push('<li><a href="#' + tabs[j] + '">' + tabs[j] + '</a></li>');
+                            }
+                            section.push('</ul>');
+                            for (j = 0, jlen = tabs.length; j < jlen; j += 1) {
+                                section.push('<div id="' + tabs[j] + '"><p><img src="./images/icon/' + me.icon + '" /> - vs - <img src="./images/icon/' + rival.icon + '" /></p>');
+                                section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
+                                m = key_to_array(me, tabs[j]);
+                                r = key_to_array(rival, tabs[j]);
+                                stats = [0, 0, 0];
+                                for (k = 0, klen = m.length; k < klen; k += 1) {
+                                    delta = m[k][2] - r[k][2];
+                                    if (m[k][2] > 0 && r[k][2] > 0) {
+                                        delta > 0 ? stats[0]++ : delta < 0 ? stats[1]++ : stats[2]++;
+                                    }
+                                    section.push("<tr><td>" + m[k][0] + "</td><td>" + m[k][2] + "</td><td>" + r[k][2] + "</td><td>" + delta + "</td></tr>");
+                                }
+                                section.pop();
+                                section.push("</tbody></table><br />");
+                                section.push('<table class="tablesorter"><thead><tr><th>Win</th><th>Lose</th><th>Draw</th></tr></thead><tbody>');
+                                section.push("<tr><td>" + stats[0] + "</td><td>" + stats[1] + "</td><td>" + stats[2] + "</td></tr>");
+                                section.push("</tbody></table></div>");
+                            }
+                            section.push('</div>');
+                        });
+                        section.push('</div>');
+                    }
+                    section.push('</div>');
+                    $("#rivals").empty().html(section.join(""));
+                    $("#rivals_accordion").accordion({
+                        active: false,
+                        collapsible: true,
+                        heightStyle: "content"
+                    });
+                    $(".rival_tabs").tabs({
+                        active: false,
+                        collapsible: true,
+                        event: "mouseover",
+                        heightStyle: "content"
+                    });
+                    $(".tablesorter").tablesorter({
+                        sortReset: true,
+                        sortRestart: true
+                    });
                 });
             }
         },
@@ -150,7 +285,8 @@ $(document).ready(function () {
     });
 
     // accordion
-    $(".accordion").accordion({
+    $("#accordion").accordion({
+        collapsible: true,
         heightStyle: "content"
     });
 
