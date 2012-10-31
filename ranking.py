@@ -54,7 +54,7 @@ def ranking(mode, name, chart="nm"):
     results = []
     identifier = _id(mode, name)
     while True:
-        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + _.CHART[chart]) if mode == _.POP else ""), "retrieving '{}'.".format(name)).read().decode())["DATA"]["RECORD"]
+        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + _.CHART[chart]) if mode == _.POP else ""), "retrieving '{}'".format(name)).read().decode())["DATA"]["RECORD"]
         results.extend((record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply)
         if len(reply) < 20:
             break

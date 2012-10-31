@@ -51,7 +51,7 @@ def _page(tabs, name, img_dir=None):
     ps.beginln("body")
 
     # jquery tabs
-    ps.beginln("div", ['id="tabs"'])
+    ps.beginln("div", ['id="ranking"'])
     ps.beginln("ul")
     for tab in tabs:
         ps.begin("li").begin("a", ['href="#{}"'.format(tab)], tab).end().endln()
@@ -91,7 +91,7 @@ def _index():
     ps.beginln("body")
 
     # jquery accordion
-    ps.beginln("div", ['class="accordion"'])
+    ps.beginln("div", ['id="root"'])
 
     ps.begin("h3", value="Rankings").endln()
     ps.beginln("div", ['id="rankings"'])

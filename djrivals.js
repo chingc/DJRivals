@@ -4,11 +4,27 @@ $(document).ready(function () {
             me: [],
             rival: []
         },
-        changed = function (array1, array2) {
-            // compare two token input object arrays for equality (order is irrelevant)
-            var a = $.map(array1, function (token) { return token.id; }).sort(),
-                b = $.map(array2, function (token) { return token.id; }).sort();
-            return JSON.stringify(a) !== JSON.stringify(b);
+        make_accordion = function (selector, activate) {
+            $(selector).accordion({
+                active: activate,
+                collapsible: true,
+                heightStyle: "content"
+            });
+        },
+        make_tabs = function (selector, callable) {
+            $(selector).tabs({
+                active: false,
+                collapsible: true,
+                event: "mouseover",
+                heightStyle: "content",
+                activate: callable
+            });
+        },
+        make_sorter = function (selector) {
+            $(selector).tablesorter({
+                sortReset: true,
+                sortRestart: true
+            });
         },
         key_to_array = function (dj, mode) {
             // extract the mode from a dj database as an array
@@ -16,89 +32,8 @@ $(document).ready(function () {
                 return [[key, value[0], value[1]]];
             });
         },
-        apply_settings = function () {
-            // apply settings and save cookie
-            var me = $("#set_me").tokenInput("get"),
-                rival = $("#set_rival").tokenInput("get"),
-                expire = new Date(new Date().setDate(new Date().getDate() + 365)).toUTCString(),
-                message = "";
-            if (changed(me, settings.me) || changed(rival, settings.rival)) {
-                if (me.length > 0 || (me.length === 0 && rival.length === 0)) {
-                    settings.me = me;
-                    settings.rival = rival;
-                    document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
-                    me_section(settings.me);
-                    rival_section(settings.me, settings.rival);
-                    message = ":D";
-                } else {
-                    message = "Please enter your DJ name!";
-                }
-            }
-            return message;
-        },
-        load_settings = function () {
-            // load settings from cookie
-            var cookie = document.cookie.split(/;\s*/),
-                i,
-                ilen;
-            for (i = 0, ilen = cookie.length; i < ilen; i += 1) {
-                if (cookie[i].indexOf("DJRivals_Settings") === 0) {
-                    cookie = JSON.parse(cookie[i].slice(cookie[i].indexOf("=") + 1));
-                    settings.me = cookie.me;
-                    settings.rival = cookie.rival;
-                    break;
-                }
-            }
-            me_section(settings.me);
-            rival_section(settings.me, settings.rival);
-        },
-        ranking_table = function (data) {
-            // generate a ranking table with the given data
-            var players = settings.me.concat(settings.rival),
-                no_play = [],
-                dj_section = [],
-                rival_section = [],
-                exit_on_zero = 10,
-                found,
-                i,
-                ilen;
-            no_play = $.map(data, function (element) {
-                return element[2];
-            });
-            no_play = $.map(players, function (token, index) {
-                if ($.inArray(token.name, no_play) < 0) {
-                    players.splice(index, 1, false);
-                    return token.name;
-                }
-            });
-            players = $.map(players, function (token) {
-                if (token) {
-                    return token.name;
-                }
-            });
-            dj_section.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
-            rival_section.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
-            for (i = 0, ilen = data.length; i < ilen; i += 1) {
-                if (players.length < 1) {
-                    if (exit_on_zero < 1) {
-                        break;
-                    }
-                    exit_on_zero -= 1;
-                }
-                dj_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
-                found = $.inArray(data[i][2], players);
-                if (found > -1) {
-                    rival_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
-                    players.splice(found, 1);
-                }
-            }
-            for (i = 0, ilen = no_play.length; i < ilen; i += 1) {
-                rival_section.push("<tr><td>-</td><td></td><td>" + no_play[i] + "</td><td>-</td></tr>");
-            }
-            return '<table><tr><td class="djrank">' + dj_section.join("") + '</table></td><td class="rivalrank">' + rival_section.join("") + "</table></td></tr></table>";
-        },
         load_tab = function (event, ui) {
-            // load tab content
+            // load ranking page tab content
             var chart = ui.newTab.children().text(),
                 div = $("#" + chart).children(),
                 name = div.first().text().replace(/\W/g, ""),
@@ -113,7 +48,49 @@ $(document).ready(function () {
                     dataType: "json",
                     url: url.toLowerCase()
                 }).done(function (data) {
-                    div.last().empty().html(ranking_table(data.ranking));
+                    var players = settings.me.concat(settings.rival),
+                        no_play = [],
+                        dj_section = [],
+                        rival_section = [],
+                        exit_on_zero = 10,
+                        found,
+                        i,
+                        ilen;
+                    data = data.ranking;
+                    no_play = $.map(data, function (element) {
+                        return element[2];
+                    });
+                    no_play = $.map(players, function (token, index) {
+                        if ($.inArray(token.name, no_play) < 0) {
+                            players.splice(index, 1, false);
+                            return token.name;
+                        }
+                    });
+                    players = $.map(players, function (token) {
+                        if (token) {
+                            return token.name;
+                        }
+                    });
+                    dj_section.push("<table><tr><th>Rank</th><th>Icon</th><th>DJ</th><th>Score</th></tr>");
+                    rival_section.push("<table><tr><th>Rank</th><th>Icon</th><th>Rival DJ</th><th>Score</th></tr>");
+                    for (i = 0, ilen = data.length; i < ilen; i += 1) {
+                        if (players.length < 1) {
+                            if (exit_on_zero < 1) {
+                                break;
+                            }
+                            exit_on_zero -= 1;
+                        }
+                        dj_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
+                        found = $.inArray(data[i][2], players);
+                        if (found > -1) {
+                            rival_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
+                            players.splice(found, 1);
+                        }
+                    }
+                    for (i = 0, ilen = no_play.length; i < ilen; i += 1) {
+                        rival_section.push("<tr><td>-</td><td></td><td>" + no_play[i] + "</td><td>-</td></tr>");
+                    }
+                    div.last().empty().html('<table><tr><td class="djrank">' + dj_section.join("") + '</table></td><td class="rivalrank">' + rival_section.join("") + "</table></td></tr></table>");
                 }).fail(function () {
                     div.last().empty().html("Unable to retrieve data.");
                 });
@@ -142,7 +119,7 @@ $(document).ready(function () {
                     section.push('</ul>');
                     for (i = 0, ilen = tabs.length; i < ilen; i += 1) {
                         section.push('<div id="' + tabs[i] + '"><p><img src="./images/icon/' + me.icon + '" />' + me.name + '</p>');
-                        section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
+                        section.push('<table class="versus"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
                         m = key_to_array(me, tabs[i]);
                         for (j = 0, jlen = m.length; j < jlen; j += 1) {
                             section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + m[j][2] + "</td></tr>");
@@ -152,16 +129,8 @@ $(document).ready(function () {
                     }
                     section.push('</div>');
                     $("#me").empty().html(section.join(""));
-                    $("#me_tabs").tabs({
-                        active: false,
-                        collapsible: true,
-                        event: "mouseover",
-                        heightStyle: "content"
-                    });
-                    $(".tablesorter").tablesorter({
-                        sortReset: true,
-                        sortRestart: true
-                    });
+                    make_tabs("#me_tabs");
+                    make_sorter(".versus");
                 });
             }
         },
@@ -203,20 +172,20 @@ $(document).ready(function () {
                             section.push('</ul>');
                             for (j = 0, jlen = tabs.length; j < jlen; j += 1) {
                                 section.push('<div id="' + tabs[j] + '"><p><img src="./images/icon/' + me.icon + '" /> - vs - <img src="./images/icon/' + rival.icon + '" /></p>');
-                                section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
+                                section.push('<table class="versus"><thead><tr><th>Title</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
                                 m = key_to_array(me, tabs[j]);
                                 r = key_to_array(rival, tabs[j]);
                                 stats = [0, 0, 0];
                                 for (k = 0, klen = m.length; k < klen; k += 1) {
                                     delta = m[k][2] - r[k][2];
                                     if (m[k][2] > 0 && r[k][2] > 0) {
-                                        delta > 0 ? stats[0]++ : delta < 0 ? stats[1]++ : stats[2]++;
+                                        delta > 0 ? stats[0] += 1 : delta < 0 ? stats[1] += 1 : stats[2] += 1;
                                     }
                                     section.push("<tr><td>" + m[k][0] + "</td><td>" + m[k][2] + "</td><td>" + r[k][2] + "</td><td>" + delta + "</td></tr>");
                                 }
                                 section.pop();
                                 section.push("</tbody></table><br />");
-                                section.push('<table class="tablesorter"><thead><tr><th>Win</th><th>Lose</th><th>Draw</th></tr></thead><tbody>');
+                                section.push('<table id="stats"><thead><tr><th>Win</th><th>Lose</th><th>Draw</th></tr></thead><tbody>');
                                 section.push("<tr><td>" + stats[0] + "</td><td>" + stats[1] + "</td><td>" + stats[2] + "</td></tr>");
                                 section.push("</tbody></table></div>");
                             }
@@ -226,28 +195,16 @@ $(document).ready(function () {
                     }
                     section.push('</div>');
                     $("#rivals").empty().html(section.join(""));
-                    $("#rivals_accordion").accordion({
-                        active: false,
-                        collapsible: true,
-                        heightStyle: "content"
-                    });
-                    $(".rival_tabs").tabs({
-                        active: false,
-                        collapsible: true,
-                        event: "mouseover",
-                        heightStyle: "content"
-                    });
-                    $(".tablesorter").tablesorter({
-                        sortReset: true,
-                        sortRestart: true
-                    });
+                    make_accordion("#rivals_accordion", false);
+                    make_tabs(".rival_tabs");
+                    make_sorter(".versus");
                 });
             }
         },
         prune = {
             // functions to help ensure all field content from settings are unique
             f: function (field) {
-                // get all ids from a field
+                // get all ids from a field as an array of ids
                 return $.map(field.tokenInput("get"), function (token) {
                     return token.id;
                 });
@@ -269,26 +226,56 @@ $(document).ready(function () {
                 }
             }
         },
+        apply_settings = function () {
+            // apply settings and save cookie
+            var changed = function (array1, array2) {
+                    // compare two token input object arrays for equality (order is irrelevant)
+                    var a = $.map(array1, function (token) { return token.id; }).sort(),
+                        b = $.map(array2, function (token) { return token.id; }).sort();
+                    return JSON.stringify(a) !== JSON.stringify(b);
+                },
+                me = $("#set_me").tokenInput("get"),
+                rival = $("#set_rival").tokenInput("get"),
+                expire = new Date(new Date().setDate(new Date().getDate() + 365)).toUTCString(),
+                message = "";
+            if (changed(me, settings.me) || changed(rival, settings.rival)) {
+                if (me.length > 0 || (me.length === 0 && rival.length === 0)) {
+                    settings.me = me;
+                    settings.rival = rival;
+                    document.cookie = "DJRivals_Settings=" + JSON.stringify(settings) + "; expires=" + expire;
+                    me_section(settings.me);
+                    rival_section(settings.me, settings.rival);
+                    message = ":D";
+                } else {
+                    message = "Please enter your DJ name!";
+                }
+            }
+            return message;
+        },
+        load_settings = function () {
+            // load settings from cookie
+            var cookie = document.cookie.split(/;\s*/),
+                i,
+                ilen;
+            for (i = 0, ilen = cookie.length; i < ilen; i += 1) {
+                if (cookie[i].indexOf("DJRivals_Settings") === 0) {
+                    cookie = JSON.parse(cookie[i].slice(cookie[i].indexOf("=") + 1));
+                    settings.me = cookie.me;
+                    settings.rival = cookie.rival;
+                    break;
+                }
+            }
+            me_section(settings.me);
+            rival_section(settings.me, settings.rival);
+        },
         set_status = function (message) {
             // display a message to the user
             $("#set_status").empty();
             $("<span>" + message + "</span>").prependTo("#set_status").fadeOut(5000, function () { $(this).remove(); });
         };
 
-    // tabs
-    $("#tabs").tabs({
-        active: false,
-        collapsible: true,
-        event: "mouseover",
-        heightStyle: "content",
-        activate: load_tab
-    });
-
-    // accordion
-    $("#accordion").accordion({
-        collapsible: true,
-        heightStyle: "content"
-    });
+    make_tabs("#ranking", load_tab);
+    make_accordion("#root");
 
     // autocomplete fields
     $.ajax({
