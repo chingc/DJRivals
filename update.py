@@ -11,20 +11,16 @@ import index
 
 def _update(mode, stop, lock):
     """Continuously update the specified database."""
-    # the cycle variable is used to prevent hammering the DJMAX site.  it sets
-    # the minimum hours to take to update all databases within an index by a
-    # single thread.  the actual time may exceed the specified cycle.  e.g. if
-    # cycle is set to zero.  when multiple threads are used, the actual time
-    # required to update all databases within an index is greater than or equal
-    # to the cycle divided by the number of threads.
+    # the interval is used to prevent hammering the DJMAX site.  it sets the
+    # number of seconds to wait before downloading score data again.
     if mode == _.STAR:
-        cycle = 48
+        interval = 900
     elif mode == _.POP:
-        cycle = 24
+        interval = 600
     elif mode == _.CLUB:
-        cycle = 36
+        interval = 1200
     elif mode == _.MISSION:
-        cycle = 36
+        interval = 1800
     else:
         raise ValueError("invalid game mode")
     while not stop.is_set():
@@ -33,7 +29,7 @@ def _update(mode, stop, lock):
             next = sorted(data.keys(), key=lambda x: data[x]["timestamp"], reverse=True).pop()
             index.touch_time(mode, next)
         database.build(mode, next)
-        stop.wait(cycle * 60 * 60 / len(data))
+        stop.wait(interval)
 
 
 def update():
