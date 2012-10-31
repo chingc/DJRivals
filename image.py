@@ -54,7 +54,7 @@ def image(mode):
                 if mode == _.POP:
                     theirname = "{}{}{}".format(name[:-1], i, extension)
                 with open(img_dir + myname, "wb") as f:
-                    f.write(_open_url(img_url.format(theirname), "downloading image").read())
+                    f.write(_open_url(img_url.format(theirname), "downloading title image").read())
                 print('Wrote: "{}{}"'.format(img_dir, myname))
 
 
