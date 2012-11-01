@@ -119,7 +119,7 @@ $(document).ready(function () {
                     section.push("</ul>");
                     for (i = 0, ilen = tabs.length; i < ilen; i += 1) {
                         section.push('<div id="' + tabs[i] + '"><p><img src="./images/icon/' + me.icon + '" />' + me.name + "</p>");
-                        section.push('<table class="versus"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
+                        section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
                         m = key_to_array(me, tabs[i]);
                         for (j = 0, jlen = m.length; j < jlen; j += 1) {
                             section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + m[j][2] + "</td></tr>");
@@ -130,7 +130,7 @@ $(document).ready(function () {
                     section.push("</div>");
                     $("#me").empty().html(section.join(""));
                     make_tabs("#me_tabs");
-                    make_sorter(".versus");
+                    make_sorter(".tablesorter");
                 });
             }
         },
@@ -173,7 +173,7 @@ $(document).ready(function () {
                             section.push("</ul>");
                             for (j = 0, jlen = tabs.length; j < jlen; j += 1) {
                                 section.push('<div id="' + tabs[j] + '"><p><img src="./images/icon/' + me.icon + '" /> - vs - <img src="./images/icon/' + rival.icon + '" /></p>');
-                                section.push('<table class="versus"><thead><tr><th>Title</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
+                                section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
                                 m = key_to_array(me, tabs[j]);
                                 r = key_to_array(rival, tabs[j]);
                                 stats = [0, 0, 0];
@@ -201,7 +201,7 @@ $(document).ready(function () {
                     $("#rivals").empty().html(section.join(""));
                     make_accordion("#rivals_accordion", false);
                     make_tabs(".rival_tabs");
-                    make_sorter(".versus");
+                    make_sorter(".tablesorter");
                 });
             }
         },

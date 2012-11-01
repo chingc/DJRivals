@@ -61,18 +61,18 @@ table {
 }
 
 /* personal/rival score tables */
-.versus {
+.tablesorter {
     width: 475px;
 }
 
 /* 1st column of the personal/rival score tables */
-.versus th:nth-child(1) {
+.tablesorter th:nth-child(1) {
     text-align: left;
     width: 250px;
 }
 
 /* 2nd, 3rd, and 4th column of the personal/rival score tables */
-.versus th:nth-child(2), .versus th:nth-child(3), .versus th:nth-child(4) {
+.tablesorter th:nth-child(2), .tablesorter th:nth-child(3), .tablesorter th:nth-child(4) {
     text-align: left;
     width: 75px;
 }
