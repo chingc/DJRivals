@@ -131,6 +131,8 @@ $(document).ready(function () {
                     $("#me").empty().html(section.join(""));
                     make_tabs("#me_tabs");
                     make_sorter(".tablesorter");
+                }).fail(function () {
+                    $("#me").empty().html("Unable to retrieve data.");
                 });
             }
         },
@@ -145,11 +147,12 @@ $(document).ready(function () {
                 }).done(function (me) {
                     var tabs = ["Star", "NM", "HD", "MX", "Club", "Mission"],
                         section = [],
+                        overall_stats,
                         i,
                         ilen;
                     section.push('<div id="rivals_accordion">');
                     for (i = 0, ilen = rival.length; i < ilen; i += 1) {
-                        var overall_stats = [0, 0];
+                        overall_stats = [0, 0];
                         section.push("<h3>" + rival[i].name + "</h3>");
                         section.push("<div>");
                         $.ajax({
@@ -180,7 +183,7 @@ $(document).ready(function () {
                                 for (k = 0, klen = m.length; k < klen; k += 1) {
                                     delta = m[k][2] - r[k][2];
                                     if (m[k][2] > 0 && r[k][2] > 0) {
-                                        delta > 0 ? stats[0] += 1 : delta < 0 ? stats[1] += 1 : stats[2] += 1;
+                                        delta > 0 ? stats[0]++ : delta < 0 ? stats[1]++ : stats[2]++;
                                     }
                                     section.push("<tr><td>" + m[k][0] + "</td><td>" + m[k][2] + "</td><td>" + r[k][2] + "</td><td>" + delta + "</td></tr>");
                                 }
@@ -193,6 +196,8 @@ $(document).ready(function () {
                                 overall_stats[1] += stats[1];
                             }
                             section.push("</div>");
+                        }).fail(function () {
+                            section.push("Unable to retrieve data.");
                         });
                         section.push("</div>");
                         section[$.inArray("<h3>" + rival[i].name + "</h3>", section)] = "<h3>" + rival[i].name + "&nbsp; &nbsp;" + overall_stats[0] + ":" + overall_stats[1] + "</h3>";
@@ -202,6 +207,8 @@ $(document).ready(function () {
                     make_accordion("#rivals_accordion", false);
                     make_tabs(".rival_tabs");
                     make_sorter(".tablesorter");
+                }).fail(function () {
+                    $("#rivals").empty().html("Unable to retrieve data.");
                 });
             }
         },
