@@ -12,15 +12,15 @@ def _head(ps):
     ps.beginln("head")
     ps.emptyln("meta", ['charset="UTF-8"'])
     ps.begin("title", value="DJRivals").endln()
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/smoothness/jquery-ui-1.9.0.custom.min.css"'])
+    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/smoothness/jquery-ui-1.9.1.min.css"'])
     ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/theme-tablesorter-default.css"'])
     ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/theme-tokeninput-facebook.css"'])
     ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/djrivals.css"'])
     ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.0.custom.min.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.1.min.js"']).endln()
     ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-tablesorter-2.2.2.min.js"']).endln()
     ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-tokeninput-1.6.0.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.js"']).endln()
+    ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.min.js"']).endln()
     ps.endln()  # head
 
 
