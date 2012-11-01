@@ -34,7 +34,14 @@ def _tail(ps):
     ps.emptyln("br")
     ps.raw("&copy; 2012 DJ cgcgngng&#47;Cherry<br />All rights reserved.").emptyln("br")
     ps.emptyln("br")
-    ps.rawln(time.strftime("%Y%m%d.%H"))
+    avg_age = [0, 0]
+    for index in (_.STAR_INDEX, _.POP_INDEX, _.CLUB_INDEX, _.MISSION_INDEX):
+        with open(index, "rb") as f:
+            data = json.loads(f.read().decode())
+        avg_age[0] += len(data)
+        avg_age[1] += sum(data[name]["timestamp"] for name in data)
+    avg_age = avg_age[1] / avg_age[0]
+    ps.rawln(time.strftime("%Y%m%d.%H", time.localtime(avg_age)))
     ps.endln()  # p
     ps.endln()  # div
 
