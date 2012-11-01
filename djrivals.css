@@ -62,7 +62,7 @@ table {
 
 /* personal/rival score tables */
 .versus {
-    width: 400px;
+    width: 475px;
 }
 
 /* 1st column of the personal/rival score tables */
@@ -74,7 +74,7 @@ table {
 /* 2nd, 3rd, and 4th column of the personal/rival score tables */
 .versus th:nth-child(2), .versus th:nth-child(3), .versus th:nth-child(4) {
     text-align: left;
-    width: 50px;
+    width: 75px;
 }
 
 /* tab icons */
