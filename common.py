@@ -63,7 +63,7 @@ _.MISSION_KEY = {"name": "MISSIONPACKNAME", "id": "MISSIONPACKID", "image": "MIS
 
 _.RANKING_URL = "http://djmaxcrew.com/ranking/"
 _.ICON_URL    = "http://img3.djmaxcrew.com/icon/"
-_.OUTPUT_DIR  = "../smwst.github.com/DJRivals-test/"
+_.OUTPUT_DIR  = "../smwst.github.com/DJRivals/"
 
 _.STAR_ID_URL    = _.RANKING_URL + "GetRankStarMixing.asp?p={}"
 _.POP_ID_URL     = _.RANKING_URL + "GetRankPopMixing.asp?p={}"
