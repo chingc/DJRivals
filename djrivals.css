@@ -61,23 +61,18 @@ table {
 }
 
 /* personal/rival score tables */
-#me table, #rivals table {
+.versus {
     width: 400px;
 }
 
 /* 1st column of the personal/rival score tables */
-#me th:nth-child(1), #me td:nth-child(1),
-#rivals th:nth-child(1), #rivals td:nth-child(1) {
+.versus th:nth-child(1) {
     text-align: left;
     width: 250px;
 }
 
 /* 2nd, 3rd, and 4th column of the personal/rival score tables */
-#me th:nth-child(2), #me td:nth-child(2),
-#me th:nth-child(3), #me td:nth-child(3),
-#rivals th:nth-child(2), #rivals td:nth-child(2),
-#rivals th:nth-child(3), #rivals td:nth-child(3),
-#rivals th:nth-child(4), #rivals td:nth-child(4) {
+.versus th:nth-child(2), .versus th:nth-child(3), .versus th:nth-child(4) {
     text-align: left;
     width: 50px;
 }
@@ -85,6 +80,12 @@ table {
 /* tab icons */
 #ranking p > img, #me_tabs p > img, .rival_tabs p > img {
     vertical-align: middle;
+}
+
+/* stats box */
+#stats {
+    text-align: center;
+    width: 150px;
 }
 
 #dedication {

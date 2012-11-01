@@ -114,11 +114,11 @@ $(document).ready(function () {
                         jlen;
                     section.push('<div id="me_tabs"><ul>');
                     for (i = 0, ilen = tabs.length; i < ilen; i += 1) {
-                        section.push('<li><a href="#' + tabs[i] + '">' + tabs[i] + '</a></li>');
+                        section.push('<li><a href="#' + tabs[i] + '">' + tabs[i] + "</a></li>");
                     }
-                    section.push('</ul>');
+                    section.push("</ul>");
                     for (i = 0, ilen = tabs.length; i < ilen; i += 1) {
-                        section.push('<div id="' + tabs[i] + '"><p><img src="./images/icon/' + me.icon + '" />' + me.name + '</p>');
+                        section.push('<div id="' + tabs[i] + '"><p><img src="./images/icon/' + me.icon + '" />' + me.name + "</p>");
                         section.push('<table class="versus"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
                         m = key_to_array(me, tabs[i]);
                         for (j = 0, jlen = m.length; j < jlen; j += 1) {
@@ -127,7 +127,7 @@ $(document).ready(function () {
                         section.pop();
                         section.push("</tbody></table></div>");
                     }
-                    section.push('</div>');
+                    section.push("</div>");
                     $("#me").empty().html(section.join(""));
                     make_tabs("#me_tabs");
                     make_sorter(".versus");
@@ -149,8 +149,9 @@ $(document).ready(function () {
                         ilen;
                     section.push('<div id="rivals_accordion">');
                     for (i = 0, ilen = rival.length; i < ilen; i += 1) {
-                        section.push('<h3>' + rival[i].name + '</h3>');
-                        section.push('<div>');
+                        var overall_stats = [0, 0];
+                        section.push("<h3>" + rival[i].name + "</h3>");
+                        section.push("<div>");
                         $.ajax({
                             async: false,
                             cache: false,
@@ -167,9 +168,9 @@ $(document).ready(function () {
                                 klen;
                             section.push('<div class="rival_tabs"><ul>');
                             for (j = 0, jlen = tabs.length; j < jlen; j += 1) {
-                                section.push('<li><a href="#' + tabs[j] + '">' + tabs[j] + '</a></li>');
+                                section.push('<li><a href="#' + tabs[j] + '">' + tabs[j] + "</a></li>");
                             }
-                            section.push('</ul>');
+                            section.push("</ul>");
                             for (j = 0, jlen = tabs.length; j < jlen; j += 1) {
                                 section.push('<div id="' + tabs[j] + '"><p><img src="./images/icon/' + me.icon + '" /> - vs - <img src="./images/icon/' + rival.icon + '" /></p>');
                                 section.push('<table class="versus"><thead><tr><th>Title</th><th>Me</th><th>Rival</th><th>Delta</th></tr></thead><tbody>');
@@ -188,12 +189,15 @@ $(document).ready(function () {
                                 section.push('<table id="stats"><thead><tr><th>Win</th><th>Lose</th><th>Draw</th></tr></thead><tbody>');
                                 section.push("<tr><td>" + stats[0] + "</td><td>" + stats[1] + "</td><td>" + stats[2] + "</td></tr>");
                                 section.push("</tbody></table></div>");
+                                overall_stats[0] += stats[0];
+                                overall_stats[1] += stats[1];
                             }
-                            section.push('</div>');
+                            section.push("</div>");
                         });
-                        section.push('</div>');
+                        section.push("</div>");
+                        section[$.inArray("<h3>" + rival[i].name + "</h3>", section)] = "<h3>" + rival[i].name + "&nbsp; &nbsp;" + overall_stats[0] + ":" + overall_stats[1] + "</h3>";
                     }
-                    section.push('</div>');
+                    section.push("</div>");
                     $("#rivals").empty().html(section.join(""));
                     make_accordion("#rivals_accordion", false);
                     make_tabs(".rival_tabs");
