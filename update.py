@@ -32,17 +32,17 @@ def _update(mode, stop, lock):
         stop.wait(interval)
 
 
-def update():
+def update(threads=2):
     """Continuously update the databases."""
     stops = []
     for mode in (_.STAR, _.POP, _.CLUB, _.MISSION):
-        threads = 2
+        run = threads
         lock = threading.Lock()
-        while threads > 0:
+        while run > 0:
             stop = threading.Event()
             threading.Thread(target=_update, args=(mode, stop, lock)).start()
             stops.append(stop)
-            threads -= 1
+            run -= 1
     try:
         while True:
             time.sleep(10000)
