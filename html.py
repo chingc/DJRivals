@@ -24,7 +24,7 @@ def _head(ps):
     ps.endln()  # head
 
 
-def _tail(ps):
+def _tail(ps, print_time):
     """Append sections that belong at the bottom of each page."""
     ps.beginln("div", ['id="footer"'])
     ps.beginln("p")
@@ -32,16 +32,17 @@ def _tail(ps):
     ps.begin("a", ['href="http://www.bemanistyle.com/forum/forumdisplay.php?7-DJMAX"', 'target="_blank"'], "DJMAX Forum (BMS)").end().rawln("&nbsp;&nbsp;")
     ps.begin("a", ['href="http://djmaxcrew.com/"', 'target="_blank"'], "DJMAX Technika").end().emptyln("br")
     ps.emptyln("br")
-    ps.raw("&copy; 2012 DJ cgcgngng&#47;Cherry<br />All rights reserved.").emptyln("br")
-    ps.emptyln("br")
-    avg_age = [0, 0]
-    for index in (_.STAR_INDEX, _.POP_INDEX, _.CLUB_INDEX, _.MISSION_INDEX):
-        with open(index, "rb") as f:
-            data = json.loads(f.read().decode())
-        avg_age[0] += len(data)
-        avg_age[1] += sum(data[name]["timestamp"] for name in data)
-    avg_age = avg_age[1] / avg_age[0]
-    ps.rawln(time.strftime("%Y%m%d.%H", time.localtime(avg_age)))
+    ps.rawln("&copy; 2012 DJ cgcgngng&#47;Cherry<br />All rights reserved.")
+    if print_time:
+        ps.rawln("<br /><br />")
+        avg_age = [0, 0]
+        for index in (_.STAR_INDEX, _.POP_INDEX, _.CLUB_INDEX, _.MISSION_INDEX):
+            with open(index, "rb") as f:
+                data = json.loads(f.read().decode())
+            avg_age[0] += len(data)
+            avg_age[1] += sum(data[name]["timestamp"] for name in data)
+        avg_age = avg_age[1] / avg_age[0]
+        ps.rawln(time.strftime("%Y%m%d.%H", time.localtime(avg_age)))
     ps.endln()  # p
     ps.endln()  # div
 
@@ -76,7 +77,7 @@ def _page(tabs, name, img_dir=None):
         ps.endln()  # div
     ps.endln()  # div (tabs)
 
-    _tail(ps)
+    _tail(ps, False)
 
     ps.endln()  # body
     ps.endln()  # html
@@ -169,7 +170,7 @@ def _index():
 
     ps.endln()  # div (accordion)
 
-    _tail(ps)
+    _tail(ps, True)
 
     ps.endln()  # body
     ps.endln()  # html
