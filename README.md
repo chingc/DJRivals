@@ -1,9 +1,9 @@
 DJRivals is a score tracker for DJMAX [Technika 3][1].
 
-Track personal scores, track the scores of your rivals, and even see score
-comparisons.  Sortable columns makes it easy to see your best and worst scores.
-
-Star Master, Club Master, and Mission Master rankings available nowhere else!
+Quickly and easily see your scores as well as those from your rivals.  Score
+comparison shows how far ahead or behind you are, and sortable columns makes it
+simple to see your best and worst scores.  DJRivals also includes master ranking
+for all modes!
 
 <br />
 
