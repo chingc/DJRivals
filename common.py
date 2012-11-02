@@ -45,17 +45,22 @@ def _open_url(url, task):
 
 _ = _Constant()
 
-_.STAR    = 0
-_.POP     = 1
-_.CLUB    = 2
-_.MISSION = 3
+_.STAR    = "Star"
+_.POP     = "Pop"
+_.CLUB    = "Club"
+_.MISSION = "Mission"
+
+_.NM = "NM"
+_.HD = "HD"
+_.MX = "MX"
+_.EX = "EX"
+
+_.CHART = {_.NM: 1, _.HD: 2, _.MX: 3, _.EX: 4}
 
 _.STAR_PAGES    = 9
 _.POP_PAGES     = 9
 _.CLUB_PAGES    = 1
 _.MISSION_PAGES = 1
-
-_.CHART = {"nm": "1", "hd": "2", "mx": "3", "ex": "4"}
 
 _.DISC_KEY    = {"name": "DISCNAME", "id": "DISCID", "image": "DISCIMG"}
 _.CLUB_KEY    = {"name": "DISCSETNAME", "id": "DISCSETID", "image": "DISCSETIMG"}

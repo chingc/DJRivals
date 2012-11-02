@@ -1,8 +1,7 @@
 """Ranking retrieval."""
 import json
-import re
 
-from common import _, _open_url
+from common import _, _clean, _open_url
 from index import index
 
 
@@ -31,7 +30,7 @@ def _id(mode, name):
             return record[key["id"]]
 
 
-def ranking(mode, name, chart="nm"):
+def ranking(mode, name, chart=_.NM):
     """The complete ranking of the specified mode and name.
 
     Any of the four game mode constants defined in the common module can be
@@ -55,7 +54,7 @@ def ranking(mode, name, chart="nm"):
     results = []
     identifier = _id(mode, name)
     while True:
-        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt=" + _.CHART[chart]) if mode == _.POP else ""), "retrieving '{}'".format(re.sub(r"[^-_ a-zA-Z0-9]", r"", name))).read().decode())["DATA"]["RECORD"]
+        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt={}".format(_.CHART[chart])) if mode == _.POP else ""), "retrieving '{}'".format(_clean(name))).read().decode())["DATA"]["RECORD"]
         results.extend((record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply)
         if len(reply) < 20:
             break

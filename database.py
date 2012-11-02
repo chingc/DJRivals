@@ -16,18 +16,18 @@ def build(mode, name):
 
     """
     if mode == _.STAR:
-        level = [("nm", _.STAR_DB_DIR)]
+        level = [(_.NM, _.STAR_DB_DIR)]
     elif mode == _.POP:
         level = [
-            ("nm", _.POP_NM_DB_DIR),
-            ("hd", _.POP_HD_DB_DIR),
-            ("mx", _.POP_MX_DB_DIR),
-            ("ex", _.POP_EX_DB_DIR)
+            (_.NM, _.POP_NM_DB_DIR),
+            (_.HD, _.POP_HD_DB_DIR),
+            (_.MX, _.POP_MX_DB_DIR),
+            (_.EX, _.POP_EX_DB_DIR)
         ]
     elif mode == _.CLUB:
-        level = [("nm", _.CLUB_DB_DIR)]
+        level = [(_.NM, _.CLUB_DB_DIR)]
     elif mode == _.MISSION:
-        level = [("nm", _.MISSION_DB_DIR)]
+        level = [(_.NM, _.MISSION_DB_DIR)]
     else:
         raise ValueError("invalid game mode")
     for mode_str, db_dir in level:

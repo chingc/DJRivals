@@ -186,24 +186,24 @@ def pages():
         tabs = []
         clean_name = _clean(name)
         if _exists(_.STAR_DB_DIR + clean_name + ".json"):
-            tabs.append("Star")
+            tabs.append(_.STAR)
         if _exists(_.POP_NM_DB_DIR + clean_name + ".json"):
-            tabs.append("NM")
+            tabs.append(_.NM)
         if _exists(_.POP_HD_DB_DIR + clean_name + ".json"):
-            tabs.append("HD")
+            tabs.append(_.HD)
         if _exists(_.POP_MX_DB_DIR + clean_name + ".json"):
-            tabs.append("MX")
+            tabs.append(_.MX)
         if _exists(_.POP_EX_DB_DIR + clean_name + ".json"):
-            tabs.append("EX")
+            tabs.append(_.EX)
         if len(tabs) > 0:
             _page(tabs, name, "disc")
     for name in (key for key in index(_.CLUB)):
         if _exists(_.CLUB_DB_DIR + _clean(name) + ".json"):
-            _page(["Club"], name, "club")
+            _page([_.CLUB], name, "club")
     for name in (key for key in index(_.MISSION)):
         if _exists(_.MISSION_DB_DIR + _clean(name) + ".json"):
-            _page(["Mission"], name, "mission")
-    _page(["Star", "NM", "HD", "MX", "Pop", "Club", "Mission"], "Master")
+            _page([_.MISSION], name, "mission")
+    _page([_.STAR, _.NM, _.HD, _.MX, _.POP, _.CLUB, _.MISSION], "Master")
     _index()
 
 
