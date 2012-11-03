@@ -96,6 +96,23 @@ $(document).ready(function () {
                 });
             }
         },
+        lamp = function (score) {
+            var lamp;
+            if (score >= 297000) {
+                lamp = "fullcombo";
+            } else if (score >= 290000) {
+                lamp = "exhardclear";
+            } else if (score >= 285000) {
+                lamp = "hardclear";
+            } else if (score >= 270000) {
+                lamp = "normalclear";
+            } else if (score > 0) {
+                lamp = "easyclear";
+            } else {
+                lamp = "noplay";
+            }
+            return '<span class="' + lamp + '">&nbsp;</span> ' + score;
+        },
         me_section = function (me) {
             if (me.length === 0) {
                 $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
@@ -122,7 +139,7 @@ $(document).ready(function () {
                         section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
                         m = key_to_array(me, tabs[i]);
                         for (j = 0, jlen = m.length; j < jlen; j += 1) {
-                            section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + m[j][2] + "</td></tr>");
+                            section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + (m[j][2] <= 300000 ? lamp(m[j][2]) : m[j][2]) + "</td></tr>");
                         }
                         section.pop();
                         section.push("</tbody></table></div>");
@@ -185,7 +202,7 @@ $(document).ready(function () {
                                     if (m[k][2] > 0 && r[k][2] > 0) {
                                         delta > 0 ? stats[0]++ : delta < 0 ? stats[1]++ : stats[2]++;
                                     }
-                                    section.push("<tr><td>" + m[k][0] + "</td><td>" + m[k][2] + "</td><td>" + r[k][2] + "</td><td>" + delta + "</td></tr>");
+                                    section.push("<tr><td>" + m[k][0] + "</td><td>" + (m[k][2] <= 300000 ? lamp(m[k][2]) : m[k][2]) + "</td><td>" + (r[k][2] <= 300000 ? lamp(r[k][2]) : r[k][2]) + "</td><td>" + delta + "</td></tr>");
                                 }
                                 section.pop();
                                 section.push("</tbody></table><br />");

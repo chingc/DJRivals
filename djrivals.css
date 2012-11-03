@@ -88,6 +88,31 @@ table {
     width: 150px;
 }
 
+/* flashing gif clear lamp */
+.fullcombo {
+    background-image: url("../images/fullcombo.gif");
+}
+
+/* gold clear lamp */
+.exhardclear {
+    background-color: #FFD700;
+}
+
+/* light gray clear lamp */
+.hardclear {
+    background-color: #DDDDDD;
+}
+
+/* azure clear lamp */
+.normalclear {
+    background-color: #007FFF;
+}
+
+/* turquoise clear lamp */
+.easyclear {
+    background-color: #40E0D0;
+}
+
 #dedication {
     margin: 100px 0px 0px 0px;
 }
