@@ -63,8 +63,8 @@ def indexes():
     print("Done.")
 
 
-def finish():
-    """Build the DJ database and html index."""
+def sync():
+    """Build the DJ database and front-end."""
     database.dj()
     image.icon()
     html.pages()
