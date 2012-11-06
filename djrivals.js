@@ -1,10 +1,12 @@
 $(document).ready(function () {
     "use strict";
     var settings = {
+            // user settings
             me: [],
             rival: []
         },
         make_accordion = function (selector, activate) {
+            // create jquery accordion
             $(selector).accordion({
                 active: activate,
                 collapsible: true,
@@ -12,6 +14,7 @@ $(document).ready(function () {
             });
         },
         make_tabs = function (selector, callable) {
+            // create jquery tab
             $(selector).tabs({
                 active: false,
                 collapsible: true,
@@ -21,6 +24,7 @@ $(document).ready(function () {
             });
         },
         make_sorter = function (selector) {
+            // create tablesorter
             $(selector).tablesorter({
                 sortReset: true,
                 sortRestart: true
@@ -96,17 +100,27 @@ $(document).ready(function () {
                 });
             }
         },
-        lamp = function (score) {
-            var lamp;
-            if (score >= 297000) {
+        lamp = function (tab_index, score) {
+            // iidx style clear lamps
+            var scale,
+                lamp;
+            if (tab_index === 4) {
+                // figure out how to deal with extended vs. non-extended
+                return score;
+            } else if (tab_index === 5) {
+                scale = [297000 * 3 * 8, 290000 * 3 * 8, 285000 * 3 * 8, 270000 * 3 * 8, 0];
+            } else {
+                scale = [297000, 290000, 285000, 270000, 0];
+            }
+            if (score >= scale[0]) {
                 lamp = "fullcombo";
-            } else if (score >= 290000) {
+            } else if (score >= scale[1]) {
                 lamp = "exhardclear";
-            } else if (score >= 285000) {
+            } else if (score >= scale[2]) {
                 lamp = "hardclear";
-            } else if (score >= 270000) {
+            } else if (score >= scale[3]) {
                 lamp = "normalclear";
-            } else if (score > 0) {
+            } else if (score > scale[4]) {
                 lamp = "easyclear";
             } else {
                 lamp = "noplay";
@@ -114,6 +128,7 @@ $(document).ready(function () {
             return '<span class="' + lamp + '">&nbsp;</span> ' + score;
         },
         me_section = function (me) {
+            // generate personal section
             if (me.length === 0) {
                 $("#me").empty().html("<p>Go to settings to enter your DJ name.</p>");
             } else {
@@ -139,7 +154,7 @@ $(document).ready(function () {
                         section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
                         m = key_to_array(me, tabs[i]);
                         for (j = 0, jlen = m.length; j < jlen; j += 1) {
-                            section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + (m[j][2] <= 300000 ? lamp(m[j][2]) : m[j][2]) + "</td></tr>");
+                            section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + lamp(i, m[j][2]) + "</td></tr>");
                         }
                         section.pop();
                         section.push("</tbody></table></div>");
@@ -154,6 +169,7 @@ $(document).ready(function () {
             }
         },
         rival_section = function (me, rival) {
+            // generate rival section
             if (rival.length === 0) {
                 $("#rivals").empty().html("<p>Go to settings to enter your DJ rivals.</p>");
             } else {
@@ -202,7 +218,7 @@ $(document).ready(function () {
                                     if (m[k][2] > 0 && r[k][2] > 0) {
                                         delta > 0 ? stats[0]++ : delta < 0 ? stats[1]++ : stats[2]++;
                                     }
-                                    section.push("<tr><td>" + m[k][0] + "</td><td>" + (m[k][2] <= 300000 ? lamp(m[k][2]) : m[k][2]) + "</td><td>" + (r[k][2] <= 300000 ? lamp(r[k][2]) : r[k][2]) + "</td><td>" + delta + "</td></tr>");
+                                    section.push("<tr><td>" + m[k][0] + "</td><td>" + lamp(j, m[k][2]) + "</td><td>" + lamp(j, r[k][2]) + "</td><td>" + delta + "</td></tr>");
                                 }
                                 section.pop();
                                 section.push("</tbody></table><br />");
@@ -302,8 +318,7 @@ $(document).ready(function () {
             $("<span>" + message + "</span>").prependTo("#set_status").fadeOut(5000, function () { $(this).remove(); });
         };
 
-    make_tabs("#ranking", load_tab);
-    make_accordion("#root");
+    load_settings();
 
     // autocomplete fields
     $.ajax({
@@ -334,5 +349,6 @@ $(document).ready(function () {
     // apply button :V
     $("#set_apply").button().click(function () { set_status(apply_settings()); });
 
-    load_settings();
+    make_accordion("#root");
+    make_tabs("#ranking", load_tab);
 });
