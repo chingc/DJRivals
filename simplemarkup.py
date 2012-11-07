@@ -1,3 +1,31 @@
+"""simplemarkup, version 2.1, https://github.com/smwst/simplemarkup
+
+Copyright (c) 2012, Ching Chow
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+
 class SimpleMarkup():
     """A simple pretty print markup generator."""
     def __init__(self, width=4):
@@ -50,8 +78,10 @@ class SimpleMarkup():
     def _begin(self, tag, attr, value, newline):
         """Begin and add a new element."""
         self._open_tags.append(tag)
-        self._output.append(self._untrim("<{}{}>{}".format(tag, self._attr_str(attr), value), newline))
+        self._output.append(self._untrim("<{}{}>".format(tag, self._attr_str(attr)), newline))
         self._depth += 1
+        if len(value) > 0:
+            self._output.append(self._untrim(value, newline))
         return self
 
     def _end(self, newline):
@@ -83,21 +113,21 @@ class SimpleMarkup():
         return self._empty(self._check(tag), self._check_attr(attr), True)
 
     def begin(self, tag, attr=[], value=""):
-        """Begin and add a new element."""
+        """Add the opening tag of an element."""
         return self._begin(self._check(tag), self._check_attr(attr), self._check(value), False)
 
     def beginln(self, tag, attr=[], value=""):
-        """Begin, add a new element, and start a newline."""
+        """Add the opening tag of an element and start a newline."""
         return self._begin(self._check(tag), self._check_attr(attr), self._check(value), True)
 
     def end(self):
-        """End an element."""
+        """Add the closing tag of an element."""
         if self._depth == 0:
             raise IndexError("already ended")
         return self._end(False)
 
     def endln(self):
-        """End an element and start a newline."""
+        """Add the closing tag of an element and start a newline."""
         if self._depth == 0:
             raise IndexError("already ended")
         return self._end(True)
