@@ -100,13 +100,17 @@ $(document).ready(function () {
                 });
             }
         },
-        lamp = function (tab_index, score) {
+        lamp = function (tab_index, score, name) {
             // iidx style clear lamps
-            var scale,
+            var extended = ["AD2222 (Extended Mix)", "EGG (Extended Mix)", "Jumping Original Version", "Pretty Girl Original Version", "Son of Sun - Extended Mix", "Step Original Version", "SuperSonic (Mr.Funky Extended Mix)", "Thor - Extended Mix", "Y - Extended Mix"],
+                scale,
                 lamp;
             if (tab_index === 4) {
-                // figure out how to deal with extended vs. non-extended
-                return score;
+                if ($.inArray(name, extended) > -1) {
+                    scale = [1188000 * 3, 1160000 * 3, 1140000 * 3, 1080000 * 3, 0];
+                } else {
+                    scale = [297000 * 4 * 2, 290000 * 4 * 2, 285000 * 4 * 2, 270000 * 4 * 2, 0];
+                }
             } else if (tab_index === 5) {
                 scale = [297000 * 3 * 8, 290000 * 3 * 8, 285000 * 3 * 8, 270000 * 3 * 8, 0];
             } else {
@@ -154,7 +158,7 @@ $(document).ready(function () {
                         section.push('<table class="tablesorter"><thead><tr><th>Title</th><th>Rank</th><th>Score</th></tr></thead><tbody>');
                         m = key_to_array(me, tabs[i]);
                         for (j = 0, jlen = m.length; j < jlen; j += 1) {
-                            section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + lamp(i, m[j][2]) + "</td></tr>");
+                            section.push("<tr><td>" + m[j][0] + "</td><td>" + m[j][1] + "</td><td>" + lamp(i, m[j][2], m[j][0]) + "</td></tr>");
                         }
                         section.pop();
                         section.push("</tbody></table></div>");
@@ -218,7 +222,7 @@ $(document).ready(function () {
                                     if (m[k][2] > 0 && r[k][2] > 0) {
                                         delta > 0 ? stats[0]++ : delta < 0 ? stats[1]++ : stats[2]++;
                                     }
-                                    section.push("<tr><td>" + m[k][0] + "</td><td>" + lamp(j, m[k][2]) + "</td><td>" + lamp(j, r[k][2]) + "</td><td>" + delta + "</td></tr>");
+                                    section.push("<tr><td>" + m[k][0] + "</td><td>" + lamp(j, m[k][2], m[k][0]) + "</td><td>" + lamp(j, r[k][2], m[k][0]) + "</td><td>" + delta + "</td></tr>");
                                 }
                                 section.pop();
                                 section.push("</tbody></table><br />");
