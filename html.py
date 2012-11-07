@@ -4,37 +4,37 @@ import time
 
 from common import _, _clean, _exists, _list_dir, _make_dir
 from index import index
-import psxml
+import simplemarkup
 
 
-def _head(ps):
+def _head(sm):
     """Append sections that belong at the top of each page."""
-    ps.beginln("head")
-    ps.emptyln("meta", ['charset="UTF-8"'])
-    ps.begin("title", value="DJRivals").endln()
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/smoothness/jquery-ui-1.9.1.min.css"'])
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/theme-tablesorter-default.css"'])
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/theme-tokeninput-facebook.css"'])
-    ps.emptyln("link", ['rel="stylesheet"', 'type="text/css"', 'href="./extern/djrivals.css"'])
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-1.8.2.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-ui-1.9.1.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-tablesorter-2.2.2.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/jquery-tokeninput-1.6.0.min.js"']).endln()
-    ps.begin("script", ['type="text/javascript"', 'src="./extern/djrivals.min.js"']).endln()
-    ps.endln()  # head
+    sm.beginln("head")
+    sm.emptyln("meta", [("charset", "UTF-8")])
+    sm.begin("title", value="DJRivals").endln()
+    sm.emptyln("link", [("rel", "stylesheet"), ("type", "text/css"), ("href", "./extern/smoothness/jquery-ui-1.9.1.min.css")])
+    sm.emptyln("link", [("rel", "stylesheet"), ("type", "text/css"), ("href", "./extern/theme-tablesorter-default.css")])
+    sm.emptyln("link", [("rel", "stylesheet"), ("type", "text/css"), ("href", "./extern/theme-tokeninput-facebook.css")])
+    sm.emptyln("link", [("rel", "stylesheet"), ("type", "text/css"), ("href", "./extern/djrivals.css")])
+    sm.begin("script", [("type", "text/javascript"), ("src", "./extern/jquery-1.8.2.min.js")]).endln()
+    sm.begin("script", [("type", "text/javascript"), ("src", "./extern/jquery-ui-1.9.1.min.js")]).endln()
+    sm.begin("script", [("type", "text/javascript"), ("src", "./extern/jquery-tablesorter-2.2.2.min.js")]).endln()
+    sm.begin("script", [("type", "text/javascript"), ("src", "./extern/jquery-tokeninput-1.6.0.min.js")]).endln()
+    sm.begin("script", [("type", "text/javascript"), ("src", "./extern/djrivals.min.js")]).endln()
+    sm.endln()  # head
 
 
-def _tail(ps, print_time):
+def _tail(sm, print_time):
     """Append sections that belong at the bottom of each page."""
-    ps.beginln("div", ['id="footer"'])
-    ps.beginln("p")
-    ps.begin("a", ['href="http://www.cyphergate.net/wiki/"', 'target="_blank"'], "Cypher Gate Wiki").end().rawln("&nbsp;&nbsp;")
-    ps.begin("a", ['href="http://www.bemanistyle.com/forum/forumdisplay.php?7-DJMAX"', 'target="_blank"'], "DJMAX Forum (BMS)").end().rawln("&nbsp;&nbsp;")
-    ps.begin("a", ['href="http://djmaxcrew.com/"', 'target="_blank"'], "DJMAX Technika").end().emptyln("br")
-    ps.emptyln("br")
-    ps.rawln("&copy; 2012 DJ cgcgngng&#47;Cherry<br />All rights reserved.")
+    sm.beginln("div", [("id", "footer")])
+    sm.beginln("p")
+    sm.begin("a", [("href", "http://www.cyphergate.net/wiki/"), ("target", "_blank")], "Cypher Gate Wiki").end().rawln("&nbsp;&nbsp;")
+    sm.begin("a", [("href", "http://www.bemanistyle.com/forum/forumdisplay.php?7-DJMAX"), ("target", "_blank")], "DJMAX Forum (BMS)").end().rawln("&nbsp;&nbsp;")
+    sm.begin("a", [("href", "http://djmaxcrew.com/"), ("target", "_blank")], "DJMAX Technika").end().emptyln("br")
+    sm.emptyln("br")
+    sm.rawln("&copy; 2012 DJ cgcgngng&#47;Cherry<br />All rights reserved.")
     if print_time:
-        ps.rawln("<br /><br />")
+        sm.rawln("<br /><br />")
         avg_age = [0, 0]
         for index in (_.STAR_INDEX, _.POP_INDEX, _.CLUB_INDEX, _.MISSION_INDEX):
             with open(index, "rb") as f:
@@ -42,141 +42,141 @@ def _tail(ps, print_time):
             avg_age[0] += len(data)
             avg_age[1] += sum(data[name]["timestamp"] for name in data)
         avg_age = avg_age[1] / avg_age[0]
-        ps.rawln(time.strftime("%Y%m%d.%H", time.localtime(avg_age)))
-    ps.endln()  # p
-    ps.endln()  # div
+        sm.rawln(time.strftime("%Y%m%d.%H", time.localtime(avg_age)))
+    sm.endln()  # p
+    sm.endln()  # div
 
 
 def _page(tabs, name, img_dir=None):
     """Generate a ranking page."""
-    ps = psxml.PrettySimpleXML(2)
+    sm = simplemarkup.SimpleMarkup(2)
 
-    ps.rawln("<!DOCTYPE html>")
-    ps.beginln("html")
+    sm.rawln("<!DOCTYPE html>")
+    sm.beginln("html")
 
-    _head(ps)
+    _head(sm)
 
-    ps.beginln("body")
+    sm.beginln("body")
 
     # jquery tabs
-    ps.beginln("div", ['id="ranking"'])
-    ps.beginln("ul")
+    sm.beginln("div", [("id", "ranking")])
+    sm.beginln("ul")
     for tab in tabs:
-        ps.begin("li").begin("a", ['href="#{}"'.format(tab)], tab).end().endln()
-    ps.endln()  # ul
+        sm.begin("li").begin("a", [("href", "#" + tab)], tab).end().endln()
+    sm.endln()  # ul
     for tab in tabs:
-        ps.beginln("div", ['id="{}"'.format(tab)])
-        ps.begin("p")
+        sm.beginln("div", [("id", tab)])
+        sm.begin("p")
         if img_dir is None:
-            ps.raw(name)
+            sm.raw(name)
         else:
-            ps.empty("img", ['src="./images/{}/{}_{}.png"'.format(img_dir, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab))])
-            ps.raw("&nbsp; " + name)
-        ps.endln()  # p
-        ps.begin("p", value="Loading...").endln()
-        ps.endln()  # div
-    ps.endln()  # div (tabs)
+            sm.empty("img", [("src", "./images/{}/{}_{}.png".format(img_dir, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab)))])
+            sm.raw("&nbsp; " + name)
+        sm.endln()  # p
+        sm.begin("p", value="Loading...").endln()
+        sm.endln()  # div
+    sm.endln()  # div (tabs)
 
-    _tail(ps, False)
+    _tail(sm, False)
 
-    ps.endln()  # body
-    ps.endln()  # html
+    sm.endln()  # body
+    sm.endln()  # html
 
     with open(_.OUTPUT_DIR + _clean(name) + ".html", "wb") as f:
-        f.write(ps.output().encode())
+        f.write(sm.output().encode())
     print('Wrote: "{}{}.html"'.format(_.OUTPUT_DIR, _clean(name)))
 
 
 def _index():
     """Generate the HTML index."""
-    ps = psxml.PrettySimpleXML(2)
+    sm = simplemarkup.SimpleMarkup(2)
 
-    ps.rawln("<!DOCTYPE html>")
-    ps.beginln("html")
+    sm.rawln("<!DOCTYPE html>")
+    sm.beginln("html")
 
-    _head(ps)
+    _head(sm)
 
-    ps.beginln("body")
+    sm.beginln("body")
 
     # jquery accordion
-    ps.beginln("div", ['id="root"'])
+    sm.beginln("div", [("id", "root")])
 
-    ps.begin("h3", value="Rankings").endln()
-    ps.beginln("div", ['id="rankings"'])
+    sm.begin("h3", value="Rankings").endln()
+    sm.beginln("div", [("id", "rankings")])
     discs = sorted(set(key for mode in (_.STAR, _.POP) for key in index(mode)))
     discsets = sorted(key for key in index(_.CLUB))
     missions = sorted(key for key in index(_.MISSION))
-    ps.beginln("table")
-    ps.beginln("tr")
-    ps.beginln("td")
+    sm.beginln("table")
+    sm.beginln("tr")
+    sm.beginln("td")
     for count, name in enumerate(discs[:]):
-        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
+        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
         discs.pop(0)
         if count > 107:
             break
-    ps.endln()  # td
-    ps.beginln("td")
+    sm.endln()  # td
+    sm.beginln("td")
     for name in discs:
-        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
-    ps.rawln("<br /><br />")
+        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
+    sm.rawln("<br /><br />")
     for name in discsets:
-        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
-    ps.rawln("<br /><br />")
+        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
+    sm.rawln("<br /><br />")
     for name in missions:
-        ps.begin("a", ['href="./{}.html"'.format(_clean(name))], name).end().emptyln("br")
-    ps.rawln("<br /><br />")
-    ps.begin("a", ['href="./master.html"'], "Master").end().emptyln("br")
-    ps.endln()  # td
-    ps.endln()  # tr
-    ps.endln()  # table
-    ps.endln()  # div
+        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
+    sm.rawln("<br /><br />")
+    sm.begin("a", [("href", "./master.html")], "Master").end().emptyln("br")
+    sm.endln()  # td
+    sm.endln()  # tr
+    sm.endln()  # table
+    sm.endln()  # div
 
-    ps.begin("h3", value="Me").endln()
-    ps.beginln("div", ['id="me"'])
-    ps.begin("p", value="Go to settings to enter your DJ name.")
-    ps.endln()  # p
-    ps.endln()  # div
+    sm.begin("h3", value="Me").endln()
+    sm.beginln("div", [("id", "me")])
+    sm.begin("p", value="Go to settings to enter your DJ name.")
+    sm.endln()  # p
+    sm.endln()  # div
 
-    ps.begin("h3", value="Rivals").endln()
-    ps.beginln("div", ['id="rivals"'])
-    ps.begin("p", value="Go to settings to enter your DJ rivals.")
-    ps.endln()  # p
-    ps.endln()  # div
+    sm.begin("h3", value="Rivals").endln()
+    sm.beginln("div", [("id", "rivals")])
+    sm.begin("p", value="Go to settings to enter your DJ rivals.")
+    sm.endln()  # p
+    sm.endln()  # div
 
-    ps.begin("h3", value="Settings").endln()
-    ps.beginln("div", ['id="settings"'])
-    ps.begin("label", ['for="set_me"'], "DJ Name").end().empty("br")
-    ps.empty("input", ['id="set_me"', 'type="text"']).emptyln("br")
-    ps.begin("label", ['for="set_rival"'], "DJ Rivals").end().empty("br")
-    ps.empty("input", ['id="set_rival"', 'type="text"']).emptyln("br")
-    ps.begin("button", ['id="set_apply"', 'type="button"'], "Apply").end().raw(" ").begin("span", ['id="set_status"']).endln()
-    ps.endln()  # div
+    sm.begin("h3", value="Settings").endln()
+    sm.beginln("div", [("id", "settings")])
+    sm.begin("label", [("for", "set_me")], "DJ Name").end().empty("br")
+    sm.empty("input", [("id", "set_me"), ("type", "text")]).emptyln("br")
+    sm.begin("label", [("for", "set_rival")], "DJ Rivals").end().empty("br")
+    sm.empty("input", [("id", "set_rival"), ("type", "text")]).emptyln("br")
+    sm.begin("button", [("id", "set_apply"), ("type", "button")], "Apply").end().raw(" ").begin("span", [("id", "set_status")]).endln()
+    sm.endln()  # div
 
-    ps.begin("h3", value="About").endln()
-    ps.beginln("div", ['id="about"'])
-    ps.beginln("p")
-    ps.rawln("DJRivals is a score tracker for DJMAX Technika 3.<br />")
-    ps.emptyln("br")
-    ps.rawln("Quickly and easily see your scores as well as those<br />")
-    ps.rawln("from your rivals.  Score comparison shows how<br />")
-    ps.rawln("far ahead or behind you are, and sortable columns<br />")
-    ps.rawln("makes it simple to see your best and worst scores.<br />")
-    ps.rawln("DJRivals also includes master ranking for all modes!")
-    ps.endln()  # p
-    ps.beginln("p", ['id="dedication"'])
-    ps.rawln("Dedicated to Shoreline<br />and all Technika players.")
-    ps.endln()  # p
-    ps.endln()  # div
+    sm.begin("h3", value="About").endln()
+    sm.beginln("div", [("id", "about")])
+    sm.beginln("p")
+    sm.rawln("DJRivals is a score tracker for DJMAX Technika 3.<br />")
+    sm.emptyln("br")
+    sm.rawln("Quickly and easily see your scores as well as those<br />")
+    sm.rawln("from your rivals.  Score comparison shows how<br />")
+    sm.rawln("far ahead or behind you are, and sortable columns<br />")
+    sm.rawln("makes it simple to see your best and worst scores.<br />")
+    sm.rawln("DJRivals also includes master ranking for all modes!")
+    sm.endln()  # p
+    sm.beginln("p", [("id", "dedication")])
+    sm.rawln("Dedicated to Shoreline<br />and all Technika players.")
+    sm.endln()  # p
+    sm.endln()  # div
 
-    ps.endln()  # div (accordion)
+    sm.endln()  # div (accordion)
 
-    _tail(ps, True)
+    _tail(sm, True)
 
-    ps.endln()  # body
-    ps.endln()  # html
+    sm.endln()  # body
+    sm.endln()  # html
 
     with open(_.HTML_INDEX, "wb") as f:
-        f.write(ps.output().encode())
+        f.write(sm.output().encode())
     print('Wrote: "{}"'.format(_.HTML_INDEX))
 
 

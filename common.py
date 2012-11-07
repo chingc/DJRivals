@@ -40,7 +40,7 @@ def _open_url(url, task):
         except OSError:
             print("Error while {}.  Retrying in {} seconds.".format(task, 180))
             time.sleep(180)
-    raise ConnectionError("Unable to retrieve data.  Connection down?")
+    raise ConnectionError("unable to retrieve data")
 
 
 _ = _Constant()
