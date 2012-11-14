@@ -43,7 +43,8 @@ def index(mode, refresh=False):
         index = dict()
     if refresh or not index:
         for page in range(1, last + 1):
-            reply = json.loads(_open_url(url.format(page), "building index").read().decode())["DATA"]["RECORD"]
+            reply = _open_url(url.format(page), "building index")
+            reply = json.loads(reply.read().decode())["DATA"]["RECORD"]
             for record in reply:
                 name = record[key]
                 if name not in index:

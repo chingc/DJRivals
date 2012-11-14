@@ -25,7 +25,8 @@ def _id(mode, name):
         data = index(_.MISSION)
     else:
         raise ValueError("invalid game mode")
-    for record in json.loads(_open_url(url.format(data[name]["page"]), "retrieving ID").read().decode())["DATA"]["RECORD"]:
+    reply = _open_url(url.format(data[name]["page"]), "retrieving ID")
+    for record in json.loads(reply.read().decode())["DATA"]["RECORD"]:
         if record[key["name"]] == name:
             return record[key["id"]]
 
@@ -54,7 +55,8 @@ def ranking(mode, name, chart=_.NM):
     results = []
     identifier = _id(mode, name)
     while True:
-        reply = json.loads(_open_url(url.format(identifier, page) + (("&pt={}".format(_.CHART[chart])) if mode == _.POP else ""), "retrieving '{}'".format(_clean(name))).read().decode())["DATA"]["RECORD"]
+        reply = _open_url(url.format(identifier, page) + (("&pt={}".format(_.CHART[chart])) if mode == _.POP else ""), "retrieving '{}'".format(_clean(name)))
+        reply = json.loads(reply.read().decode())["DATA"]["RECORD"]
         results.extend((record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply)
         if len(reply) < 20:
             break

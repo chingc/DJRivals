@@ -42,7 +42,8 @@ def image(mode):
     else:
         raise ValueError("invalid game mode")
     for page in range(1, last + 1):
-        data = json.loads(_open_url(id_url.format(page), "retrieving image name").read().decode())["DATA"]["RECORD"]
+        data = _open_url(id_url.format(page), "retrieving image name")
+        data = json.loads(data.read().decode())["DATA"]["RECORD"]
         for record in data:
             theirname = record[keys["image"]] + (".png" if mode == _.MISSION else "")
             i = theirname.rfind(".")
