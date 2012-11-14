@@ -9,7 +9,7 @@ import image
 import index
 
 
-def _update(mode, stop, lock):
+def _update(mode, stop, lock, thread_name):
     """Continuously update the specified database."""
     # the interval is used to prevent hammering the DJMAX site.  it sets the
     # number of seconds to wait before downloading score data again.
@@ -26,10 +26,11 @@ def _update(mode, stop, lock):
     while not stop.is_set():
         with lock:
             data = index.index(mode)
-            next = sorted(data.keys(), key=lambda x: data[x]["timestamp"], reverse=True)[-1]
+            next = sorted(data.keys(), key=lambda x: data[x]["timestamp"])[0]
             index.touch_time(mode, next)
         database.build(mode, next)
         stop.wait(interval)
+    print(thread_name, "has ended.")
 
 
 def update(threads=2):
@@ -40,12 +41,12 @@ def update(threads=2):
         lock = threading.Lock()
         while run > 0:
             stop = threading.Event()
-            threading.Thread(target=_update, args=(mode, stop, lock)).start()
+            threading.Thread(target=_update, args=(mode, stop, lock, "{} thread {}".format(mode, run))).start()
             stops.append(stop)
             run -= 1
     try:
         while True:
-            time.sleep(10000)
+            time.sleep(60)
     except KeyboardInterrupt:
         for stop in stops:
             stop.set()
