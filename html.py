@@ -82,9 +82,9 @@ def _page(tabs, name, img_dir=None):
     sm.endln()  # body
     sm.endln()  # html
 
-    with open(_.OUTPUT_DIR + _clean(name) + ".html", "wb") as f:
+    with open(_.HTML_DIR + _clean(name) + ".html", "wb") as f:
         f.write(sm.output().encode())
-    print('Wrote: "{}{}.html"'.format(_.OUTPUT_DIR, _clean(name)))
+    print('Wrote: "{}{}.html"'.format(_.HTML_DIR, _clean(name)))
 
 
 def _index():
@@ -175,9 +175,9 @@ def _index():
     sm.endln()  # body
     sm.endln()  # html
 
-    with open(_.HTML_INDEX, "wb") as f:
+    with open(_.HTML_DIR + "index.html", "wb") as f:
         f.write(sm.output().encode())
-    print('Wrote: "{}"'.format(_.HTML_INDEX))
+    print('Wrote: "{}index.html"'.format(_.HTML_DIR))
 
 
 def pages():
@@ -207,4 +207,4 @@ def pages():
     _index()
 
 
-_make_dir(_.OUTPUT_DIR)
+_make_dir(_.HTML_DIR)
