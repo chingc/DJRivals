@@ -21,12 +21,9 @@ path.db.mission = path.db.root + "mission/"
 path.db.master  = path.db.root + "master/"
 
 path.index = _Namespace()
-path.index.root    = path.db.root
-path.index.dj      = path.index.root + "dj_index.json"
-path.index.star    = path.index.root + "star_index.json"
-path.index.pop     = path.index.root + "pop_index.json"
-path.index.club    = path.index.root + "club_index.json"
-path.index.mission = path.index.root + "mission_index.json"
+path.index.root = path.db.root
+path.index.db   = path.index.root + "db_index.json"
+path.index.dj   = path.index.root + "dj_index.json"
 
 path.img = _Namespace()
 path.img.root    = path.root + "images/"
@@ -49,6 +46,7 @@ url.id.star    = url.id.base + "GetRankStarMixing.asp?p={}"
 url.id.pop     = url.id.base + "GetRankPopMixing.asp?p={}"
 url.id.club    = url.id.base + "GetRankClubMixing.asp?p={}"
 url.id.mission = url.id.base + "GetRankMission.asp"
+url.id.all     = (url.id.star, url.id.pop, url.id.club, url.id.mission)
 
 url.img = _Namespace()
 url.img.base    = "http://img3.djmaxcrew.com/icon/"
@@ -59,27 +57,33 @@ url.img.mission = url.img.base + "missionpack/{}"
 
 site = _Namespace()
 site.key = _Namespace()
-site.key.disc    = {"name": "DISCNAME", "id": "DISCID", "image": "DISCIMG"}
+site.key.star    = {"name": "DISCNAME", "id": "DISCID", "image": "DISCIMG"}
+site.key.pop     = site.key.star
 site.key.club    = {"name": "DISCSETNAME", "id": "DISCSETID", "image": "DISCSETIMG"}
 site.key.mission = {"name": "MISSIONPACKNAME", "id": "MISSIONPACKID", "image": "MISSIONPACKICON"}
+site.key.all     = (site.key.star, site.key.pop, site.key.club, site.key.mission)
 
 site.pages = _Namespace()
 site.pages.star    = 9
 site.pages.pop     = 9
 site.pages.club    = 1
 site.pages.mission = 1
+site.pages.all     = (site.pages.star, site.pages.pop, site.pages.club, site.pages.mission)
 
-mode = _Namespace()
-mode.star    = "Star"
-mode.pop     = "Pop"
-mode.club    = "Club"
-mode.mission = "Mission"
+game = _Namespace()
+game.mode = _Namespace()
+game.mode.star    = "Star"
+game.mode.pop     = "Pop"
+game.mode.club    = "Club"
+game.mode.mission = "Mission"
+game.mode.all     = (game.mode.star, game.mode.pop, game.mode.club, game.mode.mission)
 
-chart = _Namespace()
-chart.nm = {"str": "NM", "int": 1}
-chart.hd = {"str": "HD", "int": 2}
-chart.mx = {"str": "MX", "int": 3}
-chart.ex = {"str": "EX", "int": 4}
+game.chart = _Namespace()
+game.chart.nm  = {"str": "NM", "int": 1}
+game.chart.hd  = {"str": "HD", "int": 2}
+game.chart.mx  = {"str": "MX", "int": 3}
+game.chart.ex  = {"str": "EX", "int": 4}
+game.chart.all = (game.chart.nm, game.chart.hd, game.chart.mx, game.chart.ex)
 
 net = _Namespace()
 net.retries = 10
