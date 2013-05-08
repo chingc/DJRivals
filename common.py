@@ -1,4 +1,5 @@
 """Functions common to other modules."""
+import json
 import os
 import re
 import time
@@ -34,6 +35,19 @@ def open_url(url, task):
         try:
             return urllib.request.urlopen(url)
         except OSError:
+            print("Error: {} (retry in {}s)".format(task, net.wait))
+            time.sleep(net.wait)
+    raise ConnectionError("Halted: Unable to access resource")
+
+
+def open_json(url, task):
+    """Retrieve json data from the specified url."""
+    for attempt in range(0, net.retries):
+        try:
+            reply = urllib.request.urlopen(url)
+            reply = json.loads(reply.read().decode())
+            return reply["DATA"]["RECORD"]
+        except:
             print("Error: {} (retry in {}s)".format(task, net.wait))
             time.sleep(net.wait)
     raise ConnectionError("Halted: Unable to access resource")
