@@ -3,17 +3,17 @@ from collections import OrderedDict as dict
 import json
 import time
 
-from common import open_json
+from common import urlopen_json
 from settings import game, path, site, url
 
 
 def create():
     """Create the index."""
     index = dict()
-    for mode, addr, end, key in zip(game.mode.all, url.id.all, site.pages.all, (key["name"] for key in site.key.all)):
+    for mode, address, end, key in zip(game.mode.all, url.id.all, site.pages.all, (key["name"] for key in site.key.all)):
         index[mode] = dict()
         for page in range(1, end + 1):
-            for record in open_json(addr.format(page), "Building index"):
+            for record in urlopen_json(address.format(page), "Create index"):
                 index[mode][record[key]] = dict([("timestamp", 0), ("page", page)])
     with open(path.index.db, "wb") as f:
         f.write(json.dumps(index, indent=2).encode())
@@ -34,7 +34,7 @@ def touch(mode, name):
     name -- The full name of a disc, disc set, or mission.
 
     """
-    data = read()
-    data[mode][name]["timestamp"] = int(time.time())
+    index = read()
+    index[mode][name]["timestamp"] = int(time.time())
     with open(path.index.db, "wb") as f:
-        f.write(json.dumps(data, indent=2).encode())
+        f.write(json.dumps(index, indent=2).encode())
