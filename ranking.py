@@ -1,64 +1,46 @@
 """Ranking retrieval."""
-import json
+import itertools
 
-from common import _, _clean, _open_url
-from index import index
+import index
+from common import clean, urlopen_json
+from settings import game, path, site, url
 
 
 def _id(mode, name):
     """The identifier for a given mode and name."""
-    if mode == _.STAR:
-        url  = _.STAR_ID_URL
-        key  = _.DISC_KEY
-        data = index(_.STAR)
-    elif mode == _.POP:
-        url  = _.POP_ID_URL
-        key  = _.DISC_KEY
-        data = index(_.POP)
-    elif mode == _.CLUB:
-        url  = _.CLUB_ID_URL
-        key  = _.CLUB_KEY
-        data = index(_.CLUB)
-    elif mode == _.MISSION:
-        url  = _.MISSION_ID_URL
-        key  = _.MISSION_KEY
-        data = index(_.MISSION)
-    else:
-        raise ValueError("invalid game mode")
-    reply = _open_url(url.format(data[name]["page"]), "retrieving ID")
-    for record in json.loads(reply.read().decode())["DATA"]["RECORD"]:
+    if mode == game.mode.star: address, key = url.id.star, site.key.star
+    elif mode == game.mode.pop: address, key = url.id.pop, site.key.pop
+    elif mode == game.mode.club: address, key = url.id.club, site.key.club
+    elif mode == game.mode.mission: address, key = url.id.mission, site.key.mission
+    else: raise ValueError("Invalid game mode")
+    page = index.read()[mode][name]["page"]
+    for record in urlopen_json(address.format(page), "ID retrieval"):
         if record[key["name"]] == name:
             return record[key["id"]]
 
 
-def ranking(mode, name, chart=_.NM):
+def get(mode, name, chart=game.chart.nm):
     """The complete ranking of the specified mode and name.
 
-    Any of the four game mode constants defined in the common module can be
-    given as the first argument.  The name must be the complete name of a disc,
-    disc set, or mission.  The chart is a key from the CHART dictionary defined
-    in the common module.  It is only relevant to Pop Mode, and defaults to the
-    value of the "nm" key.
+    Arguments:
+    mode -- One of the four game modes.
+    name -- The full name of a disc, disc set, or mission.
+    chart -- One of the four game charts.  Only relevant for Pop mode.
 
     """
-    if mode == _.STAR:
-        url = _.STAR_RANKING_URL
-    elif mode == _.POP:
-        url = _.POP_RANKING_URL
-    elif mode == _.CLUB:
-        url = _.CLUB_RANKING_URL
-    elif mode == _.MISSION:
-        url = _.MISSION_RANKING_URL
-    else:
-        raise ValueError("invalid game mode")
-    page = 1
-    results = []
+    if mode == game.mode.star: address = url.ranking.star
+    elif mode == game.mode.pop: address = url.ranking.pop
+    elif mode == game.mode.club: address = url.ranking.club
+    elif mode == game.mode.mission: address = url.ranking.mission
+    else: raise ValueError("Invalid game mode")
     identifier = _id(mode, name)
-    while True:
-        reply = _open_url(url.format(identifier, page) + (("&pt={}".format(_.CHART[chart])) if mode == _.POP else ""), "retrieving '{}'".format(_clean(name)))
-        reply = json.loads(reply.read().decode())["DATA"]["RECORD"]
-        results.extend((record["RANK"], record["DJICON"], record["DJNAME"], record["SCORE"]) for record in reply)
-        if len(reply) < 20:
+    results = []
+    for page in itertools.count(1):
+        addr = address.format(identifier, page)
+        if mode == game.mode.pop:
+            addr += "&pt={}".format(chart["int"])
+        records = urlopen_json(addr, "Ranking retrieval")
+        results.extend((r["RANK"], r["DJICON"], r["DJNAME"], r["SCORE"]) for r in records)
+        if len(records) < 20:
             break
-        page += 1
     return results
