@@ -9,8 +9,13 @@ from settings import game, path, site, url
 
 def create():
     """Create the index."""
+    all_modes = (game.mode.star, game.mode.pop, game.mode.club, game.mode.mission)
+    all_ids   = (url.id.star, url.id.pop, url.id.club, url.id.mission)
+    all_pages = (site.pages.star, site.pages.pop, site.pages.club, site.pages.mission)
+    all_keys  = (key["name"] for key in (site.key.star, site.key.pop, site.key.club, site.key.mission))
+
     index = dict()
-    for mode, address, end, key in zip(game.mode.all, url.id.all, site.pages.all, (key["name"] for key in site.key.all)):
+    for mode, address, end, key in zip(all_modes, all_ids, all_pages, all_keys):
         index[mode] = dict()
         for page in range(1, end + 1):
             for record in urlopen_json(address.format(page), "Create index"):

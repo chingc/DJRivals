@@ -16,7 +16,6 @@ path.db.nm      = path.db.root + "pop_nm/"
 path.db.hd      = path.db.root + "pop_hd/"
 path.db.mx      = path.db.root + "pop_mx/"
 path.db.ex      = path.db.root + "pop_ex/"
-path.db.pop     = (path.db.nm, path.db.hd, path.db.mx, path.db.ex)
 path.db.club    = path.db.root + "club/"
 path.db.mission = path.db.root + "mission/"
 path.db.master  = path.db.root + "master/"
@@ -47,7 +46,6 @@ url.id.star    = url.id.base + "GetRankStarMixing.asp?p={}"
 url.id.pop     = url.id.base + "GetRankPopMixing.asp?p={}"
 url.id.club    = url.id.base + "GetRankClubMixing.asp?p={}"
 url.id.mission = url.id.base + "GetRankMission.asp"
-url.id.all     = (url.id.star, url.id.pop, url.id.club, url.id.mission)
 
 url.img = _Namespace()
 url.img.base    = "http://img3.djmaxcrew.com/icon/"
@@ -62,14 +60,12 @@ site.key.star    = {"name": "DISCNAME", "id": "DISCID", "image": "DISCIMG"}
 site.key.pop     = site.key.star
 site.key.club    = {"name": "DISCSETNAME", "id": "DISCSETID", "image": "DISCSETIMG"}
 site.key.mission = {"name": "MISSIONPACKNAME", "id": "MISSIONPACKID", "image": "MISSIONPACKICON"}
-site.key.all     = (site.key.star, site.key.pop, site.key.club, site.key.mission)
 
 site.pages = _Namespace()
 site.pages.star    = 9
 site.pages.pop     = 9
 site.pages.club    = 1
 site.pages.mission = 1
-site.pages.all     = (site.pages.star, site.pages.pop, site.pages.club, site.pages.mission)
 
 game = _Namespace()
 game.mode = _Namespace()
@@ -77,14 +73,12 @@ game.mode.star    = "Star"
 game.mode.pop     = "Pop"
 game.mode.club    = "Club"
 game.mode.mission = "Mission"
-game.mode.all     = (game.mode.star, game.mode.pop, game.mode.club, game.mode.mission)
 
 game.chart = _Namespace()
 game.chart.nm  = {"str": "NM", "int": 1}
 game.chart.hd  = {"str": "HD", "int": 2}
 game.chart.mx  = {"str": "MX", "int": 3}
 game.chart.ex  = {"str": "EX", "int": 4}
-game.chart.all = (game.chart.nm, game.chart.hd, game.chart.mx, game.chart.ex)
 
 net = _Namespace()
 net.retries = 10
