@@ -1,0 +1,30 @@
+JSON Disc Database
+==================
+
+{
+    "name": "",
+    "eyecatch": "",
+    "icon": "",
+    "ranking": [
+        {"rank": 1, "djicon": "", "djname": "", "score": 300000},
+        {"rank": 2, "djicon": "", "djname": "", "score": 300000},
+        {"rank": 3, "djicon": "", "djname": "", "score": 300000},
+        ...
+    ]
+}
+
+Details
+-------
+This data structure represents a disc, disc set, or mission.  The "name" key is
+the full title, "eyecatch" and "icon" are the filenames of the eyecatch and icon
+that represents the title, and "ranking" is a list of dictionaries.  Each
+dictionary represents the score for one DJ.  Each are key by "rank", "djicon",
+"djname", and "score".  Like "icon", "djicon" is a filename.
+
+Special Values
+--------------
+None.
+
+Notes
+-----
+This structure is generated automatically and should not be edited manually.
