@@ -1,9 +1,10 @@
 """Ranking retrieval."""
+from collections import OrderedDict as dict
 import itertools
 
-import index
 from common import clean, urlopen_json
 from settings import game, path, site, url
+import index
 
 
 def _id(mode, name):
@@ -40,7 +41,7 @@ def get(mode, name, chart=game.chart.nm):
         if mode == game.mode.pop:
             addr += "&pt={}".format(chart["int"])
         records = urlopen_json(addr, "Ranking retrieval")
-        results.extend((r["RANK"], r["DJICON"], r["DJNAME"], r["SCORE"]) for r in records)
+        results.extend([dict(zip(("rank", "djicon", "djname", "score"), (r["RANK"], r["DJICON"], r["DJNAME"], r["SCORE"]))) for r in records])
         if len(records) < 20:
             break
     return results
