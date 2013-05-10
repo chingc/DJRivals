@@ -3,54 +3,42 @@ from collections import OrderedDict as dict
 import json
 import zlib
 
-from common import _, _clean, _list_dir, _make_dir
-from ranking import ranking
+from common import clean, ls, mkdir
+from settings import game, path
+import ranking
+#from common import _, _clean, _list_dir, _make_dir
+#from ranking import ranking
 
 
-def build(mode, name):
-    """Build a local database of the specified mode and name.
+def create(mode, name):
+    """Create a local database of the specified mode and name.
 
-    Any of the four game mode constants defined in the common module can be
-    given as the first argument.  The name must be the complete name of a disc,
-    disc set, or mission.
+    Arguments:
+    mode -- One of the four game modes.
+    name -- The full name of a disc, disc set, or mission.
 
     """
-    if mode == _.STAR:
-        level = [(_.NM, _.STAR_DB_DIR)]
-    elif mode == _.POP:
-        level = [
-            (_.NM, _.POP_NM_DB_DIR),
-            (_.HD, _.POP_HD_DB_DIR),
-            (_.MX, _.POP_MX_DB_DIR),
-            (_.EX, _.POP_EX_DB_DIR)
-        ]
-    elif mode == _.CLUB:
-        level = [(_.NM, _.CLUB_DB_DIR)]
-    elif mode == _.MISSION:
-        level = [(_.NM, _.MISSION_DB_DIR)]
-    else:
-        raise ValueError("invalid game mode")
-    for mode_str, db_dir in level:
-        results = ranking(mode, name, mode_str)
-        if len(results) > 0:
-            clean_name = _clean(name)
-            data = dict()
-            data["name"] = name
-            data["eyecatch"] = "{}.png".format(clean_name)
-            data["icon"] = "{}_{}.png".format(clean_name, _.CHART[mode_str])
-            data["ranking"] = results
-            with open(db_dir + clean_name + ".json", "wb") as f:
-                f.write(json.dumps(data, indent=None).encode())
-            print('Wrote: "{}{}.json"'.format(db_dir, clean_name))
+    if mode == game.mode.star: level = [(game.chart.nm, path.db.star)]
+    elif mode == game.mode.pop: level = zip(game.chart.all, path.db.pop)
+    elif mode == game.mode.club: level = [(game.chart.nm, path.db.club)]
+    elif mode == game.mode.mission: level = [(game.chart.nm, path.db.mission)]
+    else: raise ValueError("Invalid game mode")
+    for chart, directory in level:
+        results = ranking.get(mode, name, chart)
+        if results:
+            clean_name = clean(name)
+            db = dict()
+            db["name"] = name
+            db["eyecatch"] = "{}.png".format(clean_name)
+            db["icon"] = "{}_{}.png".format(clean_name, chart["int"])
+            db["ranking"] = results
+            with open(directory + clean_name + ".json", "wb") as f:
+                f.write(json.dumps(db, indent=1).encode())
+            print('Wrote: "{}{}.json"'.format(directory, clean_name))
 
 
 def dj():
-    """Build a DJ database using information from the local database.
-
-    The master rankings will also be generated along with the DJ database.
-    Requires a database to build from.
-
-    """
+    """Create a database of scores for each DJ using the local database."""
     def _extract(dj_set, directory):
         """Extract DJ and name data."""
         names = dict()
@@ -134,14 +122,3 @@ def dj():
             f.write(json.dumps(scores, indent=None).encode())
     with open(_.DJ_INDEX, "wb") as f:
         f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(djs.keys())], indent=None).encode())
-
-
-_make_dir(_.DJ_DB_DIR)
-_make_dir(_.STAR_DB_DIR)
-_make_dir(_.POP_NM_DB_DIR)
-_make_dir(_.POP_HD_DB_DIR)
-_make_dir(_.POP_MX_DB_DIR)
-_make_dir(_.POP_EX_DB_DIR)
-_make_dir(_.CLUB_DB_DIR)
-_make_dir(_.MISSION_DB_DIR)
-_make_dir(_.MASTER_DB_DIR)
