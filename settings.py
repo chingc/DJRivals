@@ -1,4 +1,4 @@
-"""DJRival directory and program settings."""
+"""DJRivals directory and program settings."""
 
 class _Namespace():
     """Namespace for various settings."""
@@ -16,6 +16,7 @@ path.db.nm      = path.db.root + "pop_nm/"
 path.db.hd      = path.db.root + "pop_hd/"
 path.db.mx      = path.db.root + "pop_mx/"
 path.db.ex      = path.db.root + "pop_ex/"
+path.db.pop     = (path.db.nm, path.db.hd, path.db.mx, path.db.ex)
 path.db.club    = path.db.root + "club/"
 path.db.mission = path.db.root + "mission/"
 path.db.master  = path.db.root + "master/"
