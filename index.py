@@ -14,7 +14,7 @@ def create():
         index[mode] = dict()
         for page in range(1, end + 1):
             for record in urlopen_json(address.format(page), "Create index"):
-                index[mode][record[key]] = dict([("timestamp", 0), ("page", page)])
+                index[mode][record[key]] = dict(zip(("timestamp", "page"), (0, page)))
     with open(path.index.db, "wb") as f:
         f.write(json.dumps(index, indent=2).encode())
     print('Wrote: "{}"'.format(path.index.db))
