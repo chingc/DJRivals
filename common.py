@@ -40,7 +40,7 @@ def open_url(url, task):
     raise ConnectionError("Halted: Unable to access resource")
 
 
-def urlopen_json(url, task):
+def urlopen_json(url, task="Unknown task"):
     """Retrieve json data from the specified url."""
     for attempt in range(0, net.retries):
         try:
