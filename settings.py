@@ -69,10 +69,15 @@ site.pages.mission = 1
 
 game = _Namespace()
 game.mode = _Namespace()
-game.mode.star    = "Star"
-game.mode.pop     = "Pop"
-game.mode.club    = "Club"
-game.mode.mission = "Mission"
+game.mode.star    = "star"
+game.mode.pop     = "pop"
+game.mode.club    = "club"
+game.mode.mission = "mission"
+
+game.mode.pop_nm = "pop_nm"
+game.mode.pop_hd = "pop_hd"
+game.mode.pop_mx = "pop_mx"
+game.mode.pop_ex = "pop_ex"
 
 game.chart = _Namespace()
 game.chart.nm  = {"str": "NM", "int": 1}
