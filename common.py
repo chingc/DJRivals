@@ -29,13 +29,13 @@ def mkdir(path):
     return path
 
 
-def open_url(url, task):
-    """Retrieve data from the specified url."""
+def urlopen_image(url):
+    """Retrieve image data from the specified url."""
     for attempt in range(0, net.retries):
         try:
-            return urllib.request.urlopen(url)
-        except OSError:
-            print("Error: {} (retry in {}s)".format(task, net.wait))
+            return urllib.request.urlopen(url).read()
+        except:
+            print("Error: Downloading image (retry in {}s)".format(net.wait))
             time.sleep(net.wait)
     raise ConnectionError("Halted: Unable to access resource")
 
