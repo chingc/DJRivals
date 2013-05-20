@@ -28,7 +28,8 @@ path.index.dj   = path.index.root + "dj_index.json"
 path.img = _Namespace()
 path.img.root    = path.root + "images/"
 path.img.icon    = path.img.root + "icon/"
-path.img.disc    = path.img.root + "disc/"
+path.img.star    = path.img.root + "disc/"
+path.img.pop     = path.img.star
 path.img.club    = path.img.root + "club/"
 path.img.mission = path.img.root + "mission/"
 
@@ -50,7 +51,8 @@ url.id.mission = url.id.base + "GetRankMission.asp"
 url.img = _Namespace()
 url.img.base    = "http://img3.djmaxcrew.com/icon/"
 url.img.icon    = url.img.base + "djicon/104/{}"
-url.img.disc    = url.img.base + "disc/110/{}"
+url.img.star    = url.img.base + "disc/110/{}"
+url.img.pop     = url.img.star
 url.img.club    = url.img.base + "discset/134/{}"
 url.img.mission = url.img.base + "missionpack/{}"
 
