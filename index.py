@@ -22,7 +22,7 @@ def create():
                 index[mode][record[key]] = dict(zip(("timestamp", "page"), (0, page)))
     with open(path.index.db, "wb") as f:
         f.write(json.dumps(index, indent=2).encode())
-    print('Wrote: "{}"'.format(path.index.db))
+    #print('Wrote: "{}"'.format(path.index.db))
 
 
 def read():
