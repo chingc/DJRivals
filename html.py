@@ -2,8 +2,9 @@
 import json
 import time
 
-from common import _, _clean, _exists, _list_dir, _make_dir
-from index import index
+from common import clean, exists
+from settings import game, path
+import index
 import simplemarkup
 
 
@@ -24,7 +25,7 @@ def _head(sm):
     sm.endln()  # head
 
 
-def _tail(sm, print_time):
+def _tail(sm, idx=None):
     """Append sections that belong at the bottom of each page."""
     sm.beginln("div", [("id", "footer")])
     sm.beginln("p")
@@ -33,14 +34,12 @@ def _tail(sm, print_time):
     sm.begin("a", [("href", "http://djmaxcrew.com/"), ("target", "_blank")], "DJMAX Technika").end().emptyln("br")
     sm.emptyln("br")
     sm.rawln("&copy; 2012 DJ cgcgngng&#47;Cherry<br />All rights reserved.")
-    if print_time:
+    if idx:
         sm.rawln("<br /><br />")
         avg_age = [0, 0]
-        for index in (_.STAR_INDEX, _.POP_INDEX, _.CLUB_INDEX, _.MISSION_INDEX):
-            with open(index, "rb") as f:
-                data = json.loads(f.read().decode())
-            avg_age[0] += len(data)
-            avg_age[1] += sum(data[name]["timestamp"] for name in data)
+        for mode in (game.mode.star, game.mode.pop, game.mode.club, game.mode.mission):
+            avg_age[0] += len(idx[mode])
+            avg_age[1] += sum(idx[mode][key]["timestamp"] for key in idx[mode])
         avg_age = avg_age[1] / avg_age[0]
         sm.rawln(time.strftime("%Y%m%d.%H", time.localtime(avg_age)))
     sm.endln()  # p
@@ -70,25 +69,29 @@ def _page(tabs, name, img_dir=None):
         if img_dir is None:
             sm.raw(name)
         else:
-            sm.empty("img", [("src", "./images/{}/{}_{}.png".format(img_dir, _clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab)))])
+            sm.empty("img", [("src", "{}/{}_{}.png".format(img_dir, clean(name), (lambda x: 2 if x == "HD" else 3 if x == "MX" else 4 if x == "EX" else 1)(tab)))])
             sm.raw("&nbsp; " + name)
         sm.endln()  # p
         sm.begin("p", value="Loading...").endln()
         sm.endln()  # div
     sm.endln()  # div (tabs)
 
-    _tail(sm, False)
+    _tail(sm)
 
     sm.endln()  # body
     sm.endln()  # html
 
-    with open(_.HTML_DIR + _clean(name) + ".html", "wb") as f:
+    with open(path.root + clean(name) + ".html", "wb") as f:
         f.write(sm.output().encode())
-    print('Wrote: "{}{}.html"'.format(_.HTML_DIR, _clean(name)))
+    #print('Wrote: "{}{}.html"'.format(path.root, clean(name)))
 
 
-def _index():
+def _index(idx):
     """Generate the HTML index."""
+    discs = sorted(set(key for mode in (game.mode.star, game.mode.pop) for key in idx[mode]))
+    discsets = sorted(key for key in idx[game.mode.club])
+    missions = sorted(key for key in idx[game.mode.mission])
+
     sm = simplemarkup.SimpleMarkup(2)
 
     sm.rawln("<!DOCTYPE html>")
@@ -103,27 +106,24 @@ def _index():
 
     sm.begin("h3", value="Rankings").endln()
     sm.beginln("div", [("id", "rankings")])
-    discs = sorted(set(key for mode in (_.STAR, _.POP) for key in index(mode)))
-    discsets = sorted(key for key in index(_.CLUB))
-    missions = sorted(key for key in index(_.MISSION))
     sm.beginln("table")
     sm.beginln("tr")
     sm.beginln("td")
     for count, name in enumerate(discs[:]):
-        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
+        sm.begin("a", [("href", "./{}.html".format(clean(name)))], name).end().emptyln("br")
         discs.pop(0)
-        if count > 107:
+        if count > 107:  # no more than this number of items in the first column
             break
     sm.endln()  # td
-    sm.beginln("td")
+    sm.beginln("td")  # here starts the second column
     for name in discs:
-        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
+        sm.begin("a", [("href", "./{}.html".format(clean(name)))], name).end().emptyln("br")
     sm.rawln("<br /><br />")
     for name in discsets:
-        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
+        sm.begin("a", [("href", "./{}.html".format(clean(name)))], name).end().emptyln("br")
     sm.rawln("<br /><br />")
     for name in missions:
-        sm.begin("a", [("href", "./{}.html".format(_clean(name)))], name).end().emptyln("br")
+        sm.begin("a", [("href", "./{}.html".format(clean(name)))], name).end().emptyln("br")
     sm.rawln("<br /><br />")
     sm.begin("a", [("href", "./master.html")], "Master").end().emptyln("br")
     sm.endln()  # td
@@ -170,41 +170,40 @@ def _index():
 
     sm.endln()  # div (accordion)
 
-    _tail(sm, True)
+    _tail(sm, idx)
 
     sm.endln()  # body
     sm.endln()  # html
 
-    with open(_.HTML_DIR + "index.html", "wb") as f:
+    with open(path.root + "index.html", "wb") as f:
         f.write(sm.output().encode())
-    print('Wrote: "{}index.html"'.format(_.HTML_DIR))
+    #print('Wrote: "{}index.html"'.format(path.root))
 
 
 def pages():
     """Generate all ranking pages and the HTML index."""
-    for name in set(key for mode in (_.STAR, _.POP) for key in index(mode)):
+    def get_str(chart):
+        return chart["str"].upper()
+
+    def mk_cap(mode):
+        return mode.capitalize()
+
+    idx = index.read()
+    for name in set(key for mode in (game.mode.star, game.mode.pop) for key in idx[mode]):
         tabs = []
-        clean_name = _clean(name)
-        if _exists(_.STAR_DB_DIR + clean_name + ".json"):
-            tabs.append(_.STAR)
-        if _exists(_.POP_NM_DB_DIR + clean_name + ".json"):
-            tabs.append(_.NM)
-        if _exists(_.POP_HD_DB_DIR + clean_name + ".json"):
-            tabs.append(_.HD)
-        if _exists(_.POP_MX_DB_DIR + clean_name + ".json"):
-            tabs.append(_.MX)
-        if _exists(_.POP_EX_DB_DIR + clean_name + ".json"):
-            tabs.append(_.EX)
+        clean_name = clean(name)
+        if exists(path.db.star + clean_name + ".json"): tabs.append(mk_cap(game.mode.star))
+        if exists(path.db.nm + clean_name + ".json"): tabs.append(get_str(game.chart.nm))
+        if exists(path.db.hd + clean_name + ".json"): tabs.append(get_str(game.chart.hd))
+        if exists(path.db.mx + clean_name + ".json"): tabs.append(get_str(game.chart.mx))
+        if exists(path.db.ex + clean_name + ".json"): tabs.append(get_str(game.chart.ex))
         if len(tabs) > 0:
-            _page(tabs, name, "disc")
-    for name in (key for key in index(_.CLUB)):
-        if _exists(_.CLUB_DB_DIR + _clean(name) + ".json"):
-            _page([_.CLUB], name, "club")
-    for name in (key for key in index(_.MISSION)):
-        if _exists(_.MISSION_DB_DIR + _clean(name) + ".json"):
-            _page([_.MISSION], name, "mission")
-    _page([_.STAR, _.NM, _.HD, _.MX, _.POP, _.CLUB, _.MISSION], "Master")
-    _index()
-
-
-_make_dir(_.HTML_DIR)
+            _page(tabs, name, "./images/disc")
+    for name in (key for key in idx[game.mode.club]):
+        if exists(path.db.club + clean(name) + ".json"):
+            _page([mk_cap(game.mode.club)], name, "./images/club")
+    for name in (key for key in idx[game.mode.mission]):
+        if exists(path.db.mission + clean(name) + ".json"):
+            _page([mk_cap(game.mode.mission)], name, "./images/mission")
+    _page([mk_cap(game.mode.star), get_str(game.chart.nm), get_str(game.chart.hd), get_str(game.chart.mx), mk_cap(game.mode.pop), mk_cap(game.mode.club), mk_cap(game.mode.mission)], "Master")
+    _index(idx)
