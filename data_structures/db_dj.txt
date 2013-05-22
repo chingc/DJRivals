@@ -1,5 +1,5 @@
-JSON DJ
-=======
+JSON DJ Record
+==============
 
 {
     "name": "",
@@ -8,52 +8,46 @@ JSON DJ
         "disc 1": [1, 300000],
         "disc 2": [2, 300000],
         "disc 3": [3, 300000],
-        ...,
-        "_master_": [1, 15000000]
+        ...
     },
-    "pop_nm": {
+    "nm": {
         "disc 1": [1, 300000],
         "disc 2": [2, 300000],
         "disc 3": [3, 300000],
-        ...,
-        "_master_": [1, 15000000]
+        ...
     },
-    "pop_hd": {
+    "hd": {
         "disc 1": [1, 300000],
         "disc 2": [2, 300000],
         "disc 3": [3, 300000],
-        ...,
-        "_master_": [1, 15000000]
+        ...
     },
-    "pop_mx": {
+    "mx": {
         "disc 1": [1, 300000],
         "disc 2": [2, 300000],
         "disc 3": [3, 300000],
-        ...,
-        "_master_": [1, 15000000]
+        ...
     },
-    "pop_ex": {
+    "ex": {
         "disc 1": [1, 300000],
         "disc 2": [2, 300000],
         "disc 3": [3, 300000],
-        ...,
-        "_master_": [1, 15000000]
+        ...
     },
     "club": {
         "discset 1": [1, 300000],
         "discset 2": [2, 300000],
         "discset 3": [3, 300000],
-        ...,
-        "_master_": [1, 15000000]
+        ...
     },
     "mission": {
         "mission 1": [1, 300000],
         "mission 2": [2, 300000],
         "mission 3": [3, 300000],
-        ...,
-        "_master_": [1, 15000000]
+        ...
     }
 }
+
 
 Details
 -------
@@ -64,10 +58,11 @@ mode and difficulty.  Each of these remaining keys accesses a dictionary keyed
 by the full title of the disc, disc set, or mission.  The title keys accesses a
 list of two elements, the rank and score for that particular title.
 
+
 Special Values
 --------------
-A score of 0 means the title has not been played.  Each mode has a special key
-called "_master_" which contains the overall rank and score for that mode.
+A rank of 9999 and a score of 0 means the title has not been played.
+
 
 Notes
 -----

@@ -1,5 +1,5 @@
-JSON Master Ranking
-===================
+JSON Master Record
+==================
 
 {
     "ranking": [
@@ -10,15 +10,19 @@ JSON Master Ranking
     ]
 }
 
+
 Details
 -------
 This data structure is for the master rankings, which is the overall rank and
-score for each DJ.  It has a single key called "ranking" and is identical to the
-ranking key of the database data structure.
+score for each DJ.  It has a single key called "ranking" and is similar to the
+ranking key of a disc record except it is a list of lists instead of a list of
+dictionaries.
+
 
 Special Values
 --------------
 None.
+
 
 Notes
 -----
