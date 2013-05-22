@@ -76,16 +76,11 @@ game.mode.pop     = "pop"
 game.mode.club    = "club"
 game.mode.mission = "mission"
 
-game.mode.pop_nm = "pop_nm"
-game.mode.pop_hd = "pop_hd"
-game.mode.pop_mx = "pop_mx"
-game.mode.pop_ex = "pop_ex"
-
 game.chart = _Namespace()
-game.chart.nm  = {"str": "NM", "int": 1}
-game.chart.hd  = {"str": "HD", "int": 2}
-game.chart.mx  = {"str": "MX", "int": 3}
-game.chart.ex  = {"str": "EX", "int": 4}
+game.chart.nm = {"str": "nm", "int": 1}
+game.chart.hd = {"str": "hd", "int": 2}
+game.chart.mx = {"str": "mx", "int": 3}
+game.chart.ex = {"str": "ex", "int": 4}
 
 net = _Namespace()
 net.retries = 10

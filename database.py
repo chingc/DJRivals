@@ -56,7 +56,7 @@ def dj():
             for dj in disc["ranking"]:
                 all_dj[dj["djname"]][mode][disc["name"]] = (dj["rank"], dj["score"])
 
-    all_type    = (game.mode.star, game.mode.pop_nm, game.mode.pop_hd, game.mode.pop_mx, game.mode.pop_ex, game.mode.club, game.mode.mission)
+    all_type    = (game.mode.star, game.chart.nm["str"], game.chart.hd["str"], game.chart.mx["str"], game.chart.ex["str"], game.mode.club, game.mode.mission)
     all_db_path = (path.db.star, path.db.nm, path.db.hd, path.db.mx, path.db.ex, path.db.club, path.db.mission)
 
     # extract all djnames and disc/club/mission names
@@ -93,7 +93,7 @@ def master():
     """Use the local DJ database to create the master score records."""
     pop_master = {}
 
-    for mode in (game.mode.star, game.mode.pop_nm, game.mode.pop_hd, game.mode.pop_mx, game.mode.pop_ex, game.mode.club, game.mode.mission):
+    for mode in (game.mode.star, game.chart.nm["str"], game.chart.hd["str"], game.chart.mx["str"], game.chart.ex["str"], game.mode.club, game.mode.mission):
         master = []
         for record in ls(path.db.dj):
             with open(path.db.dj + record, "rb") as f:
@@ -101,7 +101,7 @@ def master():
             master_score = sum([v[1] for k, v in record[mode].items()])
             if master_score:
                 master.append((record["icon"], record["name"], master_score))
-            if mode in (game.mode.pop_nm, game.mode.pop_hd, game.mode.pop_mx, game.mode.pop_ex):
+            if mode in (game.chart.nm["str"], game.chart.hd["str"], game.chart.mx["str"], game.chart.ex["str"]):
                 if record["name"] not in pop_master:
                     pop_master[record["name"]] = [record["icon"], record["name"], master_score]
                 else:
