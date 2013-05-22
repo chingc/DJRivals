@@ -52,7 +52,7 @@ def db(threads=2):
             threading.Thread(target=thread, args=(mode, stop, lock)).start()
             stops.append(stop)
     try:
-        while True:
+        while threading.active_count() > 1:
             print("{} of {} threads running.".format(threading.active_count() - 1, threads * 4), end="\r")
             time.sleep(30)
     except KeyboardInterrupt:
@@ -61,6 +61,7 @@ def db(threads=2):
         print("Finishing current jobs.  Please wait...")
         while threading.active_count() > 1:
             time.sleep(2)
+    finally:
         print("Done.")
 
 
