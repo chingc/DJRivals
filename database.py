@@ -80,7 +80,7 @@ def dj():
 
     # write dj index
     with open(path.index.dj, "wb") as f:
-        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(all_dj.keys())], indent=1).encode())
+        f.write(json.dumps([{"id": zlib.crc32(dj.encode()), "name": dj} for dj in sorted(all_dj)], indent=1).encode())
 
     # write dj records
     while all_dj:

@@ -13,7 +13,7 @@ def db(threads=2):
     """Continuously update the databases."""
     def oldest_first(mode):
         idx = index.read()
-        return sorted(idx[mode].keys(), key=lambda x: idx[mode][x]["timestamp"])
+        return sorted(idx[mode], key=lambda x: idx[mode][x]["timestamp"])
 
     def thread(mode, stop, lock):
         # the interval is used to prevent hammering the DJMAX site.  it sets the
