@@ -1,9 +1,11 @@
-"""DJRivals directory and program settings."""
+"""Directory and program settings."""
 
 class _Namespace():
     """Namespace for various settings."""
     pass
 
+
+### Output Directories ###
 
 path = _Namespace()
 path.root = "../djr_test/"
@@ -32,6 +34,16 @@ path.img.star    = path.img.root + "disc/"
 path.img.pop     = path.img.star
 path.img.club    = path.img.root + "club/"
 path.img.mission = path.img.root + "mission/"
+
+
+### Program Settings ###
+
+net = _Namespace()
+net.retries = 5
+net.wait    = 180  # seconds
+
+
+### DJMAX website and game settings -- DO NOT CHANGE ###
 
 url = _Namespace()
 url.ranking = _Namespace()
@@ -81,7 +93,3 @@ game.chart.nm = {"str": "nm", "int": 1}
 game.chart.hd = {"str": "hd", "int": 2}
 game.chart.mx = {"str": "mx", "int": 3}
 game.chart.ex = {"str": "ex", "int": 4}
-
-net = _Namespace()
-net.retries = 10
-net.wait    = 180

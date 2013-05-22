@@ -1,4 +1,4 @@
-"""Generate HTML."""
+"""Front-end generator."""
 import json
 import time
 

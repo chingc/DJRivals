@@ -1,4 +1,4 @@
-"""Index management."""
+"""Index manager."""
 from collections import OrderedDict as dict
 import json
 import time

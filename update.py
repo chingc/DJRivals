@@ -1,4 +1,4 @@
-"""DJRivals database updater."""
+"""Update manager."""
 import threading
 import time
 
