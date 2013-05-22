@@ -31,7 +31,7 @@ def mkdir(path):
 
 def urlopen_image(url):
     """Retrieve image data from the specified url."""
-    for attempt in range(0, net.retries):
+    for attempt in range(net.retries):
         try:
             return urllib.request.urlopen(url).read()
         except:
@@ -42,7 +42,7 @@ def urlopen_image(url):
 
 def urlopen_json(url, task="Unknown task"):
     """Retrieve json data from the specified url."""
-    for attempt in range(0, net.retries):
+    for attempt in range(net.retries):
         try:
             reply = urllib.request.urlopen(url)
             reply = json.loads(reply.read().decode())
