@@ -4,16 +4,16 @@ import time
 
 from settings import game
 import database
-#import html
+import html
 import image
 import index
 
 
 def db(threads=2):
     """Continuously update the databases."""
-    def oldest_last(mode):
-        data = index.read()
-        return sorted(data[mode].keys(), key=lambda x: data[mode][x]["timestamp"], reverse=True)
+    def oldest_first(mode):
+        idx = index.read()
+        return sorted(idx[mode].keys(), key=lambda x: idx[mode][x]["timestamp"])
 
     def thread(mode, stop, lock):
         # the interval is used to prevent hammering the DJMAX site.  it sets the
@@ -25,24 +25,24 @@ def db(threads=2):
         else: raise ValueError("Invalid game mode")
         while not stop.is_set():
             with lock:
-                next = names[mode].pop()
+                next = names[mode].pop(0)
             try:
                 database.create(mode, next)
             except:
-                names[mode].append(next)
+                names[mode].insert(0, next)
                 stop.set()
                 raise
             else:
                 with lock:
-                    names[mode].insert(0, next)
+                    names[mode].append(next)
                     index.touch(mode, next)
                 stop.wait(interval)
 
     names = {}
-    names[game.mode.star]    = oldest_last(game.mode.star)
-    names[game.mode.pop]     = oldest_last(game.mode.pop)
-    names[game.mode.club]    = oldest_last(game.mode.club)
-    names[game.mode.mission] = oldest_last(game.mode.mission)
+    names[game.mode.star]    = oldest_first(game.mode.star)
+    names[game.mode.pop]     = oldest_first(game.mode.pop)
+    names[game.mode.club]    = oldest_first(game.mode.club)
+    names[game.mode.mission] = oldest_first(game.mode.mission)
 
     stops = []
     for mode in (game.mode.star, game.mode.pop, game.mode.club, game.mode.mission):
@@ -66,23 +66,23 @@ def db(threads=2):
 
 def other():
     """Update the index and download any necessary images."""
-    start_time = time.monotonic()
-    index.create()
-    print("Index built (took: {:.2f}s)".format(time.monotonic() - start_time))
-
-    start_time = time.monotonic()
-    image.disc()
-    print("Disc icons downloaded (took: {:.2f}s)".format(time.monotonic() - start_time))
-
-    start_time = time.monotonic()
-    image.icon()
-    print("DJ icons downloaded (took: {:.2f}s)".format(time.monotonic() - start_time))
+    print("Rebuild index (took: {}s)".format(_time(index.create)))
+    print("Check disc icons (took: {}s)".format(_time(image.disc)))
+    print("Check dj icons (took: {}s)".format(_time(image.icon)))
     print("Done.")
 
 
 def sync():
     """Build the DJ database and front-end."""
-    database.dj()
-    image.icon()
-    #html.pages()
+    print("Sync dj database (took: {}s)".format(_time(database.dj)))
+    print("Sync master scores (took: {}s)".format(_time(database.master)))
+    print("Check dj icons (took: {}s)".format(_time(image.icon)))
+    print("Build front-end (took: {}s)".format(_time(html.pages)))
     print("Done.")
+
+
+def _time(function):
+    """Determine the amount of time a function takes to run."""
+    start_time = time.monotonic()
+    function()
+    return round(time.monotonic() - start_time, 2)
