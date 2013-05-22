@@ -66,7 +66,7 @@ def db(threads=2):
 
 def other():
     """Update the index and download any necessary images."""
-    print("Rebuild index (took: {}s)".format(_time(index.create)))
+    print("Build index (took: {}s)".format(_time(index.create)))
     print("Check disc icons (took: {}s)".format(_time(image.disc)))
     print("Check dj icons (took: {}s)".format(_time(image.icon)))
     print("Done.")
