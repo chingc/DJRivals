@@ -3,9 +3,9 @@ JSON Master Record
 
 {
     "ranking": [
-        [1, "djicon", "djname", 1500000],
-        [2, "djicon", "djname", 1500000],
-        [3, "djicon", "djname", 1500000],
+        {"rank": 1, "djicon": "", "djname": "", "score": 1500000},
+        {"rank": 2, "djicon": "", "djname": "", "score": 1500000},
+        {"rank": 3, "djicon": "", "djname": "", "score": 1500000},
         ...
     ]
 }
@@ -14,9 +14,8 @@ JSON Master Record
 Details
 -------
 This data structure is for the master rankings, which is the overall rank and
-score for each DJ.  It has a single key called "ranking" and is similar to the
-ranking key of a disc record except it is a list of lists instead of a list of
-dictionaries.
+score for each DJ.  It has a single key called "ranking" and is identical to the
+ranking key of the disc record structure.
 
 
 Special Values
