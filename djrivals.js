@@ -32,7 +32,7 @@ $(document).ready(function () {
         },
         key_to_array = function (dj, mode) {
             // extract the mode from a dj database as an array
-            return $.map(dj[(mode.length === 2 ? "pop_" + mode : mode).toLowerCase()], function (value, key) {
+            return $.map(dj[mode.toLowerCase()], function (value, key) {
                 return [[key, value[0], value[1]]];
             });
         },
@@ -42,9 +42,6 @@ $(document).ready(function () {
                 div = $("#" + chart).children(),
                 name = div.first().text().replace(/\W/g, ""),
                 url;
-            if (chart.length === 2) {
-                chart = "pop_" + chart;
-            }
             url = "./database/" + (name === "Master" ? (name + "/" + chart) : (chart + "/" + name)) + ".json";
             if (div.last().text() === "Loading...") {
                 $.ajax({
@@ -62,7 +59,7 @@ $(document).ready(function () {
                         ilen;
                     data = data.ranking;
                     no_play = $.map(data, function (element) {
-                        return element[2];
+                        return element["djname"];
                     });
                     no_play = $.map(players, function (token, index) {
                         if ($.inArray(token.name, no_play) < 0) {
@@ -84,10 +81,10 @@ $(document).ready(function () {
                             }
                             exit_on_zero -= 1;
                         }
-                        dj_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
-                        found = $.inArray(data[i][2], players);
+                        dj_section.push("<tr><td>" + data[i]["rank"] + '</td><td><img src="./images/icon/' + data[i]["djicon"] + '" /></td><td>' + data[i]["djname"] + "</td><td>" + data[i]["score"] + "</td></tr>");
+                        found = $.inArray(data[i]["djname"], players);
                         if (found > -1) {
-                            rival_section.push("<tr><td>" + data[i][0] + '</td><td><img src="./images/icon/' + data[i][1] + '" /></td><td>' + data[i][2] + "</td><td>" + data[i][3] + "</td></tr>");
+                            rival_section.push("<tr><td>" + data[i]["rank"] + '</td><td><img src="./images/icon/' + data[i]["djicon"] + '" /></td><td>' + data[i]["djname"] + "</td><td>" + data[i]["score"] + "</td></tr>");
                             players.splice(found, 1);
                         }
                     }
