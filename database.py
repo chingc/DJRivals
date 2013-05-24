@@ -108,8 +108,8 @@ def master():
                     pop_master[record["name"]][2] += master_score
         master = [[rank + 1, dj[0], dj[1], dj[2]] for rank, dj in enumerate(sorted(master, key=lambda x: x[2], reverse=True))]
         with open("{}{}.json".format(path.db.master, mode), "wb") as f:
-            f.write(json.dumps({"ranking": master}, indent=2).encode())
+            f.write(json.dumps({"ranking": master}, indent=1).encode())
 
     pop_master = [[rank + 1, dj[0], dj[1], dj[2]] for rank, dj in enumerate(sorted(pop_master.values(), key=lambda x: x[2], reverse=True))]
     with open("{}{}.json".format(path.db.master, "pop"), "wb") as f:
-        f.write(json.dumps({"ranking": pop_master}, indent=2).encode())
+        f.write(json.dumps({"ranking": pop_master}, indent=1).encode())

@@ -21,7 +21,7 @@ def create():
             for record in urlopen_json(address.format(page), "Create index"):
                 index[mode][record[key]] = dict(zip(("timestamp", "page"), (0, page)))
     with open(path.index.db, "wb") as f:
-        f.write(json.dumps(index, indent=2).encode())
+        f.write(json.dumps(index, indent=1).encode())
     #print('Wrote: "{}"'.format(path.index.db))
 
 
@@ -42,4 +42,4 @@ def touch(mode, name):
     index = read()
     index[mode][name]["timestamp"] = int(time.time())
     with open(path.index.db, "wb") as f:
-        f.write(json.dumps(index, indent=2).encode())
+        f.write(json.dumps(index, indent=1).encode())
