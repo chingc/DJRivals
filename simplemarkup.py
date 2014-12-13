@@ -1,4 +1,4 @@
-"""simplemarkup, version 2.1, https://github.com/smwst/simplemarkup
+"""simplemarkup, version 2.1, https://github.com/chingc/simplemarkup
 
 Copyright (c) 2012, Ching Chow
 All rights reserved.

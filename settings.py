@@ -8,7 +8,7 @@ class _Namespace():
 ### Output Directories ###
 
 path = _Namespace()
-path.root = "../smwst.github.io/DJRivals/"
+path.root = "../chingc.github.io/DJRivals/"
 
 path.db = _Namespace()
 path.db.root    = path.root + "database/"

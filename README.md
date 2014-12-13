@@ -41,6 +41,6 @@ DJRivals is distributed under the Simplified BSD license.  See [LICENSE][3] for 
 
 
 
-[1]: http://smwst.github.com/DJRivals/ "DJRivals"
+[1]: http://chingc.github.io/DJRivals/ "DJRivals"
 [2]: http://en.wikipedia.org/wiki/DJMax_Technika_3 "DJMAX Technika 3"
-[3]: https://github.com/smwst/DJRivals/blob/master/LICENSE "License"
+[3]: https://github.com/chingc/DJRivals/blob/master/LICENSE "License"
